@@ -23,31 +23,31 @@ const CourseDetail: React.FC = () => {
   const courseSections = [
     {
       id: 1,
-      title: "Introduction to the Course",
+      title: "Introduction au Cours",
       duration: "15 min",
       isPreview: true,
     },
     {
       id: 2,
-      title: `Basic ${course.title} Concepts`,
+      title: `Concepts de Base en ${course.title}`,
       duration: "30 min",
       isPreview: false,
     },
     {
       id: 3,
-      title: "Interactive 3D Exploration",
+      title: "Exploration 3D Interactive",
       duration: "45 min",
       isPreview: false,
     },
     {
       id: 4,
-      title: "Key Structures and Functions",
+      title: "Structures et Fonctions Clés",
       duration: "60 min",
       isPreview: false,
     },
     {
       id: 5,
-      title: "Quiz and Assessment",
+      title: "Quiz et Évaluation",
       duration: "20 min",
       isPreview: false,
     },
@@ -55,11 +55,11 @@ const CourseDetail: React.FC = () => {
 
   // Mock learning outcomes
   const learningOutcomes = [
-    `Understand the fundamental components of ${course.title.toLowerCase()}`,
-    "Navigate and manipulate 3D models to explore anatomical structures",
-    `Identify key elements and their functions within ${course.title.toLowerCase()}`,
-    "Apply knowledge through interactive quizzes and assessments",
-    "Relate anatomical structures to their physiological functions",
+    `Comprendre les composants fondamentaux de ${course.title.toLowerCase()}`,
+    "Naviguer et manipuler des modèles 3D pour explorer les structures anatomiques",
+    `Identifier les éléments clés et leurs fonctions dans ${course.title.toLowerCase()}`,
+    "Appliquer les connaissances à travers des quiz interactifs et des évaluations",
+    "Établir des liens entre les structures anatomiques et leurs fonctions physiologiques",
   ];
 
   return (
@@ -76,9 +76,9 @@ const CourseDetail: React.FC = () => {
             className="mb-4"
             style={{
               backgroundColor:
-                course.level === "Beginner"
+                course.level === "Débutant"
                   ? "#84cc16"
-                  : course.level === "Intermediate"
+                  : course.level === "Intermédiaire"
                   ? "#3b82f6"
                   : "#a855f7",
             }}
@@ -94,7 +94,7 @@ const CourseDetail: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
-              <span>{course.lessonCount} lessons</span>
+              <span>{course.lessonCount} leçons</span>
             </div>
           </div>
         </div>
@@ -108,29 +108,29 @@ const CourseDetail: React.FC = () => {
             <div className="md:col-span-2">
               <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-6 grid w-full grid-cols-3">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
-                  <TabsTrigger value="instructor">Instructor</TabsTrigger>
+                  <TabsTrigger value="overview">Aperçu</TabsTrigger>
+                  <TabsTrigger value="curriculum">Programme</TabsTrigger>
+                  <TabsTrigger value="instructor">Instructeur</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="overview">
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-2xl font-semibold text-brand-blue">
-                        About This Course
+                        À Propos de ce Cours
                       </h2>
                       <p className="mt-3 text-gray-700">
-                        This comprehensive course takes you on a journey through {course.title.toLowerCase()}, 
-                        using cutting-edge 3D visualization technology to make complex concepts easy to 
-                        understand. Whether you're a medical student, healthcare professional, or simply 
-                        curious about human anatomy, this course will provide valuable insights and 
-                        knowledge.
+                        Ce cours complet vous emmène dans un voyage à travers {course.title.toLowerCase()}, 
+                        en utilisant une technologie de visualisation 3D de pointe pour rendre les concepts complexes 
+                        faciles à comprendre. Que vous soyez étudiant en médecine, professionnel de la santé ou 
+                        simplement curieux de l'anatomie humaine, ce cours vous apportera des connaissances et 
+                        des perspectives précieuses.
                       </p>
                     </div>
 
                     <div>
                       <h2 className="text-2xl font-semibold text-brand-blue">
-                        What You'll Learn
+                        Ce que Vous Apprendrez
                       </h2>
                       <ul className="mt-3 space-y-2">
                         {learningOutcomes.map((outcome, index) => (
@@ -144,12 +144,12 @@ const CourseDetail: React.FC = () => {
 
                     <div>
                       <h2 className="text-2xl font-semibold text-brand-blue">
-                        Requirements
+                        Prérequis
                       </h2>
                       <ul className="mt-3 list-disc pl-5 text-gray-700">
-                        <li>No prior knowledge required - suitable for beginners</li>
-                        <li>A modern web browser that supports 3D graphics</li>
-                        <li>Interest in learning about human anatomy and physiology</li>
+                        <li>Aucune connaissance préalable requise - adapté aux débutants</li>
+                        <li>Un navigateur web moderne qui prend en charge les graphiques 3D</li>
+                        <li>Intérêt pour l'apprentissage de l'anatomie et de la physiologie humaines</li>
                       </ul>
                     </div>
                   </div>
@@ -158,10 +158,10 @@ const CourseDetail: React.FC = () => {
                 <TabsContent value="curriculum">
                   <div>
                     <h2 className="text-2xl font-semibold text-brand-blue">
-                      Course Curriculum
+                      Programme du Cours
                     </h2>
                     <p className="mt-2 text-gray-600">
-                      {courseSections.length} sections • {course.lessonCount} lessons • {course.duration} total length
+                      {courseSections.length} sections • {course.lessonCount} leçons • {course.duration} durée totale
                     </p>
                     
                     <div className="mt-6 space-y-4">
@@ -171,7 +171,7 @@ const CourseDetail: React.FC = () => {
                             <div className="flex items-center gap-3">
                               {section.isPreview ? (
                                 <Badge variant="outline" className="border-brand-teal text-brand-teal">
-                                  Preview
+                                  Aperçu
                                 </Badge>
                               ) : null}
                               <h3 className="font-semibold">{section.title}</h3>
@@ -189,25 +189,25 @@ const CourseDetail: React.FC = () => {
                     <div className="h-32 w-32 overflow-hidden rounded-full">
                       <img
                         src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
-                        alt="Instructor"
+                        alt="Instructeur"
                         className="h-full w-full object-cover"
                       />
                     </div>
                     <div>
                       <h2 className="text-2xl font-semibold text-brand-blue">
-                        Dr. Jane Smith
+                        Dr. Marie Dupont
                       </h2>
-                      <p className="text-brand-teal">Medical Education Specialist</p>
+                      <p className="text-brand-teal">Spécialiste en Éducation Médicale</p>
                       <p className="mt-4 text-gray-700">
-                        Dr. Jane Smith is a renowned medical educator with over 15 years of 
-                        experience teaching anatomy and physiology. She has developed numerous 
-                        innovative approaches to medical education, with a focus on using 
-                        3D visualization technology to enhance understanding of complex anatomical 
-                        structures.
+                        Dr. Marie Dupont est une éducatrice médicale renommée avec plus de 15 ans 
+                        d'expérience dans l'enseignement de l'anatomie et de la physiologie. Elle a 
+                        développé de nombreuses approches innovantes pour l'éducation médicale, en 
+                        se concentrant sur l'utilisation de la technologie de visualisation 3D pour 
+                        améliorer la compréhension des structures anatomiques complexes.
                       </p>
                       <p className="mt-3 text-gray-700">
-                        She holds a Ph.D. in Medical Education from Harvard University and 
-                        has published extensively on effective teaching methods in anatomy.
+                        Elle détient un doctorat en Éducation Médicale de l'Université de Paris et 
+                        a beaucoup publié sur les méthodes d'enseignement efficaces en anatomie.
                       </p>
                     </div>
                   </div>
@@ -227,28 +227,28 @@ const CourseDetail: React.FC = () => {
                 </div>
                 <div className="p-6">
                   <div className="mb-6 text-center">
-                    <span className="text-3xl font-bold text-brand-blue">Free</span>
-                    <p className="text-sm text-gray-500">Limited time offer</p>
+                    <span className="text-3xl font-bold text-brand-blue">Gratuit</span>
+                    <p className="text-sm text-gray-500">Offre à durée limitée</p>
                   </div>
                   <Button className="mb-4 w-full bg-brand-coral hover:bg-brand-coral/90">
-                    Enroll Now
+                    S'inscrire Maintenant
                   </Button>
                   <Button variant="outline" className="w-full">
-                    Preview Course
+                    Aperçu du Cours
                   </Button>
 
                   <div className="mt-6 space-y-3 text-sm">
                     <div className="flex items-center gap-2">
                       <Award className="h-4 w-4 text-brand-teal" />
-                      <span>Certificate of completion</span>
+                      <span>Certificat de réussite</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-brand-teal" />
-                      <span>Lifetime access</span>
+                      <span>Accès à vie</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <BookOpen className="h-4 w-4 text-brand-teal" />
-                      <span>Study at your own pace</span>
+                      <span>Étudiez à votre rythme</span>
                     </div>
                   </div>
                 </div>

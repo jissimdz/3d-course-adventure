@@ -22,10 +22,10 @@ const Index: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
-              Featured Courses
+              Cours Vedettes
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-              Start your journey into interactive 3D learning with our most popular courses
+              Commencez votre voyage dans l'apprentissage 3D interactif avec nos cours les plus populaires
             </p>
           </div>
 
@@ -42,7 +42,7 @@ const Index: React.FC = () => {
               size="lg"
               className="border-brand-teal text-brand-teal hover:bg-brand-teal/10"
             >
-              <Link to="/courses">View All Courses</Link>
+              <Link to="/courses">Voir Tous les Cours</Link>
             </Button>
           </div>
         </div>
@@ -52,18 +52,17 @@ const Index: React.FC = () => {
       <section className="bg-brand-blue py-16 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold md:text-4xl">
-            Ready to Transform Your Learning Experience?
+            Prêt à Transformer Votre Expérience d'Apprentissage?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-blue-100">
-            Join thousands of students and professionals who are already using our 3D learning platform
-            to enhance their understanding of anatomy and medical concepts.
+            Rejoignez des milliers d'étudiants et de professionnels qui utilisent déjà notre plateforme d'apprentissage 3D pour améliorer leur compréhension de l'anatomie et des concepts médicaux.
           </p>
           <Button
             asChild
             size="lg"
             className="mt-8 bg-brand-coral hover:bg-brand-coral/90"
           >
-            <Link to="/courses">Get Started Today</Link>
+            <Link to="/courses">Commencer Aujourd'hui</Link>
           </Button>
         </div>
       </section>

@@ -10,11 +10,10 @@ const HeroSection: React.FC = () => {
         <div className="grid items-center gap-8 md:grid-cols-2">
           <div>
             <h1 className="text-4xl font-bold leading-tight text-brand-blue md:text-5xl lg:text-6xl">
-              Learn Anatomy in <span className="text-brand-teal">3D</span>
+              Apprenez l'Anatomie en <span className="text-brand-teal">3D</span>
             </h1>
             <p className="mt-6 text-xl leading-relaxed text-gray-600">
-              Explore detailed 3D models and interactive courses designed to make anatomy and
-              medical education engaging and effective.
+              Explorez des modèles 3D détaillés et des cours interactifs conçus pour rendre l'anatomie et l'éducation médicale engageantes et efficaces.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Button
@@ -22,7 +21,7 @@ const HeroSection: React.FC = () => {
                 size="lg"
                 className="bg-brand-blue text-white hover:bg-brand-blue/90"
               >
-                <Link to="/courses">Explore Courses</Link>
+                <Link to="/courses">Explorer les Cours</Link>
               </Button>
               <Button
                 asChild
@@ -30,7 +29,7 @@ const HeroSection: React.FC = () => {
                 size="lg"
                 className="border-brand-teal text-brand-teal hover:bg-brand-teal/10"
               >
-                <Link to="/about">Learn More</Link>
+                <Link to="/about">En Savoir Plus</Link>
               </Button>
             </div>
           </div>

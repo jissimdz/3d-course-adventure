@@ -25,10 +25,9 @@ const Courses: React.FC = () => {
       {/* Header */}
       <div className="bg-brand-blue py-16 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold md:text-5xl">Explore Our Courses</h1>
+          <h1 className="text-4xl font-bold md:text-5xl">Explorez Nos Cours</h1>
           <p className="mx-auto mt-4 max-w-2xl">
-            Discover our collection of interactive 3D courses designed to make learning anatomy and
-            medical concepts engaging and effective.
+            Découvrez notre collection de cours 3D interactifs conçus pour rendre l'apprentissage de l'anatomie et des concepts médicaux engageant et efficace.
           </p>
         </div>
       </div>
@@ -40,7 +39,7 @@ const Courses: React.FC = () => {
             <div className="relative flex-1 md:max-w-md">
               <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
               <Input
-                placeholder="Search courses..."
+                placeholder="Rechercher des cours..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -52,13 +51,13 @@ const Courses: React.FC = () => {
                 onValueChange={setLevelFilter}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Filter by level" />
+                  <SelectValue placeholder="Filtrer par niveau" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Levels</SelectItem>
-                  <SelectItem value="beginner">Beginner</SelectItem>
-                  <SelectItem value="intermediate">Intermediate</SelectItem>
-                  <SelectItem value="advanced">Advanced</SelectItem>
+                  <SelectItem value="all">Tous les Niveaux</SelectItem>
+                  <SelectItem value="débutant">Débutant</SelectItem>
+                  <SelectItem value="intermédiaire">Intermédiaire</SelectItem>
+                  <SelectItem value="avancé">Avancé</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -72,15 +71,15 @@ const Courses: React.FC = () => {
           {filteredCourses.length > 0 ? (
             <>
               <p className="mb-6 text-gray-600">
-                Showing {filteredCourses.length} of {courses.length} courses
+                Affichage de {filteredCourses.length} sur {courses.length} cours
               </p>
               <CourseGrid courses={filteredCourses} />
             </>
           ) : (
             <div className="py-16 text-center">
-              <h3 className="text-xl font-semibold text-gray-700">No courses found</h3>
+              <h3 className="text-xl font-semibold text-gray-700">Aucun cours trouvé</h3>
               <p className="mt-2 text-gray-500">
-                Try adjusting your search or filter to find what you're looking for.
+                Essayez d'ajuster votre recherche ou votre filtre pour trouver ce que vous cherchez.
               </p>
             </div>
           )}

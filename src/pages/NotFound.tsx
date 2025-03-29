@@ -21,12 +21,12 @@ const NotFound = () => {
       <div className="flex min-h-[60vh] flex-col items-center justify-center bg-gray-50 py-20">
         <div className="text-center">
           <div className="text-9xl font-bold text-brand-blue">404</div>
-          <h1 className="mt-4 text-3xl font-semibold text-gray-800">Page Not Found</h1>
+          <h1 className="mt-4 text-3xl font-semibold text-gray-800">Page Non Trouvée</h1>
           <p className="mt-2 text-xl text-gray-600">
-            The page you are looking for doesn't exist or has been moved.
+            La page que vous recherchez n'existe pas ou a été déplacée.
           </p>
           <Button asChild className="mt-8 bg-brand-blue hover:bg-brand-blue/90">
-            <Link to="/">Return to Home</Link>
+            <Link to="/">Retour à l'Accueil</Link>
           </Button>
         </div>
       </div>

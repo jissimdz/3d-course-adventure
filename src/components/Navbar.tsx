@@ -20,16 +20,16 @@ const Navbar: React.FC = () => {
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
           <Link to="/" className="font-medium text-gray-700 hover:text-brand-blue">
-            Home
+            Accueil
           </Link>
           <Link to="/courses" className="font-medium text-gray-700 hover:text-brand-blue">
-            Courses
+            Cours
           </Link>
           <Link to="/about" className="font-medium text-gray-700 hover:text-brand-blue">
-            About
+            À Propos
           </Link>
           <Button variant="default" className="ml-2 bg-brand-blue hover:bg-brand-blue/90">
-            Get Started
+            Commencer
           </Button>
         </nav>
 
@@ -53,28 +53,28 @@ const Navbar: React.FC = () => {
               className="block py-2 font-medium text-gray-700 hover:text-brand-blue"
               onClick={() => setIsMenuOpen(false)}
             >
-              Home
+              Accueil
             </Link>
             <Link
               to="/courses"
               className="block py-2 font-medium text-gray-700 hover:text-brand-blue"
               onClick={() => setIsMenuOpen(false)}
             >
-              Courses
+              Cours
             </Link>
             <Link
               to="/about"
               className="block py-2 font-medium text-gray-700 hover:text-brand-blue"
               onClick={() => setIsMenuOpen(false)}
             >
-              About
+              À Propos
             </Link>
             <Button
               variant="default"
               className="mt-2 w-full bg-brand-blue hover:bg-brand-blue/90"
               onClick={() => setIsMenuOpen(false)}
             >
-              Get Started
+              Commencer
             </Button>
           </div>
         </div>

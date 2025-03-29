@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -14,37 +15,37 @@ const Footer: React.FC = () => {
               <span className="text-xl font-bold text-brand-blue">NeuroForge</span>
             </div>
             <p className="mt-4 text-gray-600">
-              Interactive 3D learning platform for anatomy, biology, and medical education.
+              Plateforme d'apprentissage 3D interactive pour l'anatomie, la biologie et l'éducation médicale.
             </p>
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-gray-800">Quick Links</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-800">Liens Rapides</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-gray-600 hover:text-brand-blue">
-                  Home
+                  Accueil
                 </Link>
               </li>
               <li>
                 <Link to="/courses" className="text-gray-600 hover:text-brand-blue">
-                  Courses
+                  Cours
                 </Link>
               </li>
               <li>
                 <Link to="/about" className="text-gray-600 hover:text-brand-blue">
-                  About
+                  À Propos
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-gray-800">Resources</h3>
+            <h3 className="mb-4 text-lg font-semibold text-gray-800">Ressources</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/faq" className="text-gray-600 hover:text-brand-blue">
-                  FAQs
+                  FAQ
                 </Link>
               </li>
               <li>
@@ -63,8 +64,8 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="mb-4 text-lg font-semibold text-gray-800">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-gray-600">Email: info@coursequest.com</li>
-              <li className="text-gray-600">Phone: +1 (555) 123-4567</li>
+              <li className="text-gray-600">Email: info@neuroforge.com</li>
+              <li className="text-gray-600">Téléphone: +1 (555) 123-4567</li>
               <li className="mt-4">
                 <div className="flex gap-4">
                   <a href="#" className="text-gray-400 hover:text-brand-blue">
@@ -101,7 +102,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-8 border-t border-gray-200 pt-6 text-center">
           <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} NeuroForge. All rights reserved.
+            © {new Date().getFullYear()} NeuroForge. Tous droits réservés.
           </p>
         </div>
       </div>

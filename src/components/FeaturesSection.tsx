@@ -5,27 +5,27 @@ import { Brain, Book, PanelTop, Workflow } from "lucide-react";
 const features = [
   {
     icon: <Brain className="h-10 w-10" />,
-    title: "Interactive 3D Models",
+    title: "Modèles 3D Interactifs",
     description:
-      "Explore detailed anatomical structures with fully interactive 3D models that you can rotate, zoom, and dissect.",
+      "Explorez les structures anatomiques détaillées avec des modèles 3D entièrement interactifs que vous pouvez faire pivoter, zoomer et disséquer.",
   },
   {
     icon: <Book className="h-10 w-10" />,
-    title: "Comprehensive Courses",
+    title: "Cours Complets",
     description:
-      "Learn with structured courses designed by medical professionals and educators for maximum retention.",
+      "Apprenez avec des cours structurés conçus par des professionnels médicaux et des éducateurs pour une rétention maximale.",
   },
   {
     icon: <PanelTop className="h-10 w-10" />,
-    title: "Progress Tracking",
+    title: "Suivi de Progression",
     description:
-      "Monitor your learning progress with detailed statistics and achievements to keep you motivated.",
+      "Suivez votre progression d'apprentissage avec des statistiques détaillées et des réalisations pour rester motivé.",
   },
   {
     icon: <Workflow className="h-10 w-10" />,
-    title: "Interactive Quizzes",
+    title: "Quiz Interactifs",
     description:
-      "Test your knowledge with interactive quizzes that adapt to your learning style and progress.",
+      "Testez vos connaissances avec des quiz interactifs qui s'adaptent à votre style d'apprentissage et à vos progrès.",
   },
 ];
 
@@ -35,11 +35,10 @@ const FeaturesSection: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
-            Features That Transform Learning
+            Fonctionnalités qui Transforment l'Apprentissage
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-gray-600">
-            Our platform combines cutting-edge technology with expert educational design to create
-            an immersive learning experience.
+            Notre plateforme combine une technologie de pointe avec une conception pédagogique experte pour créer une expérience d'apprentissage immersive.
           </p>
         </div>
 
