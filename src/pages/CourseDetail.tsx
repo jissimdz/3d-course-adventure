@@ -195,11 +195,11 @@ const CourseDetail: React.FC = () => {
                     </div>
                     <div>
                       <h2 className="text-2xl font-semibold text-brand-blue">
-                        Dr. Marie Dupont
+                        Dr. Souttou
                       </h2>
-                      <p className="text-brand-teal">Spécialiste en Éducation Médicale</p>
+                      <p className="text-brand-teal">Spécialiste en Neurobiologie</p>
                       <p className="mt-4 text-gray-700">
-                        Dr. Marie Dupont est une éducatrice médicale renommée avec plus de 15 ans 
+                        Dr. Souttou est une éducatrice médicale renommée avec plus de 15 ans 
                         d'expérience dans l'enseignement de l'anatomie et de la physiologie. Elle a 
                         développé de nombreuses approches innovantes pour l'éducation médicale, en 
                         se concentrant sur l'utilisation de la technologie de visualisation 3D pour 
