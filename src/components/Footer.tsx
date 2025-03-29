@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -12,7 +11,7 @@ const Footer: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
                 <span className="text-lg font-bold">3D</span>
               </div>
-              <span className="text-xl font-bold text-brand-blue">CourseQuest</span>
+              <span className="text-xl font-bold text-brand-blue">NeuroForge</span>
             </div>
             <p className="mt-4 text-gray-600">
               Interactive 3D learning platform for anatomy, biology, and medical education.
@@ -102,7 +101,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-8 border-t border-gray-200 pt-6 text-center">
           <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} CourseQuest. All rights reserved.
+            © {new Date().getFullYear()} NeuroForge. All rights reserved.
           </p>
         </div>
       </div>

@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
             <span className="text-lg font-bold">3D</span>
           </div>
-          <span className="text-xl font-bold text-brand-blue">CourseQuest</span>
+          <span className="text-xl font-bold text-brand-blue">NeuroForge</span>
         </Link>
 
         {/* Desktop Navigation */}
