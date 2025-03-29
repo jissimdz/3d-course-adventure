@@ -15,7 +15,10 @@ const Courses: React.FC = () => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           course.description.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesLevel = levelFilter === "all" || course.level.toLowerCase() === levelFilter.toLowerCase();
+    const matchesLevel = levelFilter === "all" || 
+                        (levelFilter === "débutant" && course.level === "Beginner") ||
+                        (levelFilter === "intermédiaire" && course.level === "Intermediate") ||
+                        (levelFilter === "avancé" && course.level === "Advanced");
     
     return matchesSearch && matchesLevel;
   });

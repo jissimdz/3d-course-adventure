@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
                 <span className="text-lg font-bold">3D</span>
               </div>
-              <span className="text-xl font-bold text-brand-blue">NeuroForge</span>
+              <span className="text-xl font-bold text-brand-blue">Moussaoui Rayane</span>
             </div>
             <p className="mt-4 text-gray-600">
               Plateforme d'apprentissage 3D interactive pour l'anatomie, la biologie et l'éducation médicale.
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="mb-4 text-lg font-semibold text-gray-800">Contact</h3>
             <ul className="space-y-2">
-              <li className="text-gray-600">Email: info@neuroforge.com</li>
+              <li className="text-gray-600">Email: rayane.moussaoui@learning.com</li>
               <li className="text-gray-600">Téléphone: +1 (555) 123-4567</li>
               <li className="mt-4">
                 <div className="flex gap-4">
@@ -102,7 +102,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-8 border-t border-gray-200 pt-6 text-center">
           <p className="text-sm text-gray-500">
-            © {new Date().getFullYear()} NeuroForge. Tous droits réservés.
+            © {new Date().getFullYear()} Moussaoui Rayane Learning. Tous droits réservés.
           </p>
         </div>
       </div>
