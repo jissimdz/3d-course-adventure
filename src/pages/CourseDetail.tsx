@@ -76,14 +76,14 @@ const CourseDetail: React.FC = () => {
             className="mb-4"
             style={{
               backgroundColor:
-                course.level === "Débutant"
+                course.level === "Beginner"
                   ? "#84cc16"
-                  : course.level === "Intermédiaire"
+                  : course.level === "Intermediate"
                   ? "#3b82f6"
                   : "#a855f7",
             }}
           >
-            {course.level}
+            {course.level === "Beginner" ? "Débutant" : course.level === "Intermediate" ? "Intermédiaire" : "Avancé"}
           </Badge>
           <h1 className="text-4xl font-bold md:text-5xl">{course.title}</h1>
           <p className="mt-4 max-w-2xl text-lg">{course.description}</p>

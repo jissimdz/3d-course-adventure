@@ -31,6 +31,12 @@ const CourseCard: React.FC<CourseProps> = ({
     Advanced: "bg-purple-100 text-purple-800",
   };
 
+  const levelLabels = {
+    Beginner: "Débutant",
+    Intermediate: "Intermédiaire",
+    Advanced: "Avancé",
+  };
+
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-md">
       <div className="relative h-48 overflow-hidden">
@@ -43,7 +49,7 @@ const CourseCard: React.FC<CourseProps> = ({
           className={`absolute right-2 top-2 ${levelColors[level]}`}
           variant="outline"
         >
-          {level}
+          {levelLabels[level]}
         </Badge>
       </div>
       <CardHeader className="p-4 pb-0">
@@ -54,7 +60,7 @@ const CourseCard: React.FC<CourseProps> = ({
         <div className="flex items-center justify-between text-sm text-gray-500">
           <div className="flex items-center gap-1">
             <BookOpen className="h-4 w-4" />
-            <span>{lessonCount} lessons</span>
+            <span>{lessonCount} leçons</span>
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
@@ -67,7 +73,7 @@ const CourseCard: React.FC<CourseProps> = ({
           asChild
           className="w-full bg-brand-teal hover:bg-brand-teal/90"
         >
-          <Link to={`/course/${id}`}>Explore Course</Link>
+          <Link to={`/course/${id}`}>Explorer le cours</Link>
         </Button>
       </CardFooter>
     </Card>
