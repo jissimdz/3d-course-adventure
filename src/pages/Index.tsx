@@ -60,7 +60,7 @@ const Index: React.FC = () => {
           <Button
             asChild
             size="lg"
-            className="mt-8 bg-brand-coral hover:bg-brand-coral/90"
+            className="mt-8 bg-brand-teal hover:bg-brand-teal/90"
           >
             <Link to="/courses">Commencer Aujourd'hui</Link>
           </Button>

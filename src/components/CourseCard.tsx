@@ -27,7 +27,7 @@ const CourseCard: React.FC<CourseProps> = ({
 }) => {
   const levelColors = {
     Beginner: "bg-green-100 text-green-800",
-    Intermediate: "bg-red-100 text-red-800", // Changed from blue to red
+    Intermediate: "bg-blue-100 text-blue-800", // Changed back to blue
     Advanced: "bg-purple-100 text-purple-800",
   };
 
@@ -53,7 +53,7 @@ const CourseCard: React.FC<CourseProps> = ({
         </Badge>
       </div>
       <CardHeader className="p-4 pb-0">
-        <h3 className="text-xl font-semibold text-brand-red">{title}</h3>
+        <h3 className="text-xl font-semibold text-brand-blue">{title}</h3>
       </CardHeader>
       <CardContent className="p-4">
         <p className="mb-4 line-clamp-2 text-gray-600">{description}</p>
@@ -71,7 +71,7 @@ const CourseCard: React.FC<CourseProps> = ({
       <CardFooter className="p-4 pt-0">
         <Button
           asChild
-          className="w-full bg-brand-red hover:bg-brand-dark-red"
+          className="w-full bg-brand-blue hover:bg-brand-dark-blue"
         >
           <Link to={`/course/${id}`}>Explorer le cours</Link>
         </Button>

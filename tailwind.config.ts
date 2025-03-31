@@ -63,13 +63,15 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for our application - updated with red theme
-				"brand-red": "#e53e3e",
-				"brand-dark-red": "#9b2c2c",
-				"brand-light-red": "#feb2b2",
-				"brand-blue": "#1a365d", // keeping for reference but replacing usage
-				"brand-teal": "#2c7a7b", // keeping for reference but replacing usage
-				"brand-coral": "#f56565",
+				// Custom colors for our application - updated with blue theme
+				"brand-blue": "#1a365d",
+				"brand-dark-blue": "#0f172a",
+				"brand-light-blue": "#bfdbfe",
+				"brand-red": "#e53e3e", // keeping for reference but replacing usage
+				"brand-dark-red": "#9b2c2c", // keeping for reference but replacing usage
+				"brand-light-red": "#feb2b2", // keeping for reference but replacing usage
+				"brand-teal": "#2c7a7b",
+				"brand-coral": "#f56565", // keeping for reference but replacing usage
 				"brand-light": "#f7fafc",
 				"brand-dark": "#2d3748"
 			},

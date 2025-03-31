@@ -9,8 +9,8 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-8 md:grid-cols-2">
           <div>
-            <h1 className="text-4xl font-bold leading-tight text-brand-dark-red md:text-5xl lg:text-6xl">
-              Apprenez l'Anatomie en <span className="text-brand-red">3D</span>
+            <h1 className="text-4xl font-bold leading-tight text-brand-dark-blue md:text-5xl lg:text-6xl">
+              Apprenez l'Anatomie en <span className="text-brand-blue">3D</span>
             </h1>
             <p className="mt-6 text-xl leading-relaxed text-gray-600">
               Explorez des modèles 3D détaillés et des cours interactifs conçus pour rendre l'anatomie et l'éducation médicale engageantes et efficaces.
@@ -19,7 +19,7 @@ const HeroSection: React.FC = () => {
               <Button
                 asChild
                 size="lg"
-                className="bg-brand-red text-white hover:bg-brand-dark-red"
+                className="bg-brand-blue text-white hover:bg-brand-dark-blue"
               >
                 <Link to="/courses">Explorer les Cours</Link>
               </Button>
@@ -27,7 +27,7 @@ const HeroSection: React.FC = () => {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-brand-red text-brand-red hover:bg-brand-red/10"
+                className="border-brand-blue text-brand-blue hover:bg-brand-blue/10"
               >
                 <Link to="/about">En Savoir Plus</Link>
               </Button>
@@ -36,16 +36,16 @@ const HeroSection: React.FC = () => {
           <div className="relative flex justify-center">
             <div className="relative h-80 w-80 animate-float md:h-96 md:w-96">
               {/* Placeholder for 3D model - in a real implementation this would be a Three.js component */}
-              <div className="absolute inset-0 rounded-full bg-red-100 opacity-50 blur-2xl"></div>
+              <div className="absolute inset-0 rounded-full bg-blue-100 opacity-50 blur-2xl"></div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-64 w-64 animate-rotate-slow rounded-full border-4 border-red-200 border-opacity-50">
-                  <div className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rounded-full bg-brand-red"></div>
+                <div className="h-64 w-64 animate-rotate-slow rounded-full border-4 border-blue-200 border-opacity-50">
+                  <div className="absolute left-1/2 top-0 h-4 w-4 -translate-x-1/2 rounded-full bg-brand-blue"></div>
                 </div>
-                <div className="h-48 w-48 animate-rotate-slow rounded-full border-4 border-pink-200 border-opacity-50">
-                  <div className="absolute bottom-0 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full bg-brand-coral"></div>
+                <div className="h-48 w-48 animate-rotate-slow rounded-full border-4 border-cyan-200 border-opacity-50">
+                  <div className="absolute bottom-0 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full bg-brand-teal"></div>
                 </div>
                 <div className="absolute flex h-40 w-40 items-center justify-center rounded-full bg-white/80 shadow-lg backdrop-blur">
-                  <span className="text-6xl font-bold text-brand-red">3D</span>
+                  <span className="text-6xl font-bold text-brand-blue">3D</span>
                 </div>
               </div>
             </div>
