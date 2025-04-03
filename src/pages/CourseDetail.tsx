@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -6,12 +5,15 @@ import { getCourseById } from "@/data/coursesData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, BookOpen, Award, Check, Brain, Layers, Video } from "lucide-react";
+import { Clock, BookOpen, Award, Check, Brain, Layers, Video, Play, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [activeTab, setActiveTab] = useState("overview");
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number} | null>(null);
   
   const course = courseId ? getCourseById(courseId) : null;
   
@@ -29,6 +31,7 @@ const CourseDetail: React.FC = () => {
       title: "Introduction à la Neuroanatomie",
       duration: "30 min",
       isPreview: true,
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     },
     {
       id: 2,
@@ -66,6 +69,7 @@ const CourseDetail: React.FC = () => {
       title: "Introduction au Cours",
       duration: "15 min",
       isPreview: true,
+      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
     },
     {
       id: 2,
@@ -238,6 +242,12 @@ const CourseDetail: React.FC = () => {
     }
   };
 
+  // Handle preview button click
+  const handlePreviewClick = (section: any) => {
+    setSelectedPreview(section);
+    setPreviewOpen(true);
+  };
+
   return (
     <Layout>
       {/* Course Header */}
@@ -307,14 +317,27 @@ const CourseDetail: React.FC = () => {
                         <div key={section.id} className="rounded-md border border-gray-200 p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              {section.isPreview ? (
+                              <h3 className="font-semibold">{section.title}</h3>
+                              {section.isPreview && (
                                 <Badge variant="outline" className="border-brand-teal text-brand-teal">
                                   Aperçu
                                 </Badge>
-                              ) : null}
-                              <h3 className="font-semibold">{section.title}</h3>
+                              )}
                             </div>
-                            <div className="text-sm text-gray-500">{section.duration}</div>
+                            <div className="flex items-center gap-4">
+                              <div className="text-sm text-gray-500">{section.duration}</div>
+                              {section.isPreview && (
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-1 text-brand-blue"
+                                  onClick={() => handlePreviewClick(section)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  <span>Aperçu</span>
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -362,6 +385,21 @@ const CourseDetail: React.FC = () => {
                     alt={course.title}
                     className="h-full w-full object-cover"
                   />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Button 
+                      className="rounded-full bg-white/90 p-2 text-brand-blue hover:bg-white"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const firstPreviewSection = courseSections.find(section => section.isPreview);
+                        if (firstPreviewSection) {
+                          handlePreviewClick(firstPreviewSection);
+                        }
+                      }}
+                    >
+                      <Play className="h-8 w-8" fill="currentColor" />
+                    </Button>
+                  </div>
                 </div>
                 <div className="p-6">
                   <div className="mb-6 text-center">
@@ -371,7 +409,16 @@ const CourseDetail: React.FC = () => {
                   <Button className="mb-4 w-full bg-brand-coral hover:bg-brand-coral/90">
                     S'inscrire Maintenant
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => {
+                      const firstPreviewSection = courseSections.find(section => section.isPreview);
+                      if (firstPreviewSection) {
+                        handlePreviewClick(firstPreviewSection);
+                      }
+                    }}
+                  >
                     Aperçu du Cours
                   </Button>
 
@@ -395,6 +442,40 @@ const CourseDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Course Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedPreview?.title} - Aperçu du cours</DialogTitle>
+          </DialogHeader>
+          <div className="aspect-video w-full">
+            {selectedPreview?.videoUrl ? (
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src={selectedPreview.videoUrl}
+                title={`Aperçu de ${selectedPreview.title}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen
+                className="aspect-video"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                <p>Vidéo d'aperçu non disponible</p>
+              </div>
+            )}
+          </div>
+          <div className="mt-4">
+            <p>Cet aperçu vous donne un bref aperçu du contenu de cette section du cours. Pour accéder au cours complet, veuillez vous inscrire.</p>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <Button className="bg-brand-blue hover:bg-brand-blue/90">
+              S'inscrire au cours
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
