@@ -55,7 +55,7 @@ const Index: React.FC = () => {
             Prêt à Transformer Votre Expérience d'Apprentissage?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-blue-100">
-            Rejoignez des milliers d'étudiants et de professionnels qui utilisent déjà notre plateforme d'apprentissage 3D pour améliorer leur compréhension de l'anatomie et des concepts médicaux.
+            Rejoignez des milliers d'étudiants et de professionnels qui utilisent déjà notre plateforme d'apprentissage 3D pour améliorer leur compréhension de l'anatomie et des concepts biologiques et médicaux.
           </p>
           <Button
             asChild

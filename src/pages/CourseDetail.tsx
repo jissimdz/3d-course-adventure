@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { getCourseById } from "@/data/coursesData";
@@ -7,13 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, BookOpen, Award, Check, Brain, Layers, Video, Play, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [activeTab, setActiveTab] = useState("overview");
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number} | null>(null);
+  const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number; videoUrl?: string} | null>(null);
   
   const course = courseId ? getCourseById(courseId) : null;
   
@@ -189,7 +190,7 @@ const CourseDetail: React.FC = () => {
               Public Cible
             </h2>
             <ul className="mt-3 list-disc pl-5 text-gray-700">
-              <li>Étudiants en médecine, neurosciences ou disciplines connexes</li>
+              <li>Étudiants en sciences biologiques et médicales, neurosciences ou disciplines connexes</li>
               <li>Professionnels de la santé souhaitant approfondir leurs connaissances en neuroanatomie</li>
               <li>Chercheurs dans le domaine des neurosciences</li>
               <li>Passionnés des sciences cognitives et du fonctionnement du cerveau</li>
@@ -207,7 +208,7 @@ const CourseDetail: React.FC = () => {
             <p className="mt-3 text-gray-700">
               Ce cours complet vous emmène dans un voyage à travers {course.title.toLowerCase()}, 
               en utilisant une technologie de visualisation 3D de pointe pour rendre les concepts complexes 
-              faciles à comprendre. Que vous soyez étudiant en médecine, professionnel de la santé ou 
+              faciles à comprendre. Que vous soyez étudiant en sciences biologiques et médicales, professionnel de la santé ou 
               simplement curieux de l'anatomie humaine, ce cours vous apportera des connaissances et 
               des perspectives précieuses.
             </p>
@@ -360,14 +361,14 @@ const CourseDetail: React.FC = () => {
                       </h2>
                       <p className="text-brand-teal">Spécialiste en Neurobiologie</p>
                       <p className="mt-4 text-gray-700">
-                        Dr. Souttou est une éducatrice médicale renommée avec plus de 15 ans 
+                        Dr. Souttou est une éducatrice biologique et médicale renommée avec plus de 15 ans 
                         d'expérience dans l'enseignement de l'anatomie et de la physiologie. Elle a 
-                        développé de nombreuses approches innovantes pour l'éducation médicale, en 
+                        développé de nombreuses approches innovantes pour l'éducation biologique et médicale, en 
                         se concentrant sur l'utilisation de la technologie de visualisation 3D pour 
                         améliorer la compréhension des structures anatomiques complexes.
                       </p>
                       <p className="mt-3 text-gray-700">
-                        Elle détient un doctorat en Éducation Médicale de l'Université de Paris et 
+                        Elle détient un doctorat en Éducation Biologique et Médicale de l'Université de Paris et 
                         a beaucoup publié sur les méthodes d'enseignement efficaces en anatomie.
                       </p>
                     </div>
