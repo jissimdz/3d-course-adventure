@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, Suspense } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { getCourseById } from "@/data/coursesData";
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, BookOpen, Award, Check, Brain, Layers, Video, Play, Eye, Rotate3d } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import BrainModel3D from "@/components/BrainModel3D";
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -197,11 +199,14 @@ const CourseDetail: React.FC = () => {
                 
                 <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
                   <div className="relative aspect-square">
-                    <img
-                      src="/lovable-uploads/f356b642-8943-4e33-9f09-51ce5be99ae1.png"
-                      alt="Modèle 3D de coupe sagittale du cerveau"
-                      className="h-full w-full object-cover"
-                    />
+                    {/* Replace static image with interactive 3D model */}
+                    <Suspense fallback={
+                      <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                        <p>Chargement du modèle 3D...</p>
+                      </div>
+                    }>
+                      <BrainModel3D />
+                    </Suspense>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Button 
                         onClick={() => setModelViewOpen(true)}
@@ -214,7 +219,7 @@ const CourseDetail: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-3 text-center text-sm text-gray-700">
-                    Coupe sagittale du cerveau humain détaillant les structures internes
+                    Modèle interactif du cerveau humain en 3D
                   </div>
                 </div>
               </div>
@@ -565,15 +570,18 @@ const CourseDetail: React.FC = () => {
       <Dialog open={modelViewOpen} onOpenChange={setModelViewOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Modèle 3D - Coupe Sagittale du Cerveau</DialogTitle>
+            <DialogTitle>Modèle 3D du Cerveau Humain</DialogTitle>
           </DialogHeader>
           <div className="mt-2 rounded-lg bg-gray-50 p-4">
             <div className="aspect-square w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
-              <img
-                src="/lovable-uploads/f356b642-8943-4e33-9f09-51ce5be99ae1.png"
-                alt="Modèle 3D du cerveau - coupe sagittale"
-                className="h-full w-full object-contain"
-              />
+              {/* Replace static image with interactive 3D model */}
+              <Suspense fallback={
+                <div className="flex h-full w-full items-center justify-center bg-gray-200">
+                  <p>Chargement du modèle 3D...</p>
+                </div>
+              }>
+                <BrainModel3D height="500px" />
+              </Suspense>
             </div>
             <div className="mt-4 grid gap-6 md:grid-cols-2">
               <div>
@@ -608,16 +616,24 @@ const CourseDetail: React.FC = () => {
               <div>
                 <h3 className="mb-2 text-lg font-semibold text-brand-blue">À propos de ce modèle</h3>
                 <p className="text-gray-700">
-                  Cette coupe sagittale médiane du cerveau humain illustre les principales structures anatomiques internes. 
-                  Dans le cours complet, vous pourrez manipuler ce modèle en 3D, zoomer sur des régions spécifiques et 
-                  explorer chaque structure avec des annotations détaillées.
+                  Ce modèle 3D interactif du cerveau humain vous permet d'explorer les principales structures anatomiques.
+                  Utilisez votre souris pour faire pivoter le modèle, zoomer et explorer les détails de chaque structure.
                 </p>
+                <p className="mt-2 text-gray-700">
+                  Dans le cours complet, vous aurez accès à des modèles encore plus détaillés avec des annotations
+                  interactives pour chaque région du cerveau.
+                </p>
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500 italic">
+                    Astuce: Cliquez et faites glisser pour faire pivoter. Utilisez la molette de défilement pour zoomer.
+                  </p>
+                </div>
                 <div className="mt-4">
                   <Button 
                     className="bg-brand-blue hover:bg-brand-blue/90"
                     onClick={() => setModelViewOpen(false)}
                   >
-                    Explorer dans le cours complet
+                    Retour au cours
                   </Button>
                 </div>
               </div>
