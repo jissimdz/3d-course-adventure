@@ -70,7 +70,7 @@ function CerebralCortex() {
 
   return (
     <group>
-      {/* Hémisphère droit */}
+      {/* Hémisphère droit - Using sphereGeometry with phiStart/phiLength to create hemisphere */}
       <mesh
         ref={meshRef}
         position={[0.2, 0.3, 0]}
@@ -78,7 +78,7 @@ function CerebralCortex() {
         onPointerOut={() => setHovered(false)}
         castShadow
       >
-        <hemisphereGeometry args={[1, 0.9, 32, 16, 0, Math.PI * 2]} />
+        <sphereGeometry args={[1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial
           color="#e8a19c"
           roughness={0.7}
@@ -90,14 +90,14 @@ function CerebralCortex() {
         />
       </mesh>
       
-      {/* Hémisphère gauche */}
+      {/* Hémisphère gauche - Using sphereGeometry with phiStart/phiLength to create hemisphere */}
       <mesh
         position={[-0.2, 0.3, 0]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         castShadow
       >
-        <hemisphereGeometry args={[1, 0.9, 32, 16, 0, Math.PI * 2]} />
+        <sphereGeometry args={[1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
         <meshStandardMaterial
           color="#e8a19c"
           roughness={0.7}
