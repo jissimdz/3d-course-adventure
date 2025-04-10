@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -6,7 +5,7 @@ import { getCourseById } from "@/data/coursesData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, BookOpen, Award, Check, Brain, Layers, Video, Play, Eye } from "lucide-react";
+import { Clock, BookOpen, Award, Check, Brain, Layers, Video, Play, Eye, Rotate3d } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -15,6 +14,7 @@ const CourseDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number; videoUrl?: string} | null>(null);
+  const [modelViewOpen, setModelViewOpen] = useState(false);
   
   const course = courseId ? getCourseById(courseId) : null;
   
@@ -22,10 +22,8 @@ const CourseDetail: React.FC = () => {
     return <Navigate to="/courses" replace />;
   }
 
-  // Enhanced content for Neuroanatomy course
   const isNeuroanatomyCourse = courseId === "neuroanatomy";
   
-  // Custom course sections based on course ID
   const courseSections = isNeuroanatomyCourse ? [
     {
       id: 1,
@@ -44,7 +42,8 @@ const CourseDetail: React.FC = () => {
       id: 3,
       title: "Exploration 3D du Cerveau",
       duration: "60 min",
-      isPreview: false,
+      isPreview: true,
+      has3DModel: true,
     },
     {
       id: 4,
@@ -98,7 +97,6 @@ const CourseDetail: React.FC = () => {
     },
   ];
 
-  // Custom learning outcomes based on course ID
   const learningOutcomes = isNeuroanatomyCourse ? [
     "Comprendre l'organisation structurelle complexe du cerveau et du système nerveux",
     "Maîtriser l'identification des structures cérébrales importantes via des modèles 3D interactifs",
@@ -114,7 +112,6 @@ const CourseDetail: React.FC = () => {
     "Établir des liens entre les structures anatomiques et leurs fonctions physiologiques",
   ];
 
-  // Generate neuroanatomy-specific course description
   const getCourseDescription = () => {
     if (isNeuroanatomyCourse) {
       return (
@@ -156,6 +153,71 @@ const CourseDetail: React.FC = () => {
                 <h3 className="text-lg font-medium">Animations Interactives</h3>
                 <p className="text-sm text-gray-600">Visualisez le fonctionnement des voies neuronales</p>
               </Card>
+            </div>
+            
+            <div className="mt-8 rounded-lg border border-brand-blue/20 bg-brand-blue/5 p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-brand-blue">Modélisation 3D Avancée</h3>
+                <Badge variant="outline" className="border-brand-teal text-brand-teal">
+                  Nouveau
+                </Badge>
+              </div>
+              
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <p className="text-gray-700">
+                    Découvrez notre technologie de modélisation 3D de pointe qui vous permet d'explorer 
+                    en détail l'anatomie du cerveau humain. Manipulez, tournez et zoomez sur des modèles 
+                    tridimensionnels précis pour une compréhension approfondie des structures cérébrales.
+                  </p>
+                  
+                  <ul className="mt-4 space-y-2">
+                    <li className="flex items-start gap-2 text-gray-700">
+                      <Check className="h-5 w-5 shrink-0 text-green-500" />
+                      <span>Visualisation haute résolution des structures cérébrales</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-700">
+                      <Check className="h-5 w-5 shrink-0 text-green-500" />
+                      <span>Exploration interactive avec zoom et rotation</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-gray-700">
+                      <Check className="h-5 w-5 shrink-0 text-green-500" />
+                      <span>Étude anatomique précise avec annotations détaillées</span>
+                    </li>
+                  </ul>
+                  
+                  <Button 
+                    onClick={() => setModelViewOpen(true)}
+                    className="mt-6 flex items-center gap-2 bg-brand-blue text-white hover:bg-brand-blue/90"
+                  >
+                    <Rotate3d className="h-4 w-4" />
+                    Explorer le Modèle 3D
+                  </Button>
+                </div>
+                
+                <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
+                  <div className="relative aspect-square">
+                    <img
+                      src="/lovable-uploads/f356b642-8943-4e33-9f09-51ce5be99ae1.png"
+                      alt="Modèle 3D de coupe sagittale du cerveau"
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Button 
+                        onClick={() => setModelViewOpen(true)}
+                        variant="ghost" 
+                        className="rounded-full bg-white/90 p-2 text-brand-blue hover:bg-white"
+                        size="icon"
+                      >
+                        <Rotate3d className="h-8 w-8" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="p-3 text-center text-sm text-gray-700">
+                    Coupe sagittale du cerveau humain détaillant les structures internes
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -243,15 +305,17 @@ const CourseDetail: React.FC = () => {
     }
   };
 
-  // Handle preview button click
   const handlePreviewClick = (section: any) => {
     setSelectedPreview(section);
     setPreviewOpen(true);
   };
 
+  const handle3DModelClick = (section: any) => {
+    setModelViewOpen(true);
+  };
+
   return (
     <Layout>
-      {/* Course Header */}
       <div
         className="relative bg-cover bg-center py-20 text-white"
         style={{
@@ -287,11 +351,9 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Course Content */}
       <div className="bg-white py-12">
         <div className="container mx-auto px-4">
           <div className="grid gap-8 md:grid-cols-3">
-            {/* Main Content */}
             <div className="md:col-span-2">
               <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-6 grid w-full grid-cols-3">
@@ -324,10 +386,15 @@ const CourseDetail: React.FC = () => {
                                   Aperçu
                                 </Badge>
                               )}
+                              {section.has3DModel && (
+                                <Badge variant="outline" className="border-brand-blue text-brand-blue">
+                                  Modèle 3D
+                                </Badge>
+                              )}
                             </div>
                             <div className="flex items-center gap-4">
                               <div className="text-sm text-gray-500">{section.duration}</div>
-                              {section.isPreview && (
+                              {section.isPreview && section.videoUrl && (
                                 <Button 
                                   variant="outline" 
                                   size="sm"
@@ -336,6 +403,17 @@ const CourseDetail: React.FC = () => {
                                 >
                                   <Eye className="h-4 w-4" />
                                   <span>Aperçu</span>
+                                </Button>
+                              )}
+                              {section.has3DModel && (
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-1 text-brand-teal"
+                                  onClick={() => handle3DModelClick(section)}
+                                >
+                                  <Rotate3d className="h-4 w-4" />
+                                  <span>Modèle 3D</span>
                                 </Button>
                               )}
                             </div>
@@ -377,7 +455,6 @@ const CourseDetail: React.FC = () => {
               </Tabs>
             </div>
 
-            {/* Sidebar */}
             <div>
               <Card className="sticky top-8 overflow-hidden">
                 <div className="aspect-video w-full overflow-hidden">
@@ -394,7 +471,11 @@ const CourseDetail: React.FC = () => {
                       onClick={() => {
                         const firstPreviewSection = courseSections.find(section => section.isPreview);
                         if (firstPreviewSection) {
-                          handlePreviewClick(firstPreviewSection);
+                          if (firstPreviewSection.videoUrl) {
+                            handlePreviewClick(firstPreviewSection);
+                          } else if (firstPreviewSection.has3DModel) {
+                            handle3DModelClick(firstPreviewSection);
+                          }
                         }
                       }}
                     >
@@ -416,7 +497,11 @@ const CourseDetail: React.FC = () => {
                     onClick={() => {
                       const firstPreviewSection = courseSections.find(section => section.isPreview);
                       if (firstPreviewSection) {
-                        handlePreviewClick(firstPreviewSection);
+                        if (firstPreviewSection.videoUrl) {
+                          handlePreviewClick(firstPreviewSection);
+                        } else if (firstPreviewSection.has3DModel) {
+                          handle3DModelClick(firstPreviewSection);
+                        }
                       }
                     }}
                   >
@@ -444,7 +529,6 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Course Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
@@ -474,6 +558,70 @@ const CourseDetail: React.FC = () => {
             <Button className="bg-brand-blue hover:bg-brand-blue/90">
               S'inscrire au cours
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={modelViewOpen} onOpenChange={setModelViewOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Modèle 3D - Coupe Sagittale du Cerveau</DialogTitle>
+          </DialogHeader>
+          <div className="mt-2 rounded-lg bg-gray-50 p-4">
+            <div className="aspect-square w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg">
+              <img
+                src="/lovable-uploads/f356b642-8943-4e33-9f09-51ce5be99ae1.png"
+                alt="Modèle 3D du cerveau - coupe sagittale"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="mt-4 grid gap-6 md:grid-cols-2">
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-brand-blue">Structures visibles</h3>
+                <ul className="space-y-1 text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-red-400"></div>
+                    <span>Cortex cérébral</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-orange-400"></div>
+                    <span>Corps calleux</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-yellow-400"></div>
+                    <span>Thalamus</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-green-400"></div>
+                    <span>Hypothalamus</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-blue-400"></div>
+                    <span>Tronc cérébral</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="mt-1 h-3 w-3 rounded-full bg-indigo-400"></div>
+                    <span>Cervelet</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-brand-blue">À propos de ce modèle</h3>
+                <p className="text-gray-700">
+                  Cette coupe sagittale médiane du cerveau humain illustre les principales structures anatomiques internes. 
+                  Dans le cours complet, vous pourrez manipuler ce modèle en 3D, zoomer sur des régions spécifiques et 
+                  explorer chaque structure avec des annotations détaillées.
+                </p>
+                <div className="mt-4">
+                  <Button 
+                    className="bg-brand-blue hover:bg-brand-blue/90"
+                    onClick={() => setModelViewOpen(false)}
+                  >
+                    Explorer dans le cours complet
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
