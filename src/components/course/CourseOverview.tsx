@@ -1,11 +1,10 @@
-
 import React from "react";
 import { Check, Brain, Layers, Video, Rotate3d } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Suspense } from "react";
-import BrainModel3D from "@/components/BrainModel3D";
+import BrainModel3D from "@/components/brain-model";
 
 interface CourseOverviewProps {
   isNeuroanatomyCourse: boolean;

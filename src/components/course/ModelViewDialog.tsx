@@ -1,4 +1,3 @@
-
 import React, { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import BrainModel3D from "@/components/BrainModel3D";
+import BrainModel3D from "@/components/brain-model";
 
 interface ModelViewDialogProps {
   open: boolean;
