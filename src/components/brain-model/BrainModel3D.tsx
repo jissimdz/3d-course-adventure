@@ -2,13 +2,17 @@
 import React, { useState, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
-import { BrainModelMesh } from './BrainModelMesh';
+import BrainModelMesh from './BrainModelMesh';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 import { Settings, ZoomIn, ZoomOut, RotateCcw, Info, PanelRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const BrainModel3D: React.FC = () => {
+interface BrainModel3DProps {
+  height?: string;
+}
+
+const BrainModel3D: React.FC<BrainModel3DProps> = ({ height = "500px" }) => {
   const [activeParts, setActiveParts] = useState<string[]>(['CerebralCortex', 'CorpusCallosum', 'Thalamus', 'Hypothalamus', 'Cerebellum', 'BrainStem']);
   const [backgroundColor, setBackgroundColor] = useState<string>("#f1f5f9");
   const [autoRotate, setAutoRotate] = useState(false);
@@ -65,7 +69,7 @@ const BrainModel3D: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full h-[500px] rounded-lg overflow-hidden border border-gray-200">
+    <div className="relative w-full rounded-lg overflow-hidden border border-gray-200" style={{ height }}>
       {/* Contrôles */}
       <div className="absolute top-2 left-2 z-10 flex flex-col gap-2">
         <Menubar className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg shadow-sm">

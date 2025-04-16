@@ -11,7 +11,11 @@ import {
   BrainStem 
 } from './parts';
 
-const BrainModelMesh: React.FC = () => {
+interface BrainModelMeshProps {
+  activeParts?: string[];
+}
+
+const BrainModelMesh: React.FC<BrainModelMeshProps> = ({ activeParts = ['CerebralCortex', 'CorpusCallosum', 'Thalamus', 'Hypothalamus', 'Cerebellum', 'BrainStem'] }) => {
   const group = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState<string | null>(null);
   
@@ -30,22 +34,22 @@ const BrainModelMesh: React.FC = () => {
   return (
     <group ref={group}>
       {/* Cerebral cortex - Main part of the brain */}
-      <CerebralCortex />
+      {activeParts.includes('CerebralCortex') && <CerebralCortex />}
       
       {/* Corpus callosum */}
-      <CorpusCallosum />
+      {activeParts.includes('CorpusCallosum') && <CorpusCallosum />}
       
       {/* Thalamus */}
-      <Thalamus />
+      {activeParts.includes('Thalamus') && <Thalamus />}
       
       {/* Hypothalamus */}
-      <Hypothalamus />
+      {activeParts.includes('Hypothalamus') && <Hypothalamus />}
       
       {/* Cerebellum */}
-      <Cerebellum />
+      {activeParts.includes('Cerebellum') && <Cerebellum />}
       
       {/* Brain stem */}
-      <BrainStem />
+      {activeParts.includes('BrainStem') && <BrainStem />}
     </group>
   );
 };
