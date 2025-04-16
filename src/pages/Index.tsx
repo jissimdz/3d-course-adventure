@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { courses } from "@/data/coursesData";
 import CourseCard from "@/components/CourseCard";
 import { BrainModel3D } from "@/components/brain-model";
+import { Pencil } from "lucide-react";
 
 const Index: React.FC = () => {
   // Only show the first 3 courses on the homepage
@@ -17,6 +18,30 @@ const Index: React.FC = () => {
     <Layout>
       <HeroSection />
       <FeaturesSection />
+      
+      {/* Section pour l'éditeur de schémas */}
+      <section className="bg-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
+              Éditeur de Schémas Interactif
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-gray-600">
+              Créez et exportez facilement des schémas personnalisés pour vos études ou présentations.
+            </p>
+            <Button 
+              asChild
+              className="mt-6 bg-brand-teal hover:bg-brand-teal/90"
+              size="lg"
+            >
+              <Link to="/editor" className="flex items-center gap-2">
+                <Pencil size={18} />
+                Ouvrir l'Éditeur
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
       
       {/* Nouvelle section de modèle 3D */}
       <section className="bg-gradient-to-b from-white to-gray-50 py-16">
