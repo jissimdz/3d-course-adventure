@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import * as fabric from 'fabric';
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Download, Circle, Upload, Image } from "lucide-react";
+import { Download, Circle, Upload, Image, Bug } from "lucide-react";
+import { toast } from "sonner";
 
 // Tableau d'URLs d'icônes bioicons pour les exemples
 const BIOICON_EXAMPLES = [
@@ -12,6 +13,7 @@ const BIOICON_EXAMPLES = [
   "https://bioicons.com/icons/dna.svg",
   "https://bioicons.com/icons/bacteria.svg",
   "https://bioicons.com/icons/protein.svg",
+  "/lovable-uploads/80207e3b-3c5f-4d89-bd3c-bc2a15a56e50.png" // Drosophila image
 ];
 
 const EditorPage: React.FC = () => {
@@ -59,44 +61,88 @@ const EditorPage: React.FC = () => {
     setIsLoading(true);
     
     // Charger l'icône SVG depuis l'URL
-    fabric.loadSVGFromURL(iconUrl, function(objects, options) {
-      if (fabricCanvasRef.current) {
-        const icon = fabric.util.groupSVGElements(objects, options);
-        
-        // Personnalisation de l'icône
-        icon.set({
-          left: 150,
-          top: 150,
-          scaleX: 0.5,
-          scaleY: 0.5,
-          hasControls: true,
-        });
+    if (iconUrl.endsWith('.png')) {
+      // Pour les images PNG
+      fabric.Image.fromURL(iconUrl, function(img) {
+        if (fabricCanvasRef.current) {
+          img.set({
+            left: 150,
+            top: 150,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            hasControls: true,
+          });
+          
+          fabricCanvasRef.current.add(img);
+          fabricCanvasRef.current.renderAll();
+          setIsLoading(false);
+          toast("Image ajoutée avec succès");
+        }
+      }, { crossOrigin: 'anonymous' });
+    } else {
+      // Pour les fichiers SVG
+      fabric.loadSVGFromURL(iconUrl, function(objects, options) {
+        if (fabricCanvasRef.current) {
+          const svgGroup = fabric.util.groupSVGElements(objects, options);
+          
+          // Personnalisation de l'icône
+          svgGroup.set({
+            left: 150,
+            top: 150,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            hasControls: true,
+          });
 
-        fabricCanvasRef.current.add(icon);
-        fabricCanvasRef.current.renderAll();
+          fabricCanvasRef.current.add(svgGroup);
+          fabricCanvasRef.current.renderAll();
+          toast("Icône SVG ajoutée avec succès");
+        }
         setIsLoading(false);
-      }
-    }, function() {
-      console.error("Erreur lors du chargement de l'icône SVG");
-      setIsLoading(false);
-    });
+      }, undefined, function() {
+        console.error("Erreur lors du chargement de l'icône SVG");
+        toast.error("Erreur lors du chargement de l'icône");
+        setIsLoading(false);
+      });
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !fabricCanvasRef.current) return;
 
+    setIsLoading(true);
     const reader = new FileReader();
+    
     reader.onload = function(event) {
       if (event.target?.result && fabricCanvasRef.current) {
         const dataUrl = event.target.result.toString();
         
-        fabric.loadSVGFromURL(dataUrl, function(objects, options) {
-          const svgObject = fabric.util.groupSVGElements(objects, options);
-          fabricCanvasRef.current?.add(svgObject).renderAll();
-        });
+        if (file.type === 'image/svg+xml') {
+          // Pour les fichiers SVG
+          fabric.loadSVGFromURL(dataUrl, function(objects, options) {
+            const svgObject = fabric.util.groupSVGElements(objects, options);
+            fabricCanvasRef.current?.add(svgObject);
+            fabricCanvasRef.current?.renderAll();
+            toast("SVG importé avec succès");
+            setIsLoading(false);
+          }, undefined, function() {
+            console.error("Erreur lors du chargement du SVG");
+            toast.error("Erreur lors du chargement du SVG");
+            setIsLoading(false);
+          });
+        } else {
+          // Pour les autres types d'images
+          fabric.Image.fromURL(dataUrl, function(img) {
+            fabricCanvasRef.current?.add(img);
+            fabricCanvasRef.current?.renderAll();
+            toast("Image importée avec succès");
+            setIsLoading(false);
+          });
+        }
       }
     };
+    
     reader.readAsDataURL(file);
   };
 
@@ -111,6 +157,7 @@ const EditorPage: React.FC = () => {
       link.href = dataURL;
       link.download = 'schema.png';
       link.click();
+      toast("Schéma exporté en PNG");
     }
   };
 
@@ -137,7 +184,7 @@ const EditorPage: React.FC = () => {
           <input 
             type="file" 
             ref={fileInputRef}
-            accept=".svg" 
+            accept=".svg,.png,.jpg,.jpeg" 
             className="hidden" 
             onChange={handleFileUpload}
           />
@@ -151,7 +198,7 @@ const EditorPage: React.FC = () => {
         <div className="mb-4">
           <h2 className="text-lg font-semibold mb-2">Bioicons</h2>
           <div className="flex flex-wrap gap-2">
-            {BIOICON_EXAMPLES.map((iconUrl, index) => (
+            {BIOICON_EXAMPLES.slice(0, 5).map((iconUrl, index) => (
               <Button 
                 key={index}
                 onClick={() => handleAddBioicon(iconUrl)} 
@@ -163,6 +210,16 @@ const EditorPage: React.FC = () => {
                 Icon {index + 1}
               </Button>
             ))}
+            
+            <Button 
+              onClick={() => handleAddBioicon(BIOICON_EXAMPLES[5])} 
+              variant="secondary"
+              className="flex items-center gap-2"
+              disabled={isLoading}
+            >
+              <Bug size={16} />
+              Drosophile
+            </Button>
           </div>
         </div>
         
