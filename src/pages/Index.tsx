@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { courses } from "@/data/coursesData";
 import CourseCard from "@/components/CourseCard";
+import { BrainModel3D } from "@/components/brain-model";
 
 const Index: React.FC = () => {
   // Only show the first 3 courses on the homepage
@@ -16,6 +17,35 @@ const Index: React.FC = () => {
     <Layout>
       <HeroSection />
       <FeaturesSection />
+      
+      {/* Nouvelle section de modèle 3D */}
+      <section className="bg-gradient-to-b from-white to-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
+              Explorez Notre Modèle 3D Interactif
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-gray-600">
+              Découvrez l'anatomie du cerveau humain avec notre modèle 3D entièrement interactif. Faites tourner, zoomez et explorez les différentes parties pour une expérience d'apprentissage immersive.
+            </p>
+          </div>
+          
+          <div className="mx-auto max-w-4xl">
+            <BrainModel3D />
+          </div>
+          
+          <div className="mt-8 text-center">
+            <Button 
+              asChild
+              variant="outline" 
+              size="lg"
+              className="border-brand-blue text-brand-blue hover:bg-brand-blue/10"
+            >
+              <Link to="/course/brain-anatomy-101">En Savoir Plus</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
       
       {/* Featured Courses Section */}
       <section className="bg-gray-50 py-16">
