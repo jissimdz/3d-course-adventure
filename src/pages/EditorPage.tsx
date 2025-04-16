@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Download, Circle } from "lucide-react";
