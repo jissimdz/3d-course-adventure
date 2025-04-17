@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ const Navbar: React.FC = () => {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
             <span className="text-lg font-bold">3D</span>
           </div>
-          <span className="text-xl font-bold text-brand-blue">Moussaoui Rayane</span>
+          <span className="text-xl font-bold text-brand-blue">Erudis</span>
         </Link>
 
         {/* Desktop Navigation */}
