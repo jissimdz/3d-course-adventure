@@ -8,9 +8,11 @@ const Footer: React.FC = () => {
         <div className="grid gap-8 md:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
-                <span className="text-lg font-bold">3D</span>
-              </div>
+              <img
+                src="/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png"
+                alt="Erudis Logo"
+                className="h-10 w-10"
+              />
               <span className="text-xl font-bold text-brand-blue">Erudis</span>
             </div>
             <p className="mt-4 text-gray-600">
