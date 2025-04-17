@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ const Navbar: React.FC = () => {
           <img
             src="/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png"
             alt="Erudis Logo"
-            className="h-12 w-12"
+            className="h-15 w-15"
           />
           <span className="text-xl font-bold text-brand-blue">Erudis</span>
         </Link>
