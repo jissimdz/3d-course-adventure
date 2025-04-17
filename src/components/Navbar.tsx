@@ -13,12 +13,11 @@ const Navbar: React.FC = () => {
           <img
             src="/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png"
             alt="Erudis Logo"
-            className="h-10 w-10"
+            className="h-12 w-12"
           />
           <span className="text-xl font-bold text-brand-blue">Erudis</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
           <Link to="/" className="font-medium text-gray-700 hover:text-brand-blue">
             Accueil
@@ -34,7 +33,6 @@ const Navbar: React.FC = () => {
           </Button>
         </nav>
 
-        {/* Mobile Menu Button */}
         <Button
           variant="ghost"
           size="icon"
@@ -45,7 +43,6 @@ const Navbar: React.FC = () => {
         </Button>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="border-t border-gray-200 bg-white py-2 md:hidden">
           <div className="container mx-auto space-y-2 px-4">
