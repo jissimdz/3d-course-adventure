@@ -3,8 +3,6 @@ import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { getCourseById } from "@/data/coursesData";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Import our new components
 import CourseHeader from "@/components/course/CourseHeader";
 import CourseOverview from "@/components/course/CourseOverview";
 import CourseCurriculum from "@/components/course/CourseCurriculum";
@@ -89,6 +87,7 @@ const CourseDetail: React.FC = () => {
 
   const handleQuizEdit = () => {
     console.log("Quiz edit clicked");
+    // You can implement quiz editing functionality here
   };
 
   return (

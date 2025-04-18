@@ -1,9 +1,16 @@
 
-import React from "react";
-import { Check, HelpCircle, Edit2 } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Edit2, X } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 interface Question {
   id: number;
@@ -17,9 +24,31 @@ interface QuizSectionProps {
   onEditClick: () => void;
 }
 
-const CourseQuiz: React.FC<QuizSectionProps> = ({ questions, onEditClick }) => {
-  const [selectedAnswers, setSelectedAnswers] = React.useState<Record<number, number>>({});
-  const [showResults, setShowResults] = React.useState(false);
+const meningesQuestions = [
+  {
+    id: 1,
+    question: "Quelle est la couche la plus externe des méninges ?",
+    options: ["Dure-mère", "Arachnoïde", "Pie-mère"],
+    correctAnswer: 0
+  },
+  {
+    id: 2,
+    question: "Quelle méninge contient le liquide céphalo-rachidien ?",
+    options: ["Dure-mère", "Espace sous-arachnoïdien", "Pie-mère"],
+    correctAnswer: 1
+  },
+  {
+    id: 3,
+    question: "Quelle est la méninge la plus proche du tissu cérébral ?",
+    options: ["Dure-mère", "Arachnoïde", "Pie-mère"],
+    correctAnswer: 2
+  }
+];
+
+const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = meningesQuestions, onEditClick }) => {
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
+  const [showResults, setShowResults] = useState(false);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const handleAnswerSelect = (questionId: number, answerIndex: number) => {
     setSelectedAnswers(prev => ({
@@ -36,6 +65,12 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions, onEditClick }) => {
       }
     });
     return correct;
+  };
+
+  const resetQuiz = () => {
+    setSelectedAnswers({});
+    setShowResults(false);
+    setIsQuizOpen(false);
   };
 
   return (
@@ -55,57 +90,71 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions, onEditClick }) => {
         </Button>
       </div>
 
-      <div className="space-y-4">
-        {questions.map((question, index) => (
-          <Card key={question.id} className="p-4">
-            <Collapsible>
-              <CollapsibleTrigger className="flex w-full items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
-                    {index + 1}
-                  </span>
-                  <h3 className="text-lg font-medium">{question.question}</h3>
-                </div>
-                <HelpCircle className="h-5 w-5 text-gray-400" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-4">
-                <div className="space-y-2">
+      <Dialog open={isQuizOpen} onOpenChange={setIsQuizOpen}>
+        <DialogTrigger asChild>
+          <Button className="w-full bg-brand-blue hover:bg-brand-blue/90">
+            Commencer le Quiz
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Quiz sur les méninges</span>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setIsQuizOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            {questions.map((question, index) => (
+              <div key={question.id} className="space-y-4">
+                <p className="font-medium">
+                  {index + 1}. {question.question}
+                </p>
+                <RadioGroup
+                  value={selectedAnswers[question.id]?.toString()}
+                  onValueChange={(value) => handleAnswerSelect(question.id, parseInt(value))}
+                >
                   {question.options.map((option, optionIndex) => (
-                    <button
-                      key={optionIndex}
-                      onClick={() => handleAnswerSelect(question.id, optionIndex)}
-                      className={`w-full rounded-lg border p-3 text-left transition-colors ${
-                        selectedAnswers[question.id] === optionIndex
-                          ? "border-brand-blue bg-brand-blue/5"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                    >
-                      {option}
-                    </button>
+                    <div key={optionIndex} className="flex items-center space-x-2">
+                      <RadioGroupItem value={optionIndex.toString()} id={`q${question.id}-${optionIndex}`} />
+                      <Label htmlFor={`q${question.id}-${optionIndex}`}>{option}</Label>
+                    </div>
                   ))}
+                </RadioGroup>
+              </div>
+            ))}
+
+            {!showResults ? (
+              <Button
+                onClick={() => setShowResults(true)}
+                className="w-full bg-brand-blue hover:bg-brand-blue/90"
+              >
+                Valider les réponses
+              </Button>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-lg bg-green-50 p-4 text-center">
+                  <p className="text-lg font-medium text-green-800">
+                    Score: {calculateScore()} sur {questions.length}
+                  </p>
                 </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
-        ))}
-      </div>
-
-      {questions.length > 0 && (
-        <Button
-          onClick={() => setShowResults(true)}
-          className="w-full bg-brand-blue hover:bg-brand-blue/90"
-        >
-          Vérifier les Réponses
-        </Button>
-      )}
-
-      {showResults && (
-        <div className="rounded-lg bg-green-50 p-4 text-center">
-          <p className="text-lg font-medium text-green-800">
-            Score: {calculateScore()} sur {questions.length}
-          </p>
-        </div>
-      )}
+                <Button
+                  onClick={resetQuiz}
+                  className="w-full"
+                  variant="outline"
+                >
+                  Recommencer le Quiz
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
