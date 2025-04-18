@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -19,6 +18,32 @@ import {
   getLearningOutcomes,
   CourseSection
 } from "@/components/course/CourseSections";
+
+// Add sample quiz data
+const sampleQuestions = [
+  {
+    id: 1,
+    question: "Quelle est la principale fonction du cortex cérébral ?",
+    options: [
+      "Le stockage de la mémoire à long terme",
+      "Le traitement des informations sensorielles et motrices",
+      "La régulation du sommeil",
+      "La production d'hormones"
+    ],
+    correctAnswer: 1
+  },
+  {
+    id: 2,
+    question: "Où se trouve le thalamus dans le cerveau ?",
+    options: [
+      "Dans le tronc cérébral",
+      "Dans le cervelet",
+      "Dans le diencéphale",
+      "Dans le cortex cérébral"
+    ],
+    correctAnswer: 2
+  }
+];
 
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -61,6 +86,10 @@ const CourseDetail: React.FC = () => {
     setModelViewOpen(true);
   };
 
+  const handleQuizEdit = () => {
+    console.log("Quiz edit clicked");
+  };
+
   return (
     <Layout>
       <CourseHeader course={course} />
@@ -70,10 +99,11 @@ const CourseDetail: React.FC = () => {
           <div className="grid gap-8 md:grid-cols-3">
             <div className="md:col-span-2">
               <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="mb-6 grid w-full grid-cols-3">
+                <TabsList className="mb-6 grid w-full grid-cols-4">
                   <TabsTrigger value="overview">Aperçu</TabsTrigger>
                   <TabsTrigger value="curriculum">Programme</TabsTrigger>
                   <TabsTrigger value="instructor">Instructeur</TabsTrigger>
+                  <TabsTrigger value="quiz">Quiz</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="overview">
@@ -95,6 +125,13 @@ const CourseDetail: React.FC = () => {
                 
                 <TabsContent value="instructor">
                   <CourseInstructor />
+                </TabsContent>
+
+                <TabsContent value="quiz">
+                  <CourseQuiz 
+                    questions={sampleQuestions}
+                    onEditClick={handleQuizEdit}
+                  />
                 </TabsContent>
               </Tabs>
             </div>
