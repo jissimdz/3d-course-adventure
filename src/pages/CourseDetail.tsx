@@ -12,6 +12,7 @@ import CourseInstructor from "@/components/course/CourseInstructor";
 import CourseSidebar from "@/components/course/CourseSidebar";
 import PreviewDialog from "@/components/course/PreviewDialog";
 import ModelViewDialog from "@/components/course/ModelViewDialog";
+import CourseQuiz from "@/components/course/CourseQuiz";
 import { 
   getNeuroanatomySections, 
   getGenericCourseSections, 
