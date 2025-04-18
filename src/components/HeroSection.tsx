@@ -35,7 +35,6 @@ const HeroSection: React.FC = () => {
           </div>
           <div className="relative flex justify-center">
             <div className="relative h-80 w-80 animate-float md:h-96 md:w-96">
-              {/* Placeholder for 3D model - in a real implementation this would be a Three.js component */}
               <div className="absolute inset-0 rounded-full bg-blue-100 opacity-50 blur-2xl"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="h-64 w-64 animate-rotate-slow rounded-full border-4 border-blue-200 border-opacity-50">
@@ -45,7 +44,11 @@ const HeroSection: React.FC = () => {
                   <div className="absolute bottom-0 left-1/2 h-4 w-4 -translate-x-1/2 rounded-full bg-brand-teal"></div>
                 </div>
                 <div className="absolute flex h-40 w-40 items-center justify-center rounded-full bg-white/80 shadow-lg backdrop-blur">
-                  <span className="text-6xl font-bold text-brand-blue">3D</span>
+                  <img 
+                    src="/lovable-uploads/4edc6e70-3375-4492-813c-ce1104349b42.png"
+                    alt="Erudys Logo"
+                    className="h-24 w-24 object-contain"
+                  />
                 </div>
               </div>
             </div>
@@ -57,3 +60,4 @@ const HeroSection: React.FC = () => {
 };
 
 export default HeroSection;
+
