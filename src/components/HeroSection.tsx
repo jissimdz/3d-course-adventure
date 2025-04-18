@@ -10,10 +10,10 @@ const HeroSection: React.FC = () => {
         <div className="grid items-center gap-8 md:grid-cols-2">
           <div>
             <h1 className="text-4xl font-bold leading-tight text-brand-dark-blue md:text-5xl lg:text-6xl">
-              Apprenez l'Anatomie en <span className="text-brand-blue">3D</span>
+              Plongez dans l'<span className="text-brand-blue">Apprentissage</span> Visuel et Interactif
             </h1>
             <p className="mt-6 text-xl leading-relaxed text-gray-600">
-              Explorez des modèles 3D détaillés et des cours interactifs conçus pour rendre l'anatomie et l'éducation biologique et médicale engageantes et efficaces.
+              Explorez des modèles 3D interactifs, des vidéos explicatives claires et des quiz ludiques pour rendre l'apprentissage de l'anatomie, de la biologie et de la médecine plus accessible, engageant et efficace.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Button
