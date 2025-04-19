@@ -22,25 +22,29 @@ import {
 const sampleQuestions = [
   {
     id: 1,
-    question: "Quelle est la principale fonction du cortex cérébral ?",
+    question: "Quelle image représente la dure-mère ?",
     options: [
-      "Le stockage de la mémoire à long terme",
-      "Le traitement des informations sensorielles et motrices",
-      "La régulation du sommeil",
-      "La production d'hormones"
-    ],
-    correctAnswer: 1
-  },
-  {
-    id: 2,
-    question: "Où se trouve le thalamus dans le cerveau ?",
-    options: [
-      "Dans le tronc cérébral",
-      "Dans le cervelet",
-      "Dans le diencéphale",
-      "Dans le cortex cérébral"
-    ],
-    correctAnswer: 2
+      {
+        image: "https://via.placeholder.com/150?text=Dure-mère",
+        alt: "Dure-mère",
+        isCorrect: true
+      },
+      {
+        image: "https://via.placeholder.com/150?text=Arachnoïde",
+        alt: "Arachnoïde",
+        isCorrect: false
+      },
+      {
+        image: "https://via.placeholder.com/150?text=Pie-mère",
+        alt: "Pie-mère",
+        isCorrect: false
+      },
+      {
+        image: "https://via.placeholder.com/150?text=Autre",
+        alt: "Autre",
+        isCorrect: false
+      }
+    ]
   }
 ];
 
