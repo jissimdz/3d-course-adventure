@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Rotate3d, Play } from "lucide-react";
+import { Eye, Rotate3d, Play, Video } from "lucide-react";
 
 interface CourseSection {
   id: number;
@@ -54,7 +53,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                 <h3 className="font-semibold">{section.title}</h3>
                 {section.isPreview && (
                   <Badge variant="outline" className="border-brand-teal text-brand-teal">
-                    Aperçu
+                    Cours vidéo
                   </Badge>
                 )}
                 {section.has3DModel && (
@@ -71,6 +70,17 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                   <Play className="h-4 w-4" />
                   <span>Commencer le Quiz</span>
                 </Button>
+                {section.videoUrl && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="flex items-center gap-1 text-brand-blue"
+                    onClick={() => onPreviewClick(section)}
+                  >
+                    <Video className="h-4 w-4" />
+                    <span>Voir la vidéo</span>
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-sm text-gray-500">{section.duration}</div>
@@ -106,4 +116,3 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
 };
 
 export default CourseCurriculum;
-
