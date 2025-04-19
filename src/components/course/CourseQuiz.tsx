@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, X, Plus, Trash2 } from "lucide-react";
+import { Edit2, X, Plus, Trash2, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
 
 interface ImageQuestion {
   id: number;
@@ -44,6 +44,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = [], onEditClick })
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingQuestions, setEditingQuestions] = useState<ImageQuestion[]>(questions);
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
 
   const form = useForm<ImageQuestion>({
     defaultValues: {
@@ -107,6 +108,39 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = [], onEditClick })
     }
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, optionIndex: number) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const data = await response.json();
+      const imageUrl = data.url;
+
+      const currentOptions = form.getValues('options');
+      currentOptions[optionIndex] = {
+        ...currentOptions[optionIndex],
+        image: imageUrl,
+        alt: file.name,
+      };
+      form.setValue('options', currentOptions);
+
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -161,47 +195,81 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = [], onEditClick })
                 <h4 className="font-medium">Options de réponse</h4>
                 {form.watch("options").map((_, index) => (
                   <div key={index} className="space-y-2 p-4 border rounded-lg">
-                    <FormField
-                      control={form.control}
-                      name={`options.${index}.image`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Image URL {index + 1}</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://..." {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`options.${index}.alt`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description {index + 1}</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Description..." {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`options.${index}.isCorrect`}
-                      render={({ field }) => (
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <input
-                              type="checkbox"
-                              checked={field.value}
-                              onChange={field.onChange}
-                              className="h-4 w-4"
-                            />
-                          </FormControl>
-                          <FormLabel>Réponse correcte</FormLabel>
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2">
+                        <FormField
+                          control={form.control}
+                          name={`options.${index}.image`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormLabel>Image {index + 1}</FormLabel>
+                              <FormControl>
+                                <div className="flex gap-2">
+                                  <Input 
+                                    placeholder="URL de l'image..." 
+                                    {...field}
+                                    className="flex-1"
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => fileInputRefs.current[index]?.click()}
+                                  >
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Upload
+                                  </Button>
+                                  <input
+                                    type="file"
+                                    ref={el => fileInputRefs.current[index] = el}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageUpload(e, index)}
+                                  />
+                                </div>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name={`options.${index}.alt`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description {index + 1}</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Description..." {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`options.${index}.isCorrect`}
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <input
+                                type="checkbox"
+                                checked={field.value}
+                                onChange={field.onChange}
+                                className="h-4 w-4"
+                              />
+                            </FormControl>
+                            <FormLabel>Réponse correcte</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {form.watch(`options.${index}.image`) && (
+                      <img 
+                        src={form.watch(`options.${index}.image`)}
+                        alt={form.watch(`options.${index}.alt`)}
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -345,4 +413,3 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = [], onEditClick })
 };
 
 export default CourseQuiz;
-
