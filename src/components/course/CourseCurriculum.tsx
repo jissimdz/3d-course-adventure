@@ -2,7 +2,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Rotate3d } from "lucide-react";
+import { Eye, Rotate3d, Play } from "lucide-react";
 
 interface CourseSection {
   id: number;
@@ -29,6 +29,14 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   onPreviewClick,
   on3DModelClick,
 }) => {
+  const handleQuizStart = (sectionTitle: string) => {
+    // Pour l'instant, on va juste faire défiler jusqu'à l'onglet Quiz
+    const quizTab = document.querySelector('[value="quiz"]');
+    if (quizTab) {
+      (quizTab as HTMLElement).click();
+    }
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold text-brand-blue">
@@ -42,7 +50,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
         {courseSections.map((section) => (
           <div key={section.id} className="rounded-md border border-gray-200 p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <h3 className="font-semibold">{section.title}</h3>
                 {section.isPreview && (
                   <Badge variant="outline" className="border-brand-teal text-brand-teal">
@@ -54,6 +62,15 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                     Modèle 3D
                   </Badge>
                 )}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex items-center gap-1 text-brand-teal"
+                  onClick={() => handleQuizStart(section.title)}
+                >
+                  <Play className="h-4 w-4" />
+                  <span>Commencer le Quiz</span>
+                </Button>
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-sm text-gray-500">{section.duration}</div>
@@ -89,3 +106,4 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
 };
 
 export default CourseCurriculum;
+
