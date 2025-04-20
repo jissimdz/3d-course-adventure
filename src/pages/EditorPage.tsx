@@ -1,9 +1,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
-import * as fabric from 'fabric';
+import { Canvas, loadSVGFromURL, Image, Circle } from 'fabric';
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { Download, Circle, Upload, Image, Bug } from "lucide-react";
+import { Download, Circle as CircleIcon, Upload, Image as ImageIcon, Bug } from "lucide-react";
 import { toast } from "sonner";
 
 // Tableau d'URLs d'icônes bioicons pour les exemples
@@ -18,14 +18,14 @@ const BIOICON_EXAMPLES = [
 
 const EditorPage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+  const fabricCanvasRef = useRef<Canvas | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (canvasRef.current && !fabricCanvasRef.current) {
       // Initialiser le canvas Fabric.js
-      const canvas = new fabric.Canvas(canvasRef.current, {
+      const canvas = new Canvas(canvasRef.current, {
         width: 800,
         height: 600,
         backgroundColor: '#ffffff'
@@ -44,7 +44,7 @@ const EditorPage: React.FC = () => {
 
   const handleAddCircle = () => {
     if (fabricCanvasRef.current) {
-      const circle = new fabric.Circle({
+      const circle = new Circle({
         radius: 50,
         fill: 'blue',
         left: 100,
@@ -63,70 +63,74 @@ const EditorPage: React.FC = () => {
     // Charger l'icône SVG depuis l'URL
     if (iconUrl.endsWith('.png')) {
       // Pour les images PNG
-      fabric.Image.fromURL(
-        iconUrl, 
-        (img) => {
-          if (fabricCanvasRef.current) {
-            img.set({
-              left: 150,
-              top: 150,
-              scaleX: 0.5,
-              scaleY: 0.5,
-              hasControls: true,
-              borderColor: 'red',
-              cornerColor: 'green',
-              cornerSize: 12,
-              transparentCorners: false,
-            });
-            
-            // Ajouter des événements interactifs
-            img.on('selected', function() {
-              console.log("Image sélectionnée !");
-              toast("Image sélectionnée");
-            });
-            
-            fabricCanvasRef.current.add(img);
-            fabricCanvasRef.current.renderAll();
-            setIsLoading(false);
-            toast("Image ajoutée avec succès");
-          }
-        },
-        { crossOrigin: 'anonymous' }
-      );
+      Image.fromURL(iconUrl, {
+        crossOrigin: 'anonymous',
+        objectCaching: true
+      }).then((img) => {
+        if (fabricCanvasRef.current) {
+          img.set({
+            left: 150,
+            top: 150,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            hasControls: true,
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 12,
+            transparentCorners: false,
+          });
+          
+          // Ajouter des événements interactifs
+          img.on('selected', function() {
+            console.log("Image sélectionnée !");
+            toast("Image sélectionnée");
+          });
+          
+          fabricCanvasRef.current.add(img);
+          fabricCanvasRef.current.renderAll();
+          toast("Image ajoutée avec succès");
+        }
+        setIsLoading(false);
+      }).catch(err => {
+        console.error("Erreur lors du chargement de l'image:", err);
+        toast.error("Erreur lors du chargement de l'image");
+        setIsLoading(false);
+      });
     } else {
       // Pour les fichiers SVG
-      fabric.loadSVGFromURL(
-        iconUrl, 
-        (objects, options) => {
-          if (fabricCanvasRef.current) {
-            const svgGroup = fabric.util.groupSVGElements(objects, options);
-            
-            // Personnalisation de l'icône et la rendre interactive
-            svgGroup.set({
-              left: 150,
-              top: 150,
-              scaleX: 0.5,
-              scaleY: 0.5,
-              hasControls: true,
-              borderColor: 'red',
-              cornerColor: 'green',
-              cornerSize: 12,
-              transparentCorners: false,
-            });
-            
-            // Ajouter des événements interactifs
-            svgGroup.on('selected', function() {
-              console.log("Icône SVG sélectionnée !");
-              toast("Icône sélectionnée");
-            });
+      loadSVGFromURL(iconUrl).then(({ objects, options }) => {
+        if (fabricCanvasRef.current) {
+          const group = fabricCanvasRef.current.createGroup(objects);
+          
+          // Personnalisation de l'icône et la rendre interactive
+          group.set({
+            left: 150,
+            top: 150,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            hasControls: true,
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 12,
+            transparentCorners: false,
+          });
+          
+          // Ajouter des événements interactifs
+          group.on('selected', function() {
+            console.log("Icône SVG sélectionnée !");
+            toast("Icône sélectionnée");
+          });
 
-            fabricCanvasRef.current.add(svgGroup);
-            fabricCanvasRef.current.renderAll();
-            toast("Icône SVG ajoutée avec succès");
-          }
-          setIsLoading(false);
+          fabricCanvasRef.current.add(group);
+          fabricCanvasRef.current.renderAll();
+          toast("Icône SVG ajoutée avec succès");
         }
-      );
+        setIsLoading(false);
+      }).catch(err => {
+        console.error("Erreur lors du chargement du SVG:", err);
+        toast.error("Erreur lors du chargement du SVG");
+        setIsLoading(false);
+      });
     }
   };
 
@@ -143,63 +147,67 @@ const EditorPage: React.FC = () => {
         
         if (file.type === 'image/svg+xml') {
           // Pour les fichiers SVG
-          fabric.loadSVGFromURL(
-            dataUrl, 
-            (objects, options) => {
-              if (fabricCanvasRef.current) {
-                const svgObject = fabric.util.groupSVGElements(objects, options);
-                
-                // Rendre le SVG importé interactif
-                svgObject.set({
-                  left: 150,
-                  top: 150,
-                  borderColor: 'red',
-                  cornerColor: 'green',
-                  cornerSize: 12,
-                  transparentCorners: false,
-                });
-                
-                // Ajouter des événements
-                svgObject.on('selected', function() {
-                  console.log("SVG importé sélectionné !");
-                  toast("SVG sélectionné");
-                });
-                
-                fabricCanvasRef.current.add(svgObject);
-                fabricCanvasRef.current.renderAll();
-                toast("SVG importé avec succès");
-                setIsLoading(false);
-              }
+          loadSVGFromURL(dataUrl).then(({ objects, options }) => {
+            if (fabricCanvasRef.current) {
+              const group = fabricCanvasRef.current.createGroup(objects);
+              
+              // Rendre le SVG importé interactif
+              group.set({
+                left: 150,
+                top: 150,
+                borderColor: 'red',
+                cornerColor: 'green',
+                cornerSize: 12,
+                transparentCorners: false,
+              });
+              
+              // Ajouter des événements
+              group.on('selected', function() {
+                console.log("SVG importé sélectionné !");
+                toast("SVG sélectionné");
+              });
+              
+              fabricCanvasRef.current.add(group);
+              fabricCanvasRef.current.renderAll();
+              toast("SVG importé avec succès");
             }
-          );
+            setIsLoading(false);
+          }).catch(err => {
+            console.error("Erreur lors du chargement du SVG:", err);
+            toast.error("Erreur lors du chargement du SVG");
+            setIsLoading(false);
+          });
         } else {
           // Pour les autres types d'images
-          fabric.Image.fromURL(
-            dataUrl, 
-            (img) => {
-              if (fabricCanvasRef.current) {
-                // Rendre l'image interactive
-                img.set({
-                  left: 150,
-                  top: 150,
-                  borderColor: 'red',
-                  cornerColor: 'green',
-                  cornerSize: 12,
-                  transparentCorners: false,
-                });
-                
-                img.on('selected', function() {
-                  console.log("Image importée sélectionnée !");
-                  toast("Image sélectionnée");
-                });
-                
-                fabricCanvasRef.current.add(img);
-                fabricCanvasRef.current.renderAll();
-                toast("Image importée avec succès");
-                setIsLoading(false);
-              }
+          Image.fromURL(dataUrl, {
+            objectCaching: true
+          }).then((img) => {
+            if (fabricCanvasRef.current) {
+              // Rendre l'image interactive
+              img.set({
+                left: 150,
+                top: 150,
+                borderColor: 'red',
+                cornerColor: 'green',
+                cornerSize: 12,
+                transparentCorners: false,
+              });
+              
+              img.on('selected', function() {
+                console.log("Image importée sélectionnée !");
+                toast("Image sélectionnée");
+              });
+              
+              fabricCanvasRef.current.add(img);
+              fabricCanvasRef.current.renderAll();
+              toast("Image importée avec succès");
             }
-          );
+            setIsLoading(false);
+          }).catch(err => {
+            console.error("Erreur lors du chargement de l'image:", err);
+            toast.error("Erreur lors du chargement de l'image");
+            setIsLoading(false);
+          });
         }
       }
     };
@@ -233,7 +241,7 @@ const EditorPage: React.FC = () => {
         
         <div className="mb-4 flex flex-wrap gap-2">
           <Button onClick={handleAddCircle} className="flex items-center gap-2">
-            <Circle size={16} />
+            <CircleIcon size={16} />
             Ajouter un cercle
           </Button>
           
@@ -267,7 +275,7 @@ const EditorPage: React.FC = () => {
                 className="flex items-center gap-2"
                 disabled={isLoading}
               >
-                <Image size={16} />
+                <ImageIcon size={16} />
                 Icon {index + 1}
               </Button>
             ))}
