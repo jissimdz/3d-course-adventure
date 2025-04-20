@@ -11,6 +11,7 @@ interface CourseSection {
   isPreview: boolean;
   videoUrl?: string;
   has3DModel?: boolean;
+  quizId?: number;
 }
 
 interface CourseCurriculumProps {
@@ -21,7 +22,7 @@ interface CourseCurriculumProps {
   };
   onPreviewClick: (section: CourseSection) => void;
   on3DModelClick: (section: CourseSection) => void;
-  onQuizStart: () => void;
+  onQuizStart: (sectionId: number) => void; // Pass sectionId!
 }
 
 const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
@@ -60,7 +61,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                   variant="outline" 
                   size="sm"
                   className="flex items-center gap-1 text-brand-teal"
-                  onClick={onQuizStart}
+                  onClick={() => onQuizStart(section.id)}
                 >
                   <Play className="h-4 w-4" />
                   <span>Commencer le Quiz</span>
@@ -87,7 +88,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                     onClick={() => onPreviewClick(section)}
                   >
                     <Eye className="h-4 w-4" />
-                    <span>Aperçu</span>
+                    <span>Cours vidéo</span>
                   </Button>
                 )}
                 {section.has3DModel && (

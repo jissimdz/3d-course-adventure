@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -19,7 +18,6 @@ import {
   CourseSection
 } from "@/components/course/CourseSections";
 
-// Add sample quiz data
 const sampleQuestions = [
   {
     id: 1,
@@ -49,9 +47,69 @@ const sampleQuestions = [
   }
 ];
 
+const quizzesBySection: Record<number, any[]> = {
+  1: [
+    {
+      id: 1,
+      question: "Quelle image représente la dure-mère ?",
+      options: [
+        {
+          image: "https://via.placeholder.com/150?text=Dure-mère",
+          alt: "Dure-mère",
+          isCorrect: true
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Arachnoïde",
+          alt: "Arachnoïde",
+          isCorrect: false
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Pie-mère",
+          alt: "Pie-mère",
+          isCorrect: false
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Autre",
+          alt: "Autre",
+          isCorrect: false
+        }
+      ]
+    }
+  ],
+  2: [
+    {
+      id: 2,
+      question: "Quelle image montre l'arachnoïde ?",
+      options: [
+        {
+          image: "https://via.placeholder.com/150?text=Arachnoïde",
+          alt: "Arachnoïde",
+          isCorrect: true
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Dure-mère",
+          alt: "Dure-mère",
+          isCorrect: false
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Pie-mère",
+          alt: "Pie-mère",
+          isCorrect: false
+        },
+        {
+          image: "https://via.placeholder.com/150?text=Autre",
+          alt: "Autre",
+          isCorrect: false
+        }
+      ]
+    }
+  ]
+};
+
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [activeTab, setActiveTab] = useState("overview");
+  const [activeQuizSection, setActiveQuizSection] = useState<number | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number; videoUrl?: string} | null>(null);
   const [modelViewOpen, setModelViewOpen] = useState(false);
@@ -90,7 +148,8 @@ const CourseDetail: React.FC = () => {
     setModelViewOpen(true);
   };
 
-  const handleQuizStart = () => {
+  const handleQuizStart = (sectionId: number) => {
+    setActiveQuizSection(sectionId);
     setActiveTab("quiz");
   };
 
@@ -98,6 +157,11 @@ const CourseDetail: React.FC = () => {
     console.log("Quiz edit clicked");
     // You can implement quiz editing functionality here
   };
+
+  const quizQuestions =
+    activeQuizSection !== null && quizzesBySection[activeQuizSection]
+      ? quizzesBySection[activeQuizSection]
+      : [];
 
   return (
     <Layout>
@@ -139,7 +203,7 @@ const CourseDetail: React.FC = () => {
 
                 <TabsContent value="quiz">
                   <CourseQuiz 
-                    questions={sampleQuestions}
+                    questions={quizQuestions}
                     onEditClick={handleQuizEdit}
                   />
                 </TabsContent>
