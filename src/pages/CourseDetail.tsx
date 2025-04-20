@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -89,6 +90,10 @@ const CourseDetail: React.FC = () => {
     setModelViewOpen(true);
   };
 
+  const handleQuizStart = () => {
+    setActiveTab("quiz");
+  };
+
   const handleQuizEdit = () => {
     console.log("Quiz edit clicked");
     // You can implement quiz editing functionality here
@@ -124,6 +129,7 @@ const CourseDetail: React.FC = () => {
                     course={course}
                     onPreviewClick={handlePreviewClick}
                     on3DModelClick={handle3DModelClick}
+                    onQuizStart={handleQuizStart}
                   />
                 </TabsContent>
                 

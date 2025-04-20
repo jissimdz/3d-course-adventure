@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ interface CourseCurriculumProps {
   };
   onPreviewClick: (section: CourseSection) => void;
   on3DModelClick: (section: CourseSection) => void;
+  onQuizStart: () => void;
 }
 
 const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
@@ -27,15 +29,8 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   course,
   onPreviewClick,
   on3DModelClick,
+  onQuizStart,
 }) => {
-  const handleQuizStart = (sectionTitle: string) => {
-    // Pour l'instant, on va juste faire défiler jusqu'à l'onglet Quiz
-    const quizTab = document.querySelector('[value="quiz"]');
-    if (quizTab) {
-      (quizTab as HTMLElement).click();
-    }
-  };
-
   return (
     <div>
       <h2 className="text-2xl font-semibold text-brand-blue">
@@ -65,7 +60,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                   variant="outline" 
                   size="sm"
                   className="flex items-center gap-1 text-brand-teal"
-                  onClick={() => handleQuizStart(section.title)}
+                  onClick={onQuizStart}
                 >
                   <Play className="h-4 w-4" />
                   <span>Commencer le Quiz</span>
