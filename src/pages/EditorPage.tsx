@@ -63,63 +63,70 @@ const EditorPage: React.FC = () => {
     // Charger l'icône SVG depuis l'URL
     if (iconUrl.endsWith('.png')) {
       // Pour les images PNG
-      fabric.Image.fromURL(iconUrl, (img) => {
-        if (fabricCanvasRef.current) {
-          img.set({
-            left: 150,
-            top: 150,
-            scaleX: 0.5,
-            scaleY: 0.5,
-            hasControls: true,
-            borderColor: 'red',
-            cornerColor: 'green',
-            cornerSize: 12,
-            transparentCorners: false,
-          });
-          
-          // Ajouter des événements interactifs
-          img.on('selected', function() {
-            console.log("Image sélectionnée !");
-            toast("Image sélectionnée");
-          });
-          
-          fabricCanvasRef.current.add(img);
-          fabricCanvasRef.current.renderAll();
-          setIsLoading(false);
-          toast("Image ajoutée avec succès");
-        }
-      }, { crossOrigin: 'anonymous' });
+      fabric.Image.fromURL(
+        iconUrl, 
+        (img) => {
+          if (fabricCanvasRef.current) {
+            img.set({
+              left: 150,
+              top: 150,
+              scaleX: 0.5,
+              scaleY: 0.5,
+              hasControls: true,
+              borderColor: 'red',
+              cornerColor: 'green',
+              cornerSize: 12,
+              transparentCorners: false,
+            });
+            
+            // Ajouter des événements interactifs
+            img.on('selected', function() {
+              console.log("Image sélectionnée !");
+              toast("Image sélectionnée");
+            });
+            
+            fabricCanvasRef.current.add(img);
+            fabricCanvasRef.current.renderAll();
+            setIsLoading(false);
+            toast("Image ajoutée avec succès");
+          }
+        },
+        { crossOrigin: 'anonymous' }
+      );
     } else {
       // Pour les fichiers SVG
-      fabric.loadSVGFromURL(iconUrl, function(objects, options) {
-        if (fabricCanvasRef.current) {
-          const svgGroup = fabric.util.groupSVGElements(objects, options);
-          
-          // Personnalisation de l'icône et la rendre interactive
-          svgGroup.set({
-            left: 150,
-            top: 150,
-            scaleX: 0.5,
-            scaleY: 0.5,
-            hasControls: true,
-            borderColor: 'red',
-            cornerColor: 'green',
-            cornerSize: 12,
-            transparentCorners: false,
-          });
-          
-          // Ajouter des événements interactifs
-          svgGroup.on('selected', function() {
-            console.log("Icône SVG sélectionnée !");
-            toast("Icône sélectionnée");
-          });
+      fabric.loadSVGFromURL(
+        iconUrl, 
+        (objects, options) => {
+          if (fabricCanvasRef.current) {
+            const svgGroup = fabric.util.groupSVGElements(objects, options);
+            
+            // Personnalisation de l'icône et la rendre interactive
+            svgGroup.set({
+              left: 150,
+              top: 150,
+              scaleX: 0.5,
+              scaleY: 0.5,
+              hasControls: true,
+              borderColor: 'red',
+              cornerColor: 'green',
+              cornerSize: 12,
+              transparentCorners: false,
+            });
+            
+            // Ajouter des événements interactifs
+            svgGroup.on('selected', function() {
+              console.log("Icône SVG sélectionnée !");
+              toast("Icône sélectionnée");
+            });
 
-          fabricCanvasRef.current.add(svgGroup);
-          fabricCanvasRef.current.renderAll();
-          toast("Icône SVG ajoutée avec succès");
+            fabricCanvasRef.current.add(svgGroup);
+            fabricCanvasRef.current.renderAll();
+            toast("Icône SVG ajoutée avec succès");
+          }
+          setIsLoading(false);
         }
-        setIsLoading(false);
-      });
+      );
     }
   };
 
@@ -136,57 +143,63 @@ const EditorPage: React.FC = () => {
         
         if (file.type === 'image/svg+xml') {
           // Pour les fichiers SVG
-          fabric.loadSVGFromURL(dataUrl, function(objects, options) {
-            if (fabricCanvasRef.current) {
-              const svgObject = fabric.util.groupSVGElements(objects, options);
-              
-              // Rendre le SVG importé interactif
-              svgObject.set({
-                left: 150,
-                top: 150,
-                borderColor: 'red',
-                cornerColor: 'green',
-                cornerSize: 12,
-                transparentCorners: false,
-              });
-              
-              // Ajouter des événements
-              svgObject.on('selected', function() {
-                console.log("SVG importé sélectionné !");
-                toast("SVG sélectionné");
-              });
-              
-              fabricCanvasRef.current.add(svgObject);
-              fabricCanvasRef.current.renderAll();
-              toast("SVG importé avec succès");
-              setIsLoading(false);
+          fabric.loadSVGFromURL(
+            dataUrl, 
+            (objects, options) => {
+              if (fabricCanvasRef.current) {
+                const svgObject = fabric.util.groupSVGElements(objects, options);
+                
+                // Rendre le SVG importé interactif
+                svgObject.set({
+                  left: 150,
+                  top: 150,
+                  borderColor: 'red',
+                  cornerColor: 'green',
+                  cornerSize: 12,
+                  transparentCorners: false,
+                });
+                
+                // Ajouter des événements
+                svgObject.on('selected', function() {
+                  console.log("SVG importé sélectionné !");
+                  toast("SVG sélectionné");
+                });
+                
+                fabricCanvasRef.current.add(svgObject);
+                fabricCanvasRef.current.renderAll();
+                toast("SVG importé avec succès");
+                setIsLoading(false);
+              }
             }
-          });
+          );
         } else {
           // Pour les autres types d'images
-          fabric.Image.fromURL(dataUrl, function(img) {
-            if (fabricCanvasRef.current) {
-              // Rendre l'image interactive
-              img.set({
-                left: 150,
-                top: 150,
-                borderColor: 'red',
-                cornerColor: 'green',
-                cornerSize: 12,
-                transparentCorners: false,
-              });
-              
-              img.on('selected', function() {
-                console.log("Image importée sélectionnée !");
-                toast("Image sélectionnée");
-              });
-              
-              fabricCanvasRef.current.add(img);
-              fabricCanvasRef.current.renderAll();
-              toast("Image importée avec succès");
-              setIsLoading(false);
+          fabric.Image.fromURL(
+            dataUrl, 
+            (img) => {
+              if (fabricCanvasRef.current) {
+                // Rendre l'image interactive
+                img.set({
+                  left: 150,
+                  top: 150,
+                  borderColor: 'red',
+                  cornerColor: 'green',
+                  cornerSize: 12,
+                  transparentCorners: false,
+                });
+                
+                img.on('selected', function() {
+                  console.log("Image importée sélectionnée !");
+                  toast("Image sélectionnée");
+                });
+                
+                fabricCanvasRef.current.add(img);
+                fabricCanvasRef.current.renderAll();
+                toast("Image importée avec succès");
+                setIsLoading(false);
+              }
             }
-          });
+          );
         }
       }
     };
