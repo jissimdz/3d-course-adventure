@@ -66,29 +66,37 @@ const EditorPage: React.FC = () => {
       // For raster images (PNG, JPG)
       FabricImage.fromURL(
         iconUrl, 
-        (img) => {
-          if (img && fabricCanvasRef.current) {
-            img.set({
-              left: 150,
-              top: 150,
-              scaleX: 0.5,
-              scaleY: 0.5,
-              hasControls: true,
-              borderColor: 'red',
-              cornerColor: 'green',
-              cornerSize: 12,
-              transparentCorners: false,
-            });
-            img.on('selected', function() {
-              toast("Image sélectionnée");
-            });
-            fabricCanvasRef.current.add(img);
-            fabricCanvasRef.current.renderAll();
-            toast("Image ajoutée avec succès");
+        {
+          crossOrigin: 'anonymous',
+          objectCaching: true,
+          // In Fabric.js v6, we need to use the `onError` and `onComplete` callbacks
+          onComplete: (img) => {
+            if (img && fabricCanvasRef.current) {
+              img.set({
+                left: 150,
+                top: 150,
+                scaleX: 0.5,
+                scaleY: 0.5,
+                hasControls: true,
+                borderColor: 'red',
+                cornerColor: 'green',
+                cornerSize: 12,
+                transparentCorners: false,
+              });
+              img.on('selected', function() {
+                toast("Image sélectionnée");
+              });
+              fabricCanvasRef.current.add(img);
+              fabricCanvasRef.current.renderAll();
+              toast("Image ajoutée avec succès");
+            }
+            setIsLoading(false);
+          },
+          onError: () => {
+            toast.error("Erreur lors du chargement de l'image");
+            setIsLoading(false);
           }
-          setIsLoading(false);
-        },
-        { crossOrigin: 'anonymous' }
+        }
       );
     } else {
       // For SVG images
@@ -169,26 +177,34 @@ const EditorPage: React.FC = () => {
         } else {
           FabricImage.fromURL(
             dataUrl, 
-            (img) => {
-              if (img && fabricCanvasRef.current) {
-                img.set({
-                  left: 150,
-                  top: 150,
-                  borderColor: 'red',
-                  cornerColor: 'green',
-                  cornerSize: 12,
-                  transparentCorners: false,
-                });
-                img.on('selected', function() {
-                  toast("Image sélectionnée");
-                });
-                fabricCanvasRef.current.add(img);
-                fabricCanvasRef.current.renderAll();
-                toast("Image importée avec succès");
+            {
+              crossOrigin: 'anonymous',
+              objectCaching: true,
+              // Use the proper callback functions in Fabric.js v6
+              onComplete: (img) => {
+                if (img && fabricCanvasRef.current) {
+                  img.set({
+                    left: 150,
+                    top: 150,
+                    borderColor: 'red',
+                    cornerColor: 'green',
+                    cornerSize: 12,
+                    transparentCorners: false,
+                  });
+                  img.on('selected', function() {
+                    toast("Image sélectionnée");
+                  });
+                  fabricCanvasRef.current.add(img);
+                  fabricCanvasRef.current.renderAll();
+                  toast("Image importée avec succès");
+                }
+                setIsLoading(false);
+              },
+              onError: () => {
+                toast.error("Erreur lors du chargement de l'image");
+                setIsLoading(false);
               }
-              setIsLoading(false);
-            },
-            { crossOrigin: 'anonymous' }
+            }
           );
         }
       }
