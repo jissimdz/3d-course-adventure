@@ -113,28 +113,30 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({ questions = [], onEditClick })
     if (!file) return;
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (!response.ok) throw new Error('Upload failed');
-
-      const data = await response.json();
-      const imageUrl = data.url;
-
-      const currentOptions = form.getValues('options');
-      currentOptions[optionIndex] = {
-        ...currentOptions[optionIndex],
-        image: imageUrl,
-        alt: file.name,
+      // Create a data URL from the file instead of uploading to server
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          const imageUrl = e.target.result.toString();
+          
+          const currentOptions = form.getValues('options');
+          currentOptions[optionIndex] = {
+            ...currentOptions[optionIndex],
+            image: imageUrl,
+            alt: file.name,
+          };
+          form.setValue('options', currentOptions);
+          
+          toast.success('Image uploaded successfully');
+        }
       };
-      form.setValue('options', currentOptions);
-
-      toast.success('Image uploaded successfully');
+      
+      reader.onerror = () => {
+        toast.error('Failed to read image file');
+      };
+      
+      reader.readAsDataURL(file);
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Failed to upload image');
