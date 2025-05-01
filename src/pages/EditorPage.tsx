@@ -64,39 +64,33 @@ const EditorPage: React.FC = () => {
 
     if (iconUrl.endsWith('.png') || iconUrl.endsWith('.jpg') || iconUrl.endsWith('.jpeg')) {
       // Pour les images raster (PNG, JPG)
-      FabricImage.fromURL(
-        iconUrl,
-        {
-          crossOrigin: 'anonymous',
-          // Supprimé objectCaching qui causait l'erreur
-          onComplete: (img) => {
-            if (img && fabricCanvasRef.current) {
-              img.set({
-                left: 150,
-                top: 150,
-                scaleX: 0.5,
-                scaleY: 0.5,
-                hasControls: true,
-                borderColor: 'red',
-                cornerColor: 'green',
-                cornerSize: 12,
-                transparentCorners: false,
-              });
-              img.on('selected', function() {
-                toast("Image sélectionnée");
-              });
-              fabricCanvasRef.current.add(img);
-              fabricCanvasRef.current.renderAll();
-              toast("Image ajoutée avec succès");
-            }
-            setIsLoading(false);
-          },
-          onError: () => {
-            toast.error("Erreur lors du chargement de l'image");
-            setIsLoading(false);
+      FabricImage.fromURL(iconUrl, { crossOrigin: 'anonymous' })
+        .then((img) => {
+          if (img && fabricCanvasRef.current) {
+            img.set({
+              left: 150,
+              top: 150,
+              scaleX: 0.5,
+              scaleY: 0.5,
+              hasControls: true,
+              borderColor: 'red',
+              cornerColor: 'green',
+              cornerSize: 12,
+              transparentCorners: false,
+            });
+            img.on('selected', function() {
+              toast("Image sélectionnée");
+            });
+            fabricCanvasRef.current.add(img);
+            fabricCanvasRef.current.renderAll();
+            toast("Image ajoutée avec succès");
           }
-        }
-      );
+          setIsLoading(false);
+        })
+        .catch(() => {
+          toast.error("Erreur lors du chargement de l'image");
+          setIsLoading(false);
+        });
     } else {
       // Pour les images SVG
       loadSVGFromURL(iconUrl)
@@ -174,36 +168,30 @@ const EditorPage: React.FC = () => {
               setIsLoading(false);
             });
         } else {
-          FabricImage.fromURL(
-            dataUrl,
-            {
-              crossOrigin: 'anonymous',
-              // Supprimé objectCaching qui causait l'erreur
-              onComplete: (img) => {
-                if (img && fabricCanvasRef.current) {
-                  img.set({
-                    left: 150,
-                    top: 150,
-                    borderColor: 'red',
-                    cornerColor: 'green',
-                    cornerSize: 12,
-                    transparentCorners: false,
-                  });
-                  img.on('selected', function() {
-                    toast("Image sélectionnée");
-                  });
-                  fabricCanvasRef.current.add(img);
-                  fabricCanvasRef.current.renderAll();
-                  toast("Image importée avec succès");
-                }
-                setIsLoading(false);
-              },
-              onError: () => {
-                toast.error("Erreur lors du chargement de l'image");
-                setIsLoading(false);
+          FabricImage.fromURL(dataUrl, { crossOrigin: 'anonymous' })
+            .then((img) => {
+              if (img && fabricCanvasRef.current) {
+                img.set({
+                  left: 150,
+                  top: 150,
+                  borderColor: 'red',
+                  cornerColor: 'green',
+                  cornerSize: 12,
+                  transparentCorners: false,
+                });
+                img.on('selected', function() {
+                  toast("Image sélectionnée");
+                });
+                fabricCanvasRef.current.add(img);
+                fabricCanvasRef.current.renderAll();
+                toast("Image importée avec succès");
               }
-            }
-          );
+              setIsLoading(false);
+            })
+            .catch(() => {
+              toast.error("Erreur lors du chargement de l'image");
+              setIsLoading(false);
+            });
         }
       }
     };
