@@ -63,13 +63,12 @@ const EditorPage: React.FC = () => {
     setIsLoading(true);
 
     if (iconUrl.endsWith('.png') || iconUrl.endsWith('.jpg') || iconUrl.endsWith('.jpeg')) {
-      // For raster images (PNG, JPG)
+      // Pour les images raster (PNG, JPG)
       FabricImage.fromURL(
-        iconUrl, 
+        iconUrl,
         {
           crossOrigin: 'anonymous',
-          objectCaching: true,
-          // In Fabric.js v6, we need to use the `onError` and `onComplete` callbacks
+          // Supprimé objectCaching qui causait l'erreur
           onComplete: (img) => {
             if (img && fabricCanvasRef.current) {
               img.set({
@@ -99,11 +98,11 @@ const EditorPage: React.FC = () => {
         }
       );
     } else {
-      // For SVG images
+      // Pour les images SVG
       loadSVGFromURL(iconUrl)
         .then(({objects, options}) => {
           if (objects && objects.length > 0 && fabricCanvasRef.current) {
-            // Group the SVG objects
+            // Grouper les objets SVG
             objects.forEach(obj => {
               obj.set({
                 left: 150,
@@ -176,11 +175,10 @@ const EditorPage: React.FC = () => {
             });
         } else {
           FabricImage.fromURL(
-            dataUrl, 
+            dataUrl,
             {
               crossOrigin: 'anonymous',
-              objectCaching: true,
-              // Use the proper callback functions in Fabric.js v6
+              // Supprimé objectCaching qui causait l'erreur
               onComplete: (img) => {
                 if (img && fabricCanvasRef.current) {
                   img.set({
@@ -243,7 +241,7 @@ const EditorPage: React.FC = () => {
 
           <Button onClick={handleOpenFileDialog} variant="outline" className="flex items-center gap-2">
             <Upload size={16} />
-            Importer un SVG
+            Importer une image
           </Button>
 
           <input
