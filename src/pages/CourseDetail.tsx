@@ -106,6 +106,33 @@ const quizzesBySection: Record<number, any[]> = {
   ]
 };
 
+const textQuizzesBySection: Record<number, any[]> = {
+  1: [
+    {
+      id: 1,
+      question: "Quelle est la capitale de la France ?",
+      options: [
+        { text: "Paris", isCorrect: true },
+        { text: "Lyon", isCorrect: false },
+        { text: "Marseille", isCorrect: false },
+        { text: "Bordeaux", isCorrect: false }
+      ]
+    }
+  ],
+  2: [
+    {
+      id: 2,
+      question: "Quel est le plus grand organe du corps humain ?",
+      options: [
+        { text: "La peau", isCorrect: true },
+        { text: "Le foie", isCorrect: false },
+        { text: "Le cerveau", isCorrect: false },
+        { text: "Les poumons", isCorrect: false }
+      ]
+    }
+  ]
+};
+
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [activeTab, setActiveTab] = useState("overview");
@@ -163,6 +190,11 @@ const CourseDetail: React.FC = () => {
       ? quizzesBySection[activeQuizSection]
       : [];
 
+  const textQuizQuestions =
+    activeQuizSection !== null && textQuizzesBySection[activeQuizSection]
+      ? textQuizzesBySection[activeQuizSection]
+      : [];
+
   return (
     <Layout>
       <CourseHeader course={course} />
@@ -204,6 +236,7 @@ const CourseDetail: React.FC = () => {
                 <TabsContent value="quiz">
                   <CourseQuiz 
                     questions={quizQuestions}
+                    textQuestions={textQuizQuestions}
                     onEditClick={handleQuizEdit}
                   />
                 </TabsContent>
