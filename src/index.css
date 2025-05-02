@@ -101,3 +101,28 @@
 .hero-gradient {
   background: radial-gradient(circle at 80% 50%, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.2) 100%);
 }
+
+/* Quiz button animations */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.answer-btn {
+  transition: all 0.3s;
+}
+
+.answer-btn:active {
+  animation: pulse 0.3s;
+}
+
+.answer-btn.correct {
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+  border: 2px solid #4CAF50;
+}
+
+.answer-btn.wrong {
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+  border: 2px solid #F44336;
+}

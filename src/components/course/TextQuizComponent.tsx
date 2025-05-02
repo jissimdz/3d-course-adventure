@@ -26,6 +26,7 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
+  const [answerStatus, setAnswerStatus] = useState<Record<number, 'correct' | 'wrong' | null>>({});
   
   const correctSoundRef = useRef<HTMLAudioElement | null>(null);
   const wrongSoundRef = useRef<HTMLAudioElement | null>(null);
@@ -52,10 +53,16 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
     // Play sound based on answer correctness
     const isCorrect = questions[currentQuestion]?.options[optionIndex]?.isCorrect;
     
-    if (isCorrect && correctSoundRef.current) {
-      correctSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
-    } else if (!isCorrect && wrongSoundRef.current) {
-      wrongSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
+    if (isCorrect) {
+      setAnswerStatus({ ...answerStatus, [optionIndex]: 'correct' });
+      if (correctSoundRef.current) {
+        correctSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
+      }
+    } else {
+      setAnswerStatus({ ...answerStatus, [optionIndex]: 'wrong' });
+      if (wrongSoundRef.current) {
+        wrongSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
+      }
     }
   };
 
@@ -67,6 +74,7 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
       setSelectedOption(null);
+      setAnswerStatus({});
     } else {
       setIsQuizCompleted(true);
       if (onComplete) {
@@ -80,6 +88,7 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
     setSelectedOption(null);
     setScore(0);
     setIsQuizCompleted(false);
+    setAnswerStatus({});
   };
 
   // Handle case where there are no questions
@@ -111,11 +120,25 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
                   variant="outline"
                   onClick={() => handleOptionSelect(index)}
                   className={cn(
-                    "w-full justify-start text-left p-4 h-auto",
+                    "w-full justify-start text-left p-4 h-auto answer-btn transition-all",
                     selectedOption === index 
                       ? "border-brand-blue ring-2 ring-brand-blue/20" 
-                      : "border-gray-200"
+                      : "border-gray-200",
+                    {
+                      "correct box-shadow-[0_0_15px_rgba(0,255,0,0.7)] border-2 border-[#4CAF50] animate-pulse": answerStatus[index] === 'correct',
+                      "wrong box-shadow-[0_0_15px_rgba(255,0,0,0.7)] border-2 border-[#F44336] animate-pulse": answerStatus[index] === 'wrong'
+                    }
                   )}
+                  style={{
+                    boxShadow: answerStatus[index] === 'correct' 
+                      ? '0 0 15px rgba(0, 255, 0, 0.7)' 
+                      : answerStatus[index] === 'wrong' 
+                        ? '0 0 15px rgba(255, 0, 0, 0.7)' 
+                        : 'none',
+                    animation: (answerStatus[index] === 'correct' || answerStatus[index] === 'wrong') 
+                      ? 'pulse 0.3s' 
+                      : 'none'
+                  }}
                 >
                   {option.text}
                 </Button>
