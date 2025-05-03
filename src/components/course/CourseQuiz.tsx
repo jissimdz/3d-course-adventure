@@ -23,6 +23,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import TextQuizComponent from "./TextQuizComponent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ImageQuestion {
   id: number;
@@ -43,16 +50,25 @@ interface TextQuestion {
   }[];
 }
 
+interface QuizSeries {
+  id: string;
+  name: string;
+  imageQuestions: ImageQuestion[];
+  textQuestions: TextQuestion[];
+}
+
 interface QuizSectionProps {
   questions?: ImageQuestion[];
   textQuestions?: TextQuestion[];
   onEditClick: () => void;
+  seriesId?: string;
 }
 
 const CourseQuiz: React.FC<QuizSectionProps> = ({ 
   questions = [], 
   textQuestions = [],
-  onEditClick 
+  onEditClick,
+  seriesId = "default"
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -65,21 +81,138 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   const [quizType, setQuizType] = useState<"image" | "text">("image");
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
   
+  // Gestion des séries de quiz
+  const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
+  const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
+  const [newSeriesName, setNewSeriesName] = useState<string>("");
+  
+  // Charger toutes les séries de quiz au démarrage
+  useEffect(() => {
+    try {
+      const savedSeries = localStorage.getItem('quizSeries');
+      if (savedSeries && savedSeries !== 'undefined') {
+        const parsedSeries = JSON.parse(savedSeries);
+        setQuizSeries(parsedSeries);
+        
+        // Si aucune série n'existe, créer la série par défaut
+        if (parsedSeries.length === 0) {
+          const defaultSeries: QuizSeries = {
+            id: "default",
+            name: "Quiz par défaut",
+            imageQuestions: questions,
+            textQuestions: textQuestions
+          };
+          setQuizSeries([defaultSeries]);
+          localStorage.setItem('quizSeries', JSON.stringify([defaultSeries]));
+        }
+      } else {
+        // Initialiser avec la série par défaut
+        const defaultSeries: QuizSeries = {
+          id: "default",
+          name: "Quiz par défaut",
+          imageQuestions: questions,
+          textQuestions: textQuestions
+        };
+        setQuizSeries([defaultSeries]);
+        localStorage.setItem('quizSeries', JSON.stringify([defaultSeries]));
+      }
+    } catch (error) {
+      console.error("Error loading quiz series from localStorage:", error);
+    }
+  }, []);
+
+  // Observer les changements dans les séries et sauvegarder dans localStorage
+  useEffect(() => {
+    if (quizSeries.length > 0) {
+      try {
+        localStorage.setItem('quizSeries', JSON.stringify(quizSeries));
+      } catch (error) {
+        console.error("Error saving quiz series to localStorage:", error);
+      }
+    }
+  }, [quizSeries]);
+
+  // Charger les questions pour la série courante
+  useEffect(() => {
+    const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
+    if (currentSeries) {
+      setEditingQuestions(currentSeries.imageQuestions);
+      setEditingTextQuestions(currentSeries.textQuestions);
+    }
+  }, [currentSeriesId, quizSeries]);
+
+  // Mettre à jour la série quand les questions sont modifiées
+  useEffect(() => {
+    if (currentSeriesId && quizSeries.length > 0) {
+      setQuizSeries(prev => 
+        prev.map(series => 
+          series.id === currentSeriesId 
+            ? { ...series, imageQuestions: editingQuestions, textQuestions: editingTextQuestions }
+            : series
+        )
+      );
+    }
+  }, [editingQuestions, editingTextQuestions]);
+
+  // Fonctions pour gérer les séries
+  const handleAddSeries = () => {
+    if (!newSeriesName.trim()) {
+      toast.error("Veuillez entrer un nom pour la nouvelle série");
+      return;
+    }
+    
+    const newId = `series_${Date.now()}`;
+    const newSeries: QuizSeries = {
+      id: newId,
+      name: newSeriesName,
+      imageQuestions: [],
+      textQuestions: []
+    };
+    
+    setQuizSeries(prev => [...prev, newSeries]);
+    setCurrentSeriesId(newId);
+    setNewSeriesName("");
+    toast.success(`Nouvelle série "${newSeriesName}" créée`);
+  };
+
+  const handleDeleteSeries = (id: string) => {
+    if (quizSeries.length <= 1) {
+      toast.error("Vous ne pouvez pas supprimer la dernière série");
+      return;
+    }
+    
+    setQuizSeries(prev => prev.filter(series => series.id !== id));
+    
+    // Si la série supprimée est la série courante, sélectionner la première série
+    if (id === currentSeriesId) {
+      const remainingSeries = quizSeries.filter(series => series.id !== id);
+      if (remainingSeries.length > 0) {
+        setCurrentSeriesId(remainingSeries[0].id);
+      }
+    }
+    
+    toast.success("Série supprimée");
+  };
+
+  const handleChangeSeries = (id: string) => {
+    setCurrentSeriesId(id);
+  };
+
   // Store state in localStorage whenever questions change
   useEffect(() => {
     try {
-      localStorage.setItem('editingImageQuestions', JSON.stringify(editingQuestions));
-      localStorage.setItem('editingTextQuestions', JSON.stringify(editingTextQuestions));
+      localStorage.setItem(`editingImageQuestions_${currentSeriesId}`, JSON.stringify(editingQuestions));
+      localStorage.setItem(`editingTextQuestions_${currentSeriesId}`, JSON.stringify(editingTextQuestions));
     } catch (error) {
       console.error("Error saving quiz questions to localStorage:", error);
     }
-  }, [editingQuestions, editingTextQuestions]);
+  }, [editingQuestions, editingTextQuestions, currentSeriesId]);
 
   // Load state from localStorage on component mount
   useEffect(() => {
     try {
-      const savedImageQuestions = localStorage.getItem('editingImageQuestions');
-      const savedTextQuestions = localStorage.getItem('editingTextQuestions');
+      const savedImageQuestions = localStorage.getItem(`editingImageQuestions_${currentSeriesId}`);
+      const savedTextQuestions = localStorage.getItem(`editingTextQuestions_${currentSeriesId}`);
       
       if (savedImageQuestions && savedImageQuestions !== 'undefined') {
         setEditingQuestions(JSON.parse(savedImageQuestions));
@@ -91,12 +224,12 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
     } catch (error) {
       console.error("Error loading quiz questions from localStorage:", error);
     }
-  }, []);
+  }, [currentSeriesId]);
 
   // Store current form values when form changes to avoid losing data
   const storeFormDataInLocalStorage = (data: any, type: "image" | "text") => {
     try {
-      localStorage.setItem(`currentForm_${type}`, JSON.stringify(data));
+      localStorage.setItem(`currentForm_${type}_${currentSeriesId}`, JSON.stringify(data));
     } catch (error) {
       console.error(`Error saving ${type} form data to localStorage:`, error);
     }
@@ -130,7 +263,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   const imageForm = useForm<ImageQuestion>({
     defaultValues: (() => {
       try {
-        const savedForm = localStorage.getItem('currentForm_image');
+        const savedForm = localStorage.getItem(`currentForm_image_${currentSeriesId}`);
         return savedForm && savedForm !== 'undefined' 
           ? JSON.parse(savedForm) 
           : imageFormDefaultValues;
@@ -144,7 +277,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   const textForm = useForm<TextQuestion>({
     defaultValues: (() => {
       try {
-        const savedForm = localStorage.getItem('currentForm_text');
+        const savedForm = localStorage.getItem(`currentForm_text_${currentSeriesId}`);
         return savedForm && savedForm !== 'undefined'
           ? JSON.parse(savedForm)
           : textFormDefaultValues;
@@ -154,6 +287,13 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       }
     })(),
   });
+
+  // Reset forms when changing series
+  useEffect(() => {
+    imageForm.reset(imageFormDefaultValues);
+    textForm.reset(textFormDefaultValues);
+    setSelectedQuestionIndex(null);
+  }, [currentSeriesId]);
 
   // Watch form changes and save to localStorage
   useEffect(() => {
@@ -169,7 +309,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       imageSubscription.unsubscribe();
       textSubscription.unsubscribe();
     };
-  }, [imageForm, textForm]);
+  }, [imageForm, textForm, currentSeriesId]);
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedOption(optionIndex);
@@ -212,7 +352,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       toast.success("Question ajoutée avec succès");
     }
     // Clear form and localStorage after successful submission
-    localStorage.removeItem('currentForm_image');
+    localStorage.removeItem(`currentForm_image_${currentSeriesId}`);
     imageForm.reset(imageFormDefaultValues);
   };
 
@@ -233,7 +373,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       toast.success("Question ajoutée avec succès");
     }
     // Clear form and localStorage after successful submission
-    localStorage.removeItem('currentForm_text');
+    localStorage.removeItem(`currentForm_text_${currentSeriesId}`);
     textForm.reset(textFormDefaultValues);
   };
 
@@ -258,7 +398,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
     if (selectedQuestionIndex === index) {
       setSelectedQuestionIndex(null);
       imageForm.reset(imageFormDefaultValues);
-      localStorage.removeItem('currentForm_image');
+      localStorage.removeItem(`currentForm_image_${currentSeriesId}`);
     }
     toast.success("Question supprimée");
   };
@@ -268,7 +408,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
     if (selectedQuestionIndex === index) {
       setSelectedQuestionIndex(null);
       textForm.reset(textFormDefaultValues);
-      localStorage.removeItem('currentForm_text');
+      localStorage.removeItem(`currentForm_text_${currentSeriesId}`);
     }
     toast.success("Question supprimée");
   };
@@ -394,6 +534,57 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
 
       {isEditMode ? (
         <div className="space-y-6 border rounded-lg p-6">
+          {/* Gestion des séries de quiz */}
+          <div className="border-b pb-4">
+            <h3 className="text-lg font-medium mb-4">Séries de Quiz</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Série actuelle</label>
+                <Select value={currentSeriesId} onValueChange={handleChangeSeries}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une série" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {quizSeries.map(series => (
+                      <SelectItem key={series.id} value={series.id}>
+                        {series.name} ({series.imageQuestions.length + series.textQuestions.length} questions)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-2">Nouvelle série</label>
+                  <Input 
+                    placeholder="Nom de la nouvelle série"
+                    value={newSeriesName}
+                    onChange={(e) => setNewSeriesName(e.target.value)}
+                  />
+                </div>
+                <Button
+                  onClick={handleAddSeries}
+                  className="bg-brand-blue hover:bg-brand-blue/90"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Ajouter
+                </Button>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              {quizSeries.length > 1 && (
+                <Button
+                  variant="outline"
+                  className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                  onClick={() => handleDeleteSeries(currentSeriesId)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer cette série
+                </Button>
+              )}
+            </div>
+          </div>
+
           <Tabs defaultValue="image" value={quizType} onValueChange={(v) => setQuizType(v as "image" | "text")}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold">
@@ -410,10 +601,10 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
                     setSelectedQuestionIndex(null);
                     if (quizType === "image") {
                       imageForm.reset(imageFormDefaultValues);
-                      localStorage.removeItem('currentForm_image');
+                      localStorage.removeItem(`currentForm_image_${currentSeriesId}`);
                     } else {
                       textForm.reset(textFormDefaultValues);
-                      localStorage.removeItem('currentForm_text');
+                      localStorage.removeItem(`currentForm_text_${currentSeriesId}`);
                     }
                   }}
                 >
@@ -702,7 +893,23 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
           <DialogContent className="sm:max-w-[700px]">
             <DialogHeader>
               <DialogTitle className="flex items-center justify-between">
-                <span>Quiz sur les méninges</span>
+                <div className="flex items-center gap-4">
+                  <span>Quiz sur les méninges</span>
+                  {quizSeries.length > 0 && (
+                    <Select value={currentSeriesId} onValueChange={handleChangeSeries}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Sélectionner une série" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {quizSeries.map(series => (
+                          <SelectItem key={series.id} value={series.id}>
+                            {series.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
                 <Button variant="ghost" size="icon">
                   <X className="h-4 w-4" />
                 </Button>

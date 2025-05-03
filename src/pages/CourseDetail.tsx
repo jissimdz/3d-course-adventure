@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -137,6 +138,7 @@ const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [activeTab, setActiveTab] = useState("overview");
   const [activeQuizSection, setActiveQuizSection] = useState<number | null>(null);
+  const [activeQuizSeries, setActiveQuizSeries] = useState<string>("default");
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number; videoUrl?: string} | null>(null);
   const [modelViewOpen, setModelViewOpen] = useState(false);
@@ -175,8 +177,9 @@ const CourseDetail: React.FC = () => {
     setModelViewOpen(true);
   };
 
-  const handleQuizStart = (sectionId: number) => {
+  const handleQuizStart = (sectionId: number, seriesId: string = "default") => {
     setActiveQuizSection(sectionId);
+    setActiveQuizSeries(seriesId);
     setActiveTab("quiz");
   };
 
@@ -238,6 +241,7 @@ const CourseDetail: React.FC = () => {
                     questions={quizQuestions}
                     textQuestions={textQuizQuestions}
                     onEditClick={handleQuizEdit}
+                    seriesId={activeQuizSeries}
                   />
                 </TabsContent>
               </Tabs>
