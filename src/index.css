@@ -146,3 +146,25 @@
 .question.active {
   display: block;
 }
+
+/* Video upload styles */
+.video-upload-area {
+  border: 2px dashed #e2e8f0;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.video-upload-area:hover {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.video-upload-progress {
+  height: 4px;
+  background-color: #3b82f6;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
