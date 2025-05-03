@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -63,32 +64,112 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
   const [quizType, setQuizType] = useState<"image" | "text">("image");
   const fileInputRefs = useRef<(HTMLInputElement | null)[]>([null, null, null, null]);
+  
+  // Store state in localStorage whenever questions change
+  useEffect(() => {
+    try {
+      localStorage.setItem('editingImageQuestions', JSON.stringify(editingQuestions));
+      localStorage.setItem('editingTextQuestions', JSON.stringify(editingTextQuestions));
+    } catch (error) {
+      console.error("Error saving quiz questions to localStorage:", error);
+    }
+  }, [editingQuestions, editingTextQuestions]);
 
+  // Load state from localStorage on component mount
+  useEffect(() => {
+    try {
+      const savedImageQuestions = localStorage.getItem('editingImageQuestions');
+      const savedTextQuestions = localStorage.getItem('editingTextQuestions');
+      
+      if (savedImageQuestions && savedImageQuestions !== 'undefined') {
+        setEditingQuestions(JSON.parse(savedImageQuestions));
+      }
+      
+      if (savedTextQuestions && savedTextQuestions !== 'undefined') {
+        setEditingTextQuestions(JSON.parse(savedTextQuestions));
+      }
+    } catch (error) {
+      console.error("Error loading quiz questions from localStorage:", error);
+    }
+  }, []);
+
+  // Store current form values when form changes to avoid losing data
+  const storeFormDataInLocalStorage = (data: any, type: "image" | "text") => {
+    try {
+      localStorage.setItem(`currentForm_${type}`, JSON.stringify(data));
+    } catch (error) {
+      console.error(`Error saving ${type} form data to localStorage:`, error);
+    }
+  };
+
+  // Default form values for image questions
+  const imageFormDefaultValues = {
+    id: editingQuestions.length > 0 ? Math.max(...editingQuestions.map(q => q.id)) + 1 : 1,
+    question: "",
+    options: [
+      { image: "", alt: "", isCorrect: false },
+      { image: "", alt: "", isCorrect: false },
+      { image: "", alt: "", isCorrect: false },
+      { image: "", alt: "", isCorrect: false },
+    ],
+  };
+
+  // Default form values for text questions
+  const textFormDefaultValues = {
+    id: editingTextQuestions.length > 0 ? Math.max(...editingTextQuestions.map(q => q.id)) + 1 : 1,
+    question: "",
+    options: [
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+    ],
+  };
+
+  // Initialize forms with stored values or defaults
   const imageForm = useForm<ImageQuestion>({
-    defaultValues: {
-      id: editingQuestions.length + 1,
-      question: "",
-      options: [
-        { image: "", alt: "", isCorrect: false },
-        { image: "", alt: "", isCorrect: false },
-        { image: "", alt: "", isCorrect: false },
-        { image: "", alt: "", isCorrect: false },
-      ],
-    },
+    defaultValues: (() => {
+      try {
+        const savedForm = localStorage.getItem('currentForm_image');
+        return savedForm && savedForm !== 'undefined' 
+          ? JSON.parse(savedForm) 
+          : imageFormDefaultValues;
+      } catch (error) {
+        console.error("Error loading image form from localStorage:", error);
+        return imageFormDefaultValues;
+      }
+    })(),
   });
 
   const textForm = useForm<TextQuestion>({
-    defaultValues: {
-      id: editingTextQuestions.length + 1,
-      question: "",
-      options: [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-      ],
-    },
+    defaultValues: (() => {
+      try {
+        const savedForm = localStorage.getItem('currentForm_text');
+        return savedForm && savedForm !== 'undefined'
+          ? JSON.parse(savedForm)
+          : textFormDefaultValues;
+      } catch (error) {
+        console.error("Error loading text form from localStorage:", error);
+        return textFormDefaultValues;
+      }
+    })(),
   });
+
+  // Watch form changes and save to localStorage
+  useEffect(() => {
+    const imageSubscription = imageForm.watch((value) => {
+      storeFormDataInLocalStorage(value, "image");
+    });
+    
+    const textSubscription = textForm.watch((value) => {
+      storeFormDataInLocalStorage(value, "text");
+    });
+    
+    return () => {
+      imageSubscription.unsubscribe();
+      textSubscription.unsubscribe();
+    };
+  }, [imageForm, textForm]);
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedOption(optionIndex);
@@ -120,10 +201,19 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       updatedQuestions[selectedQuestionIndex] = data;
       setEditingQuestions(updatedQuestions);
       setSelectedQuestionIndex(null);
+      toast.success("Question modifiée avec succès");
     } else {
-      setEditingQuestions(prev => [...prev, data]);
+      // Ensure the new question has a unique ID
+      const newId = editingQuestions.length > 0 
+        ? Math.max(...editingQuestions.map(q => q.id)) + 1 
+        : 1;
+      const newQuestion = { ...data, id: newId };
+      setEditingQuestions(prev => [...prev, newQuestion]);
+      toast.success("Question ajoutée avec succès");
     }
-    imageForm.reset();
+    // Clear form and localStorage after successful submission
+    localStorage.removeItem('currentForm_image');
+    imageForm.reset(imageFormDefaultValues);
   };
 
   const handleAddTextQuestion = (data: TextQuestion) => {
@@ -132,36 +222,55 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
       updatedQuestions[selectedQuestionIndex] = data;
       setEditingTextQuestions(updatedQuestions);
       setSelectedQuestionIndex(null);
+      toast.success("Question modifiée avec succès");
     } else {
-      setEditingTextQuestions(prev => [...prev, data]);
+      // Ensure the new question has a unique ID
+      const newId = editingTextQuestions.length > 0 
+        ? Math.max(...editingTextQuestions.map(q => q.id)) + 1 
+        : 1;
+      const newQuestion = { ...data, id: newId };
+      setEditingTextQuestions(prev => [...prev, newQuestion]);
+      toast.success("Question ajoutée avec succès");
     }
-    textForm.reset();
+    // Clear form and localStorage after successful submission
+    localStorage.removeItem('currentForm_text');
+    textForm.reset(textFormDefaultValues);
   };
 
   const handleEditImageQuestion = (index: number) => {
     setSelectedQuestionIndex(index);
-    imageForm.reset(editingQuestions[index]);
+    const questionToEdit = editingQuestions[index];
+    imageForm.reset(questionToEdit);
+    // Update localStorage with the question being edited
+    storeFormDataInLocalStorage(questionToEdit, "image");
   };
 
   const handleEditTextQuestion = (index: number) => {
     setSelectedQuestionIndex(index);
-    textForm.reset(editingTextQuestions[index]);
+    const questionToEdit = editingTextQuestions[index];
+    textForm.reset(questionToEdit);
+    // Update localStorage with the question being edited
+    storeFormDataInLocalStorage(questionToEdit, "text");
   };
 
   const handleDeleteImageQuestion = (index: number) => {
     setEditingQuestions(prev => prev.filter((_, i) => i !== index));
     if (selectedQuestionIndex === index) {
       setSelectedQuestionIndex(null);
-      imageForm.reset();
+      imageForm.reset(imageFormDefaultValues);
+      localStorage.removeItem('currentForm_image');
     }
+    toast.success("Question supprimée");
   };
 
   const handleDeleteTextQuestion = (index: number) => {
     setEditingTextQuestions(prev => prev.filter((_, i) => i !== index));
     if (selectedQuestionIndex === index) {
       setSelectedQuestionIndex(null);
-      textForm.reset();
+      textForm.reset(textFormDefaultValues);
+      localStorage.removeItem('currentForm_text');
     }
+    toast.success("Question supprimée");
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, optionIndex: number) => {
@@ -184,19 +293,73 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
           };
           imageForm.setValue('options', currentOptions);
           
-          toast.success('Image uploaded successfully');
+          // Save form state after upload
+          storeFormDataInLocalStorage(imageForm.getValues(), "image");
+          toast.success('Image téléchargée avec succès');
         }
       };
       
       reader.onerror = () => {
-        toast.error('Failed to read image file');
+        toast.error('Échec de lecture du fichier image');
       };
       
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload image');
+      toast.error('Échec du téléchargement de l\'image');
     }
+  };
+
+  // Deep check if there's at least one correct option selected
+  const hasCorrectOption = (options: any[]) => {
+    return options.some(option => option.isCorrect === true);
+  };
+
+  // Handle form submission with validation
+  const onImageFormSubmit = (data: ImageQuestion) => {
+    // Check if all fields are filled
+    if (!data.question.trim()) {
+      toast.error("Veuillez entrer une question");
+      return;
+    }
+
+    // Check if images are provided
+    const missingImages = data.options.some(opt => !opt.image);
+    if (missingImages) {
+      toast.error("Veuillez fournir des images pour toutes les options");
+      return;
+    }
+
+    // Check if at least one correct option is selected
+    if (!hasCorrectOption(data.options)) {
+      toast.error("Veuillez sélectionner au moins une option correcte");
+      return;
+    }
+
+    handleAddImageQuestion(data);
+  };
+
+  const onTextFormSubmit = (data: TextQuestion) => {
+    // Check if all fields are filled
+    if (!data.question.trim()) {
+      toast.error("Veuillez entrer une question");
+      return;
+    }
+
+    // Check if texts are provided
+    const missingTexts = data.options.some(opt => !opt.text.trim());
+    if (missingTexts) {
+      toast.error("Veuillez fournir du texte pour toutes les options");
+      return;
+    }
+
+    // Check if at least one correct option is selected
+    if (!hasCorrectOption(data.options)) {
+      toast.error("Veuillez sélectionner au moins une option correcte");
+      return;
+    }
+
+    handleAddTextQuestion(data);
   };
 
   const sampleTextQuestions: TextQuestion[] = [
@@ -246,9 +409,11 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
                   onClick={() => {
                     setSelectedQuestionIndex(null);
                     if (quizType === "image") {
-                      imageForm.reset();
+                      imageForm.reset(imageFormDefaultValues);
+                      localStorage.removeItem('currentForm_image');
                     } else {
-                      textForm.reset();
+                      textForm.reset(textFormDefaultValues);
+                      localStorage.removeItem('currentForm_text');
                     }
                   }}
                 >
@@ -260,7 +425,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
 
             <TabsContent value="image">
               <Form {...imageForm}>
-                <form onSubmit={imageForm.handleSubmit(handleAddImageQuestion)} className="space-y-4">
+                <form onSubmit={imageForm.handleSubmit(onImageFormSubmit)} className="space-y-4">
                   <FormField
                     control={imageForm.control}
                     name="question"
@@ -366,6 +531,11 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
               <ScrollArea className="h-[300px] w-full rounded-md border p-4 mt-4">
                 <div className="space-y-4">
                   <h4 className="font-medium sticky top-0 bg-white py-2">Questions existantes</h4>
+                  {editingQuestions.length === 0 && (
+                    <div className="text-center py-4 text-gray-500">
+                      Aucune question avec images. Ajoutez-en une !
+                    </div>
+                  )}
                   {editingQuestions.map((q, index) => (
                     <div key={q.id} className="p-4 border rounded-lg">
                       <div className="flex justify-between items-start mb-2">
@@ -409,7 +579,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
 
             <TabsContent value="text">
               <Form {...textForm}>
-                <form onSubmit={textForm.handleSubmit(handleAddTextQuestion)} className="space-y-4">
+                <form onSubmit={textForm.handleSubmit(onTextFormSubmit)} className="space-y-4">
                   <FormField
                     control={textForm.control}
                     name="question"
