@@ -608,6 +608,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
               <TabsContent value="text">
                 <TextQuizComponent 
                   questions={editingTextQuestions.length > 0 ? editingTextQuestions : sampleTextQuestions} 
+                  autoAdvance={true}
                 />
               </TabsContent>
             </Tabs>

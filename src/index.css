@@ -109,6 +109,12 @@
   100% { transform: scale(1); }
 }
 
+@keyframes flash {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
 .answer-btn {
   transition: all 0.3s;
 }
@@ -119,10 +125,24 @@
 
 .answer-btn.correct {
   box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
-  border: 2px solid #4CAF50;
+  border: 2px solid #4CAF50 !important;
 }
 
 .answer-btn.wrong {
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-  border: 2px solid #F44336;
+  border: 2px solid #F44336 !important;
+}
+
+/* Flash animation for drawing attention */
+.flash-effect {
+  animation: flash 0.5s 2;
+}
+
+/* Question visibility */
+.question {
+  display: none;
+}
+
+.question.active {
+  display: block;
 }

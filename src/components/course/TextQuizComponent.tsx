@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -16,20 +16,25 @@ interface TextQuestion {
 interface TextQuizComponentProps {
   questions: TextQuestion[];
   onComplete?: (score: number, total: number) => void;
+  autoAdvance?: boolean;
 }
 
 const TextQuizComponent: React.FC<TextQuizComponentProps> = ({ 
   questions, 
-  onComplete 
+  onComplete,
+  autoAdvance = true
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [isQuizCompleted, setIsQuizCompleted] = useState(false);
   const [answerStatus, setAnswerStatus] = useState<Record<number, 'correct' | 'wrong' | null>>({});
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
+  const [flashEffect, setFlashEffect] = useState<number | null>(null);
   
   const correctSoundRef = useRef<HTMLAudioElement | null>(null);
   const wrongSoundRef = useRef<HTMLAudioElement | null>(null);
+  const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize audio refs
   React.useEffect(() => {
@@ -44,29 +49,51 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
       // Cleanup
       correctSoundRef.current = null;
       wrongSoundRef.current = null;
+      
+      if (autoAdvanceTimeoutRef.current) {
+        clearTimeout(autoAdvanceTimeoutRef.current);
+      }
     };
   }, []);
 
   const handleOptionSelect = (optionIndex: number) => {
+    if (buttonsDisabled) return; // Prevent selecting when buttons are disabled
+    
     setSelectedOption(optionIndex);
+    setButtonsDisabled(true); // Disable all buttons after selection
     
     // Play sound based on answer correctness
     const isCorrect = questions[currentQuestion]?.options[optionIndex]?.isCorrect;
     
     if (isCorrect) {
       setAnswerStatus({ ...answerStatus, [optionIndex]: 'correct' });
+      setFlashEffect(optionIndex);
       if (correctSoundRef.current) {
+        correctSoundRef.current.currentTime = 0; // Reset if already played
         correctSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
       }
     } else {
       setAnswerStatus({ ...answerStatus, [optionIndex]: 'wrong' });
+      setFlashEffect(optionIndex);
       if (wrongSoundRef.current) {
+        wrongSoundRef.current.currentTime = 0; // Reset if already played
         wrongSoundRef.current.play().catch(err => console.error("Error playing sound:", err));
       }
+    }
+    
+    // If auto-advance is enabled, move to next question after delay
+    if (autoAdvance) {
+      autoAdvanceTimeoutRef.current = setTimeout(() => {
+        handleNextQuestion();
+      }, 1500); // 1.5 second delay before advancing
     }
   };
 
   const handleNextQuestion = () => {
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+    }
+    
     if (selectedOption !== null && questions[currentQuestion]?.options[selectedOption]?.isCorrect) {
       setScore(prev => prev + 1);
     }
@@ -75,6 +102,8 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
       setCurrentQuestion(prev => prev + 1);
       setSelectedOption(null);
       setAnswerStatus({});
+      setButtonsDisabled(false);
+      setFlashEffect(null);
     } else {
       setIsQuizCompleted(true);
       if (onComplete) {
@@ -89,7 +118,20 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
     setScore(0);
     setIsQuizCompleted(false);
     setAnswerStatus({});
+    setButtonsDisabled(false);
+    setFlashEffect(null);
   };
+
+  // Clear flash effect after animation completes
+  useEffect(() => {
+    if (flashEffect !== null) {
+      const timer = setTimeout(() => {
+        setFlashEffect(null);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [flashEffect]);
 
   // Handle case where there are no questions
   if (questions.length === 0) {
@@ -119,26 +161,18 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
                   key={index}
                   variant="outline"
                   onClick={() => handleOptionSelect(index)}
+                  disabled={buttonsDisabled}
                   className={cn(
                     "w-full justify-start text-left p-4 h-auto answer-btn transition-all",
                     selectedOption === index 
                       ? "border-brand-blue ring-2 ring-brand-blue/20" 
                       : "border-gray-200",
                     {
-                      "correct box-shadow-[0_0_15px_rgba(0,255,0,0.7)] border-2 border-[#4CAF50] animate-pulse": answerStatus[index] === 'correct',
-                      "wrong box-shadow-[0_0_15px_rgba(255,0,0,0.7)] border-2 border-[#F44336] animate-pulse": answerStatus[index] === 'wrong'
+                      "correct": answerStatus[index] === 'correct',
+                      "wrong": answerStatus[index] === 'wrong',
+                      "flash-effect": flashEffect === index
                     }
                   )}
-                  style={{
-                    boxShadow: answerStatus[index] === 'correct' 
-                      ? '0 0 15px rgba(0, 255, 0, 0.7)' 
-                      : answerStatus[index] === 'wrong' 
-                        ? '0 0 15px rgba(255, 0, 0, 0.7)' 
-                        : 'none',
-                    animation: (answerStatus[index] === 'correct' || answerStatus[index] === 'wrong') 
-                      ? 'pulse 0.3s' 
-                      : 'none'
-                  }}
                 >
                   {option.text}
                 </Button>
@@ -146,13 +180,15 @@ const TextQuizComponent: React.FC<TextQuizComponentProps> = ({
             </div>
           </div>
 
-          <Button
-            onClick={handleNextQuestion}
-            disabled={selectedOption === null}
-            className="w-full bg-brand-blue hover:bg-brand-blue/90"
-          >
-            {currentQuestion === questions.length - 1 ? "Terminer" : "Question suivante"}
-          </Button>
+          {!autoAdvance && (
+            <Button
+              onClick={handleNextQuestion}
+              disabled={selectedOption === null}
+              className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            >
+              {currentQuestion === questions.length - 1 ? "Terminer" : "Question suivante"}
+            </Button>
+          )}
         </div>
       ) : (
         <div className="space-y-4">
