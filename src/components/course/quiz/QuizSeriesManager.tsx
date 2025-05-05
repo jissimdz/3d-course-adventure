@@ -19,7 +19,7 @@ interface QuizSeriesManagerProps {
   onChangeSeries: (id: string) => void;
   onAddSeries: (name: string) => void;
   onDeleteSeries: (id: string) => void;
-  courseId: string; // Add courseId to props
+  courseId: string;
 }
 
 const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
@@ -28,7 +28,7 @@ const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
   onChangeSeries,
   onAddSeries,
   onDeleteSeries,
-  courseId // Use courseId in the component
+  courseId
 }) => {
   const [newSeriesName, setNewSeriesName] = React.useState<string>("");
 
@@ -40,18 +40,20 @@ const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
     
     onAddSeries(newSeriesName);
     setNewSeriesName("");
-
-    // We can also update the local storage here for redundancy
-    const storageKey = `quizSeries_${courseId}`;
-    try {
-      const currentData = localStorage.getItem(storageKey);
-      if (currentData) {
-        const parsedData = JSON.parse(currentData);
-        localStorage.setItem(storageKey, JSON.stringify(parsedData));
+    
+    // Mise à jour explicite du localStorage
+    setTimeout(() => {
+      try {
+        const storageKey = `quizSeries_${courseId}`;
+        const updatedSeries = localStorage.getItem(storageKey);
+        if (updatedSeries) {
+          console.log("Quiz series saved:", JSON.parse(updatedSeries));
+          toast.success("Série sauvegardée avec succès");
+        }
+      } catch (error) {
+        console.error("Error checking localStorage:", error);
       }
-    } catch (error) {
-      console.error("Error updating localStorage:", error);
-    }
+    }, 100);
   };
 
   return (
@@ -96,7 +98,11 @@ const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
           <Button
             variant="outline"
             className="text-red-500 hover:bg-red-50 hover:text-red-600"
-            onClick={() => onDeleteSeries(currentSeriesId)}
+            onClick={() => {
+              onDeleteSeries(currentSeriesId);
+              // Afficher une confirmation de suppression
+              toast.success("Série supprimée");
+            }}
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Supprimer cette série

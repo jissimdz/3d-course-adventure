@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +28,7 @@ interface QuizSectionProps {
   textQuestions?: TextQuestion[];
   onEditClick: () => void;
   seriesId?: string;
-  courseId: string; // Added courseId to the props
+  courseId: string;
 }
 
 const CourseQuiz: React.FC<QuizSectionProps> = ({ 
@@ -35,66 +36,71 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   textQuestions = [],
   onEditClick,
   seriesId = "default",
-  courseId // Use courseId in the component
+  courseId
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
 
-  // Initialize quiz series with default or saved data
+  // Clé de stockage unique par cours
+  const storageKey = `quizSeries_${courseId}`;
+
+  // Initialiser les séries de quiz avec les données par défaut ou sauvegardées
   useEffect(() => {
     try {
-      // Use courseId in the storage key
-      const storageKey = `quizSeries_${courseId}`;
+      console.log(`Loading quiz series for course: ${courseId}`);
       const savedSeries = localStorage.getItem(storageKey);
       
       if (savedSeries && savedSeries !== 'undefined') {
         const parsedSeries = JSON.parse(savedSeries);
+        console.log(`Loaded ${parsedSeries.length} quiz series for course: ${courseId}`);
         setQuizSeries(parsedSeries);
         
-        // If no series exists, create the default series
+        // Si aucune série n'existe, créer la série par défaut
         if (parsedSeries.length === 0) {
-          const defaultSeries: QuizSeries = {
-            id: "default",
-            name: "Quiz par défaut",
-            courseId: courseId, // Include courseId in the series
-            imageQuestions: questions,
-            textQuestions: textQuestions
-          };
-          setQuizSeries([defaultSeries]);
-          localStorage.setItem(storageKey, JSON.stringify([defaultSeries]));
+          createDefaultSeries();
         }
       } else {
-        // Initialize with the default series
-        const defaultSeries: QuizSeries = {
-          id: "default",
-          name: "Quiz par défaut",
-          courseId: courseId, // Include courseId in the series
-          imageQuestions: questions,
-          textQuestions: textQuestions
-        };
-        setQuizSeries([defaultSeries]);
-        localStorage.setItem(storageKey, JSON.stringify([defaultSeries]));
+        // Initialiser avec la série par défaut
+        createDefaultSeries();
       }
     } catch (error) {
-      console.error("Error loading quiz series from localStorage:", error);
+      console.error(`Error loading quiz series from localStorage for course ${courseId}:`, error);
+      createDefaultSeries();
     }
-  }, [courseId]); // Add courseId to dependency array
+  }, [courseId]);
 
-  // Save series to localStorage whenever they change
+  // Créer une série par défaut
+  const createDefaultSeries = () => {
+    const defaultSeries: QuizSeries = {
+      id: "default",
+      name: "Quiz par défaut",
+      courseId: courseId,
+      imageQuestions: questions,
+      textQuestions: textQuestions
+    };
+    setQuizSeries([defaultSeries]);
+    try {
+      localStorage.setItem(storageKey, JSON.stringify([defaultSeries]));
+      console.log(`Created default series for course: ${courseId}`);
+    } catch (error) {
+      console.error(`Error saving default quiz series for course ${courseId}:`, error);
+    }
+  };
+
+  // Sauvegarder les séries dans localStorage à chaque modification
   useEffect(() => {
     if (quizSeries.length > 0) {
       try {
-        // Use courseId in the storage key
-        const storageKey = `quizSeries_${courseId}`;
         localStorage.setItem(storageKey, JSON.stringify(quizSeries));
+        console.log(`Saved ${quizSeries.length} quiz series for course: ${courseId}`);
       } catch (error) {
-        console.error("Error saving quiz series to localStorage:", error);
+        console.error(`Error saving quiz series to localStorage for course ${courseId}:`, error);
       }
     }
-  }, [quizSeries, courseId]); // Add courseId to dependency array
+  }, [quizSeries, courseId, storageKey]);
 
-  // Get current series questions
+  // Obtenir les questions de la série actuelle
   const getCurrentSeriesQuestions = (): { imageQuestions: ImageQuestion[], textQuestions: TextQuestion[] } => {
     const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
     if (currentSeries) {
@@ -110,6 +116,22 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
 
   const handleChangeSeries = (id: string) => {
     setCurrentSeriesId(id);
+  };
+
+  const handleFinishEditing = () => {
+    setIsEditMode(false);
+    // Vérifier explicitement si les modifications ont été enregistrées
+    try {
+      const savedData = localStorage.getItem(storageKey);
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        if (parsedData.length === quizSeries.length) {
+          toast.success("Modifications enregistrées avec succès");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking saved data:", error);
+    }
   };
 
   const sampleTextQuestions: TextQuestion[] = [
@@ -148,8 +170,8 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
           setQuizSeries={setQuizSeries}
           currentSeriesId={currentSeriesId}
           setCurrentSeriesId={setCurrentSeriesId}
-          onFinishEditing={() => setIsEditMode(false)}
-          courseId={courseId} // Pass courseId to QuizEditor
+          onFinishEditing={handleFinishEditing}
+          courseId={courseId}
         />
       ) : (
         <Dialog>
