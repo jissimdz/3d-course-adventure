@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
@@ -246,6 +245,7 @@ const CourseDetail: React.FC = () => {
                     textQuestions={textQuizQuestions}
                     onEditClick={handleQuizEdit}
                     seriesId={activeQuizSeries}
+                    courseId={courseId || 'default'} // Pass courseId to CourseQuiz
                   />
                 </TabsContent>
               </Tabs>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +18,7 @@ interface QuizSeriesManagerProps {
   onChangeSeries: (id: string) => void;
   onAddSeries: (name: string) => void;
   onDeleteSeries: (id: string) => void;
+  courseId: string; // Add courseId to props
 }
 
 const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
@@ -27,6 +27,7 @@ const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
   onChangeSeries,
   onAddSeries,
   onDeleteSeries,
+  courseId // Use courseId in the component
 }) => {
   const [newSeriesName, setNewSeriesName] = React.useState<string>("");
 
@@ -38,6 +39,18 @@ const QuizSeriesManager: React.FC<QuizSeriesManagerProps> = ({
     
     onAddSeries(newSeriesName);
     setNewSeriesName("");
+
+    // We can also update the local storage here for redundancy
+    const storageKey = `quizSeries_${courseId}`;
+    try {
+      const currentData = localStorage.getItem(storageKey);
+      if (currentData) {
+        const parsedData = JSON.parse(currentData);
+        localStorage.setItem(storageKey, JSON.stringify(parsedData));
+      }
+    } catch (error) {
+      console.error("Error updating localStorage:", error);
+    }
   };
 
   return (

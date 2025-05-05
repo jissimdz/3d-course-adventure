@@ -25,6 +25,7 @@ export interface TextQuestion {
 export interface QuizSeries {
   id: string;
   name: string;
+  courseId: string;  // Added courseId to associate series with specific courses
   imageQuestions: ImageQuestion[];
   textQuestions: TextQuestion[];
 }

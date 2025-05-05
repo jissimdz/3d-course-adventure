@@ -16,6 +16,7 @@ interface QuizEditorProps {
   currentSeriesId: string;
   setCurrentSeriesId: React.Dispatch<React.SetStateAction<string>>;
   onFinishEditing: () => void;
+  courseId: string; // Add courseId to props
 }
 
 const QuizEditor: React.FC<QuizEditorProps> = ({
@@ -24,6 +25,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({
   currentSeriesId,
   setCurrentSeriesId,
   onFinishEditing,
+  courseId // Use courseId in the component
 }) => {
   const [quizType, setQuizType] = useState<"image" | "text">("image");
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
@@ -82,6 +84,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({
     const newSeries: QuizSeries = {
       id: newId,
       name,
+      courseId: courseId, // Include courseId in new series
       imageQuestions: [],
       textQuestions: []
     };
@@ -192,6 +195,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({
         onChangeSeries={handleChangeSeries}
         onAddSeries={handleAddSeries}
         onDeleteSeries={handleDeleteSeries}
+        courseId={courseId} // Pass courseId to QuizSeriesManager
       />
 
       <Tabs defaultValue="image" value={quizType} onValueChange={(v) => setQuizType(v as "image" | "text")}>
