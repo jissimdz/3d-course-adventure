@@ -18,8 +18,10 @@ import {
   getLearningOutcomes,
   CourseSection
 } from "@/components/course/CourseSections";
+import { ImageQuestion, TextQuestion } from "@/components/course/types/quizTypes";
 
-const sampleQuestions = [
+// Sample quiz questions
+const sampleQuestions: ImageQuestion[] = [
   {
     id: 1,
     question: "Quelle image représente la dure-mère ?",
@@ -48,7 +50,8 @@ const sampleQuestions = [
   }
 ];
 
-const quizzesBySection: Record<number, any[]> = {
+// Quiz questions by section
+const quizzesBySection: Record<number, ImageQuestion[]> = {
   1: [
     {
       id: 1,
@@ -107,7 +110,8 @@ const quizzesBySection: Record<number, any[]> = {
   ]
 };
 
-const textQuizzesBySection: Record<number, any[]> = {
+// Text quiz questions by section
+const textQuizzesBySection: Record<number, TextQuestion[]> = {
   1: [
     {
       id: 1,
@@ -188,7 +192,7 @@ const CourseDetail: React.FC = () => {
     // You can implement quiz editing functionality here
   };
 
-  const quizQuestions =
+  const quizQuestions = 
     activeQuizSection !== null && quizzesBySection[activeQuizSection]
       ? quizzesBySection[activeQuizSection]
       : [];
