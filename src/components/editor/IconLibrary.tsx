@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Folder, Upload, Plus } from "lucide-react";
+import { Folder, Upload, Plus, Download, Share, Save } from "lucide-react";
 import { toast } from "sonner";
 
 interface IconData {
@@ -34,6 +34,7 @@ const IconLibrary: React.FC<IconLibraryProps> = ({ onAddIcon }) => {
   const [newFolderName, setNewFolderName] = useState("");
   const [showNewFolderInput, setShowNewFolderInput] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   
   // Ouvrir/Initialiser la base de données IndexedDB
   const openDB = (): Promise<IDBDatabase> => {
@@ -205,6 +206,89 @@ const IconLibrary: React.FC<IconLibraryProps> = ({ onAddIcon }) => {
   const handleDragStart = (e: React.DragEvent, iconData: string) => {
     e.dataTransfer.setData("icon", iconData);
   };
+  
+  // Exporter un dossier spécifique
+  const exportFolder = (folderName: string) => {
+    const folderData = iconLibrary[folderName];
+    if (!folderData || folderData.length === 0) {
+      toast.error("Le dossier est vide");
+      return;
+    }
+    
+    // Créer un objet à exporter avec des métadonnées
+    const exportData = {
+      name: folderName,
+      icons: folderData,
+      timestamp: new Date().toISOString(),
+      version: "1.0"
+    };
+    
+    // Convertir en JSON et créer un blob
+    const jsonString = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    
+    // Créer un URL pour le téléchargement
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `icones-${folderName.replace(/\s+/g, '-').toLowerCase()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    
+    // Nettoyer
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Dossier "${folderName}" exporté avec succès`);
+  };
+  
+  // Importer un dossier
+  const importFolder = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        if (event.target?.result) {
+          const importedData = JSON.parse(event.target.result.toString());
+          
+          // Validation basique
+          if (!importedData.name || !Array.isArray(importedData.icons)) {
+            toast.error("Fichier d'importation invalide");
+            return;
+          }
+          
+          // Vérifier si le dossier existe déjà
+          let folderName = importedData.name;
+          if (iconLibrary[folderName]) {
+            // Générer un nom unique
+            folderName = `${folderName}_${Date.now()}`;
+          }
+          
+          // Limiter le nombre d'icônes
+          const iconsToImport = importedData.icons.slice(0, MAX_ICONS_PER_FOLDER);
+          
+          // Mettre à jour la bibliothèque
+          setIconLibrary(prev => ({
+            ...prev,
+            [folderName]: iconsToImport
+          }));
+          
+          toast.success(`Dossier "${folderName}" importé avec ${iconsToImport.length} icônes`);
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'importation:", error);
+        toast.error("Erreur lors de l'importation du dossier");
+      }
+    };
+    
+    reader.onerror = () => {
+      toast.error("Erreur de lecture du fichier");
+    };
+    
+    reader.readAsText(file);
+  };
 
   return (
     <div className="p-4 bg-white rounded-lg border border-gray-200 mb-4">
@@ -219,7 +303,7 @@ const IconLibrary: React.FC<IconLibraryProps> = ({ onAddIcon }) => {
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <label className="cursor-pointer">
               <Input 
                 type="file" 
@@ -258,12 +342,41 @@ const IconLibrary: React.FC<IconLibraryProps> = ({ onAddIcon }) => {
                 </Button>
               </div>
             )}
+            
+            {/* Bouton d'importation de dossier */}
+            <label className="cursor-pointer">
+              <Input 
+                type="file" 
+                accept=".json" 
+                className="hidden" 
+                onChange={importFolder}
+              />
+              <Button variant="outline" className="flex items-center gap-2" asChild>
+                <span>
+                  <Download size={16} />
+                  Importer un dossier
+                </span>
+              </Button>
+            </label>
           </div>
           
           <div className="space-y-4">
             {Object.entries(iconLibrary).map(([folder, icons]) => (
               <div key={folder} className="border rounded-md p-2">
-                <h4 className="font-medium mb-2">{folder}</h4>
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium">{folder}</h4>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => exportFolder(folder)}
+                      className="flex items-center gap-1"
+                    >
+                      <Save size={14} />
+                      Exporter
+                    </Button>
+                  </div>
+                </div>
                 <div className="grid grid-cols-4 gap-2">
                   {icons.map((icon, index) => (
                     <div 
