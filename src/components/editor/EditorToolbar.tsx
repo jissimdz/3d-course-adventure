@@ -1,12 +1,14 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Circle as CircleIcon, Upload } from "lucide-react";
+import { Download, Circle as CircleIcon, Upload, Pencil, Square } from "lucide-react";
 
 interface EditorToolbarProps {
   onAddCircle: () => void;
   onFileUpload: (file: File) => void;
   onExport: () => void;
+  onStartDrawLine: () => void;
+  onStopDrawLine: () => void;
   isLoading: boolean;
 }
 
@@ -14,9 +16,12 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   onAddCircle, 
   onFileUpload, 
   onExport,
+  onStartDrawLine,
+  onStopDrawLine,
   isLoading 
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
 
   const handleOpenFileDialog = () => {
     fileInputRef.current?.click();
@@ -29,22 +34,42 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
     }
   };
 
+  const toggleDrawingMode = () => {
+    if (isDrawingMode) {
+      onStopDrawLine();
+      setIsDrawingMode(false);
+    } else {
+      onStartDrawLine();
+      setIsDrawingMode(true);
+    }
+  };
+
   return (
     <div className="mb-4 flex flex-wrap gap-2">
       <Button 
         onClick={onAddCircle} 
         className="flex items-center gap-2"
-        disabled={isLoading}
+        disabled={isLoading || isDrawingMode}
       >
         <CircleIcon size={16} />
         Ajouter un cercle
       </Button>
 
       <Button 
+        onClick={toggleDrawingMode} 
+        className={`flex items-center gap-2 ${isDrawingMode ? 'bg-brand-blue text-white' : ''}`}
+        disabled={isLoading}
+        variant={isDrawingMode ? "default" : "outline"}
+      >
+        <Pencil size={16} />
+        {isDrawingMode ? "Arrêter le tracé" : "Tracer une ligne"}
+      </Button>
+
+      <Button 
         onClick={handleOpenFileDialog} 
         variant="outline" 
         className="flex items-center gap-2"
-        disabled={isLoading}
+        disabled={isLoading || isDrawingMode}
       >
         <Upload size={16} />
         Importer une image

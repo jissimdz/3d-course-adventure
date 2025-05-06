@@ -1,6 +1,5 @@
-
 import React, { useEffect, useRef } from "react";
-import { Canvas as FabricCanvas, Image as FabricImage, Circle, loadSVGFromURL } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage, Circle, Line, loadSVGFromURL } from 'fabric';
 import { toast } from "sonner";
 
 interface CanvasProps {
@@ -12,6 +11,7 @@ interface CanvasProps {
 const Canvas = ({ width = 800, height = 600, backgroundColor = '#ffffff' }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<FabricCanvas | null>(null);
+  const isDrawingRef = useRef(false);
 
   useEffect(() => {
     if (canvasRef.current && !fabricCanvasRef.current) {
@@ -41,6 +41,63 @@ const Canvas = ({ width = 800, height = 600, backgroundColor = '#ffffff' }: Canv
       fabricCanvasRef.current.add(circle);
       fabricCanvasRef.current.renderAll();
     }
+  };
+
+  const startDrawLine = () => {
+    if (!fabricCanvasRef.current) return;
+    
+    const canvas = fabricCanvasRef.current;
+    isDrawingRef.current = true;
+    
+    // Disable object selection during line drawing
+    canvas.selection = false;
+    
+    let line: Line;
+    let pointer: { x: number, y: number };
+    
+    canvas.on('mouse:down', (o) => {
+      if (!isDrawingRef.current) return;
+      pointer = canvas.getPointer(o.e);
+      line = new Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+        stroke: '#000000',
+        strokeWidth: 2,
+        selectable: true,
+        evented: true,
+      });
+      canvas.add(line);
+    });
+    
+    canvas.on('mouse:move', (o) => {
+      if (!isDrawingRef.current || !line) return;
+      pointer = canvas.getPointer(o.e);
+      line.set({ x2: pointer.x, y2: pointer.y });
+      canvas.renderAll();
+    });
+    
+    canvas.on('mouse:up', () => {
+      if (!isDrawingRef.current) return;
+      isDrawingRef.current = false;
+      if (line) {
+        line.setCoords();
+        // Re-enable selection after line is drawn
+        canvas.selection = true;
+      }
+    });
+    
+    toast("Mode tracé ligne activé");
+  };
+
+  const stopDrawLine = () => {
+    if (!fabricCanvasRef.current) return;
+    isDrawingRef.current = false;
+    fabricCanvasRef.current.selection = true;
+    
+    // Remove event listeners
+    fabricCanvasRef.current.off('mouse:down');
+    fabricCanvasRef.current.off('mouse:move');
+    fabricCanvasRef.current.off('mouse:up');
+    
+    toast("Mode tracé ligne désactivé");
   };
 
   const addImage = (imageUrl: string, isLoading: (state: boolean) => void) => {
@@ -197,12 +254,42 @@ const Canvas = ({ width = 800, height = 600, backgroundColor = '#ffffff' }: Canv
     }
   };
 
+  const addIconFromLibrary = (iconData: string) => {
+    if (!fabricCanvasRef.current) return;
+    
+    FabricImage.fromURL(iconData, { crossOrigin: 'anonymous' })
+      .then((img) => {
+        if (img && fabricCanvasRef.current) {
+          img.set({
+            left: 150,
+            top: 150,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            hasControls: true,
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 12,
+            transparentCorners: false,
+          });
+          fabricCanvasRef.current.add(img);
+          fabricCanvasRef.current.renderAll();
+          toast("Icône ajoutée depuis la bibliothèque");
+        }
+      })
+      .catch(() => {
+        toast.error("Erreur lors du chargement de l'icône");
+      });
+  };
+
   return {
     canvasRef,
     addCircle,
     addImage,
     addUploadedFile,
     exportCanvas,
+    startDrawLine,
+    stopDrawLine,
+    addIconFromLibrary,
   };
 };
 
