@@ -1,7 +1,7 @@
 
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Circle as CircleIcon, Upload, Pencil, Square } from "lucide-react";
+import { Download, Circle as CircleIcon, Upload, Pencil, Square, TextCursor } from "lucide-react";
 
 interface EditorToolbarProps {
   onAddCircle: () => void;
@@ -9,6 +9,7 @@ interface EditorToolbarProps {
   onExport: () => void;
   onStartDrawLine: () => void;
   onStopDrawLine: () => void;
+  onAddText: () => void;
   isLoading: boolean;
 }
 
@@ -18,6 +19,7 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
   onExport,
   onStartDrawLine,
   onStopDrawLine,
+  onAddText,
   isLoading 
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,6 +65,16 @@ const EditorToolbar: React.FC<EditorToolbarProps> = ({
       >
         <Pencil size={16} />
         {isDrawingMode ? "Arrêter le tracé" : "Tracer une ligne"}
+      </Button>
+
+      <Button 
+        onClick={onAddText} 
+        variant="outline" 
+        className="flex items-center gap-2"
+        disabled={isLoading || isDrawingMode}
+      >
+        <TextCursor size={16} />
+        Ajouter du texte
       </Button>
 
       <Button 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Canvas as FabricCanvas, Image as FabricImage, Circle, Line, loadSVGFromURL } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage, Circle, Line, loadSVGFromURL, IText } from 'fabric';
 import { toast } from "sonner";
 
 interface CanvasProps {
@@ -98,6 +98,28 @@ const Canvas = ({ width = 800, height = 600, backgroundColor = '#ffffff' }: Canv
     fabricCanvasRef.current.off('mouse:up');
     
     toast("Mode tracé ligne désactivé");
+  };
+
+  const addText = (text: string = "Double-cliquez pour éditer") => {
+    if (!fabricCanvasRef.current) return;
+    
+    const textObj = new IText(text, {
+      left: 150,
+      top: 150,
+      fontFamily: 'Arial',
+      fontSize: 20,
+      fill: '#000000',
+      borderColor: 'red',
+      cornerColor: 'green',
+      cornerSize: 12,
+      transparentCorners: false,
+      editingBorderColor: 'blue',
+    });
+    
+    fabricCanvasRef.current.add(textObj);
+    fabricCanvasRef.current.setActiveObject(textObj);
+    fabricCanvasRef.current.renderAll();
+    toast("Texte ajouté. Double-cliquez pour éditer");
   };
 
   const addImage = (imageUrl: string, isLoading: (state: boolean) => void) => {
@@ -290,6 +312,7 @@ const Canvas = ({ width = 800, height = 600, backgroundColor = '#ffffff' }: Canv
     startDrawLine,
     stopDrawLine,
     addIconFromLibrary,
+    addText,
   };
 };
 

@@ -42,6 +42,7 @@ const EditorPage: React.FC = () => {
           onExport={canvas.exportCanvas}
           onStartDrawLine={canvas.startDrawLine}
           onStopDrawLine={canvas.stopDrawLine}
+          onAddText={canvas.addText}
           isLoading={isLoading}
         />
 
