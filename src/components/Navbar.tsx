@@ -1,9 +1,12 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Pencil } from "lucide-react";
+
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
   return <header className="border-b border-gray-200 bg-white py-4">
       <div className="container mx-auto flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
@@ -20,6 +23,10 @@ const Navbar: React.FC = () => {
           </Link>
           <Link to="/about" className="font-medium text-gray-700 hover:text-brand-blue">
             À Propos
+          </Link>
+          <Link to="/editor" className="font-medium text-gray-700 hover:text-brand-blue flex items-center gap-1">
+            <Pencil size={16} />
+            Éditeur
           </Link>
           <Button variant="default" className="ml-2 bg-brand-blue hover:bg-brand-blue/90">
             Commencer
@@ -42,6 +49,10 @@ const Navbar: React.FC = () => {
             <Link to="/about" className="block py-2 font-medium text-gray-700 hover:text-brand-blue" onClick={() => setIsMenuOpen(false)}>
               À Propos
             </Link>
+            <Link to="/editor" className="flex items-center gap-1 py-2 font-medium text-gray-700 hover:text-brand-blue" onClick={() => setIsMenuOpen(false)}>
+              <Pencil size={16} />
+              Éditeur
+            </Link>
             <Button variant="default" className="mt-2 w-full bg-brand-blue hover:bg-brand-blue/90" onClick={() => setIsMenuOpen(false)}>
               Commencer
             </Button>
@@ -49,4 +60,5 @@ const Navbar: React.FC = () => {
         </div>}
     </header>;
 };
+
 export default Navbar;
