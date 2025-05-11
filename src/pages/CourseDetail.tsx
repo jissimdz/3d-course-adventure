@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useRef } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { getCourseById } from "@/data/coursesData";
@@ -11,6 +12,9 @@ import CourseSidebar from "@/components/course/CourseSidebar";
 import PreviewDialog from "@/components/course/PreviewDialog";
 import ModelViewDialog from "@/components/course/ModelViewDialog";
 import CourseQuiz from "@/components/course/CourseQuiz";
+import { Button } from "@/components/ui/button";
+import { Upload, Video } from "lucide-react";
+import { toast } from "sonner";
 import { 
   getNeuroanatomySections, 
   getGenericCourseSections, 
@@ -145,6 +149,8 @@ const CourseDetail: React.FC = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedPreview, setSelectedPreview] = useState<{title: string; id: number; videoUrl?: string} | null>(null);
   const [modelViewOpen, setModelViewOpen] = useState(false);
+  const [introVideo, setIntroVideo] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const course = courseId ? getCourseById(courseId) : null;
   
@@ -188,7 +194,36 @@ const CourseDetail: React.FC = () => {
 
   const handleQuizEdit = () => {
     console.log("Quiz edit clicked");
-    // You can implement quiz editing functionality here
+  };
+
+  const handleUploadIntroVideo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier si le fichier est une vidéo
+    if (!file.type.startsWith('video/')) {
+      toast.error('Le fichier doit être une vidéo');
+      return;
+    }
+
+    // Taille maximale: 100MB
+    const maxSize = 100 * 1024 * 1024; // 100MB en octets
+    if (file.size > maxSize) {
+      toast.error('La vidéo est trop volumineuse (max 100MB)');
+      return;
+    }
+
+    toast.info('Chargement de la vidéo en cours...');
+
+    // Créer une URL pour la vidéo uploadée
+    const videoUrl = URL.createObjectURL(file);
+    setIntroVideo(videoUrl);
+    
+    toast.success('Vidéo d\'introduction ajoutée avec succès');
+  };
+
+  const handleOpenFileDialog = () => {
+    fileInputRef.current?.click();
   };
 
   const quizQuestions = 
@@ -218,11 +253,71 @@ const CourseDetail: React.FC = () => {
                 </TabsList>
                 
                 <TabsContent value="overview">
-                  <CourseOverview 
-                    isNeuroanatomyCourse={isNeuroanatomyCourse} 
-                    learningOutcomes={learningOutcomes}
-                    onModelViewOpen={() => setModelViewOpen(true)}
-                  />
+                  <div className="space-y-6">
+                    {/* Zone de la vidéo d'introduction */}
+                    <div className="rounded-lg border border-gray-200 p-4">
+                      <h2 className="mb-4 text-xl font-semibold">Vidéo d'introduction</h2>
+                      
+                      {introVideo ? (
+                        <div className="aspect-video w-full overflow-hidden rounded-md">
+                          <video 
+                            src={introVideo} 
+                            controls
+                            className="h-full w-full"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex aspect-video w-full items-center justify-center rounded-md bg-gray-100">
+                          <div className="text-center">
+                            <Video className="mx-auto h-12 w-12 text-gray-400" />
+                            <p className="mt-2 text-gray-500">Aucune vidéo d'introduction</p>
+                            <Button 
+                              onClick={handleOpenFileDialog}
+                              variant="outline" 
+                              className="mt-4 flex items-center gap-2"
+                            >
+                              <Upload size={16} />
+                              Ajouter une vidéo d'introduction
+                            </Button>
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              accept="video/*"
+                              onChange={handleUploadIntroVideo}
+                              className="hidden"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      
+                      {introVideo && (
+                        <div className="mt-4 flex justify-end">
+                          <Button 
+                            variant="outline" 
+                            onClick={handleOpenFileDialog}
+                            className="flex items-center gap-2"
+                          >
+                            <Upload size={16} />
+                            Remplacer la vidéo
+                          </Button>
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept="video/*"
+                            onChange={handleUploadIntroVideo}
+                            className="hidden"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Course Overview content */}
+                    <CourseOverview 
+                      isNeuroanatomyCourse={isNeuroanatomyCourse} 
+                      learningOutcomes={learningOutcomes}
+                      onModelViewOpen={() => setModelViewOpen(true)}
+                    />
+                  </div>
                 </TabsContent>
                 
                 <TabsContent value="curriculum">
@@ -245,7 +340,7 @@ const CourseDetail: React.FC = () => {
                     textQuestions={textQuizQuestions}
                     onEditClick={handleQuizEdit}
                     seriesId={activeQuizSeries}
-                    courseId={courseId || 'default'} // Pass courseId to CourseQuiz
+                    courseId={courseId || 'default'} 
                   />
                 </TabsContent>
               </Tabs>
