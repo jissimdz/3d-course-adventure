@@ -7,7 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Upload } from "lucide-react";
+import { Upload, Video } from "lucide-react";
+import { toast } from "sonner";
 
 interface PreviewSection {
   title: string;
@@ -35,7 +36,13 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
 
     // Vérifier si le fichier est une vidéo
     if (!file.type.startsWith('video/')) {
-      console.error('Le fichier doit être une vidéo');
+      toast.error('Le fichier doit être une vidéo');
+      return;
+    }
+
+    // Vérifier la taille du fichier (limite à 100MB)
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error('La vidéo est trop volumineuse (limite 100MB)');
       return;
     }
 
@@ -47,6 +54,7 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
     setTimeout(() => {
       setUploadedVideo(videoUrl);
       setIsUploading(false);
+      toast.success('Vidéo téléchargée avec succès!');
       
       // En production, vous utiliseriez ici une API pour uploader la vidéo
       console.log('Vidéo uploadée:', file.name);
@@ -64,13 +72,12 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
         </DialogHeader>
         <div className="aspect-video w-full">
           {displayVideoUrl ? (
-            <iframe 
+            <video 
               width="100%" 
               height="100%" 
               src={displayVideoUrl}
               title={`Aperçu de ${selectedPreview?.title}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowFullScreen
+              controls
               className="aspect-video"
             />
           ) : (
