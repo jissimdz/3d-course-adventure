@@ -3,6 +3,7 @@ import React from "react";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
 import FeaturesSection from "@/components/FeaturesSection";
+import BadgeSystem from "@/components/BadgeSystem";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { courses } from "@/data/coursesData";
@@ -18,6 +19,23 @@ const Index: React.FC = () => {
     <Layout>
       <HeroSection />
       <FeaturesSection />
+      
+      {/* Badge System */}
+      <section className="bg-gray-50 py-12">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
+              Système de Badges
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-gray-600">
+              Suivez votre progression et débloquez des récompenses en complétant diverses activités éducatives.
+            </p>
+          </div>
+          <div className="mx-auto max-w-3xl">
+            <BadgeSystem />
+          </div>
+        </div>
+      </section>
       
       {/* Section pour l'éditeur de schémas */}
       <section className="bg-white py-12">

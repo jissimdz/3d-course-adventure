@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent
 } from "@/components/ui/tooltip";
-import { Search, Flask, Hourglass, Puzzle } from "lucide-react";
+import { Search, Award, Hourglass, Puzzle } from "lucide-react";
 
 interface Badge {
   id: number;
@@ -32,7 +32,7 @@ const BadgeSystem: React.FC = () => {
       id: 2, 
       name: "Génie scientifique", 
       description: "Score > 80% à un quiz", 
-      icon: <Flask className="h-8 w-8 text-white" />,
+      icon: <Award className="h-8 w-8 text-white" />,
       unlocked: false
     },
     {
