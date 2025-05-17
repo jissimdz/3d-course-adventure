@@ -19,7 +19,8 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command";
-import { Settings } from "lucide-react";
+import { Image, Trash2, Plus, Settings } from "lucide-react";
+import { toast } from "sonner";
 
 interface PuzzlePiece {
   id: number;
@@ -29,8 +30,14 @@ interface PuzzlePiece {
   top: number;
 }
 
-// Images disponibles pour les puzzles
-const availableImages = [
+interface PuzzleImage {
+  id: string;
+  url: string; 
+  name: string;
+}
+
+// Images disponibles pour les puzzles - maintenant stockées dans localStorage
+const getDefaultImages = (): PuzzleImage[] => [
   { 
     id: "default",
     url: "https://images.unsplash.com/photo-1518770660439-4636190af475", 
@@ -69,15 +76,60 @@ const PuzzlePage: React.FC = () => {
   const { toast } = useToast();
   
   // États pour la configuration
-  const [selectedImage, setSelectedImage] = useState(availableImages[0]);
+  const [availableImages, setAvailableImages] = useState<PuzzleImage[]>([]);
+  const [selectedImage, setSelectedImage] = useState<PuzzleImage | null>(null);
   const [difficulty, setDifficulty] = useState(difficultyLevels[1]); // Moyen par défaut
   const [showNumbers, setShowNumbers] = useState(false);
+  const [newImageUrl, setNewImageUrl] = useState("");
+  const [newImageName, setNewImageName] = useState("");
+  const [isAddingImage, setIsAddingImage] = useState(false);
   
+  // Charger les images depuis localStorage au chargement
   useEffect(() => {
-    initPuzzle();
+    const savedImages = localStorage.getItem('puzzleImages');
+    
+    if (savedImages) {
+      try {
+        const parsedImages = JSON.parse(savedImages);
+        setAvailableImages(parsedImages);
+        
+        // Définir la première image comme sélectionnée
+        if (parsedImages.length > 0 && !selectedImage) {
+          setSelectedImage(parsedImages[0]);
+        }
+      } catch (error) {
+        console.error("Error loading images from localStorage:", error);
+        const defaultImages = getDefaultImages();
+        setAvailableImages(defaultImages);
+        setSelectedImage(defaultImages[0]);
+      }
+    } else {
+      // Utiliser les images par défaut
+      const defaultImages = getDefaultImages();
+      setAvailableImages(defaultImages);
+      setSelectedImage(defaultImages[0]);
+      
+      // Enregistrer dans localStorage
+      localStorage.setItem('puzzleImages', JSON.stringify(defaultImages));
+    }
+  }, []);
+
+  // Sauvegarder les images dans localStorage quand elles changent
+  useEffect(() => {
+    if (availableImages.length > 0) {
+      localStorage.setItem('puzzleImages', JSON.stringify(availableImages));
+    }
+  }, [availableImages]);
+
+  useEffect(() => {
+    if (selectedImage) {
+      initPuzzle();
+    }
   }, [selectedImage, difficulty]);
 
   const initPuzzle = () => {
+    if (!selectedImage) return;
+    
     const grid = difficulty.grid;
     const pieceCount = grid * grid;
     const pieceSize = 400 / grid; // La taille de chaque pièce (conteneur de 400px)
@@ -100,6 +152,63 @@ const PuzzlePage: React.FC = () => {
     toast({
       title: "Puzzle initialisé",
       description: `${pieceCount} pièces - ${difficulty.name}`,
+    });
+  };
+
+  const addNewImage = () => {
+    if (!newImageUrl.trim() || !newImageName.trim()) {
+      toast({
+        title: "Erreur",
+        description: "L'URL et le nom de l'image sont requis",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const newId = `image-${Date.now()}`;
+    const newImage: PuzzleImage = {
+      id: newId,
+      url: newImageUrl,
+      name: newImageName
+    };
+    
+    const updatedImages = [...availableImages, newImage];
+    setAvailableImages(updatedImages);
+    setSelectedImage(newImage);
+    
+    // Reset form
+    setNewImageUrl("");
+    setNewImageName("");
+    setIsAddingImage(false);
+    
+    toast({
+      title: "Image ajoutée",
+      description: `"${newImageName}" a été ajouté à la bibliothèque`,
+    });
+  };
+
+  const deleteImage = (id: string) => {
+    // Ne pas supprimer s'il ne reste qu'une seule image
+    if (availableImages.length <= 1) {
+      toast({
+        title: "Impossible de supprimer",
+        description: "Vous devez conserver au moins une image.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const updatedImages = availableImages.filter(img => img.id !== id);
+    setAvailableImages(updatedImages);
+    
+    // Si l'image supprimée était sélectionnée, sélectionner la première
+    if (selectedImage && selectedImage.id === id) {
+      setSelectedImage(updatedImages[0]);
+    }
+    
+    toast({
+      title: "Image supprimée",
+      description: "L'image a été supprimée de la bibliothèque",
     });
   };
 
@@ -176,6 +285,21 @@ const PuzzlePage: React.FC = () => {
     }
   };
 
+  // Vérifiez si le puzzle est prêt (une image est sélectionnée)
+  if (!selectedImage) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-brand-blue">
+              Chargement du puzzle...
+            </h1>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -197,9 +321,67 @@ const PuzzlePage: React.FC = () => {
               </DialogHeader>
               
               <div className="space-y-6 py-4">
-                {/* Sélection d'image */}
+                {/* Sélection et gestion d'image */}
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Image</h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-medium">Images</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-brand-blue"
+                      onClick={() => setIsAddingImage(!isAddingImage)}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Ajouter
+                    </Button>
+                  </div>
+                  
+                  {isAddingImage && (
+                    <div className="mb-4 p-3 border rounded-lg space-y-3 bg-gray-50">
+                      <h4 className="font-medium text-sm">Ajouter une nouvelle image</h4>
+                      <div>
+                        <label className="text-sm text-gray-700">URL de l'image</label>
+                        <input 
+                          type="text" 
+                          placeholder="https://example.com/image.jpg" 
+                          className="w-full p-2 border rounded mt-1"
+                          value={newImageUrl}
+                          onChange={(e) => setNewImageUrl(e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Utilisez une URL valide d'image (jpg, png, webp)
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm text-gray-700">Nom de l'image</label>
+                        <input 
+                          type="text" 
+                          placeholder="Mon image" 
+                          className="w-full p-2 border rounded mt-1"
+                          value={newImageName}
+                          onChange={(e) => setNewImageName(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="default" 
+                          size="sm" 
+                          className="bg-brand-blue"
+                          onClick={addNewImage}
+                        >
+                          Ajouter
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setIsAddingImage(false)}
+                        >
+                          Annuler
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="grid grid-cols-2 gap-4">
                     {availableImages.map((image) => (
                       <div 
@@ -209,6 +391,16 @@ const PuzzlePage: React.FC = () => {
                         }`}
                         onClick={() => setSelectedImage(image)}
                       >
+                        <div 
+                          className="absolute top-1 right-1 z-10 bg-white/90 rounded-full p-1 shadow-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteImage(image.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </div>
+                        
                         <img 
                           src={image.url} 
                           alt={image.name} 
