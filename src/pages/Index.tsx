@@ -43,6 +43,36 @@ const Index: React.FC = () => {
         </div>
       </section>
       
+      {/* Nouvelle section de puzzle scientifique */}
+      <section className="bg-gray-100 py-16">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
+              Puzzle Scientifique Interactif
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-gray-600">
+              Testez vos connaissances et votre dextérité avec notre puzzle scientifique interactif. Reconstituez l'image pour révéler des concepts scientifiques fascinants.
+            </p>
+            <Button 
+              asChild
+              className="mt-6 bg-brand-teal hover:bg-brand-teal/90"
+              size="lg"
+            >
+              <Link to="/puzzle">
+                Essayer le Puzzle
+              </Link>
+            </Button>
+          </div>
+          <div className="flex justify-center">
+            <img 
+              src="https://images.unsplash.com/photo-1518770660439-4636190af475" 
+              alt="Aperçu du puzzle scientifique" 
+              className="max-w-xs rounded-lg shadow-lg"
+            />
+          </div>
+        </div>
+      </section>
+      
       {/* Nouvelle section de modèle 3D */}
       <section className="bg-gradient-to-b from-white to-gray-50 py-16">
         <div className="container mx-auto px-4">
