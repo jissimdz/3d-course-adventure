@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Clock, BookOpen } from "lucide-react";
+import { Clock, BookOpen, Puzzle } from "lucide-react";
 
 export interface CourseProps {
   id: string;
@@ -27,7 +27,7 @@ const CourseCard: React.FC<CourseProps> = ({
 }) => {
   const levelColors = {
     Beginner: "bg-green-100 text-green-800",
-    Intermediate: "bg-blue-100 text-blue-800", // Changed back to blue
+    Intermediate: "bg-blue-100 text-blue-800", 
     Advanced: "bg-purple-100 text-purple-800",
   };
 
@@ -68,12 +68,21 @@ const CourseCard: React.FC<CourseProps> = ({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 flex gap-2">
         <Button
           asChild
-          className="w-full bg-brand-blue hover:bg-brand-dark-blue"
+          className="flex-1 bg-brand-blue hover:bg-brand-dark-blue"
         >
           <Link to={`/course/${id}`}>Explorer le cours</Link>
+        </Button>
+        <Button
+          asChild
+          variant="outline"
+          className="flex-none border-brand-teal text-brand-teal hover:bg-brand-teal/10"
+        >
+          <Link to="/puzzle" className="flex items-center gap-1">
+            <Puzzle size={16} />
+          </Link>
         </Button>
       </CardFooter>
     </Card>

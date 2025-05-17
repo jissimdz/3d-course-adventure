@@ -28,9 +28,6 @@ const Navbar: React.FC = () => {
             <Pencil size={16} />
             Éditeur
           </Link>
-          <Link to="/puzzle" className="font-medium text-gray-700 hover:text-brand-blue">
-            Puzzle
-          </Link>
           <Button variant="default" className="ml-2 bg-brand-blue hover:bg-brand-blue/90">
             Commencer
           </Button>
@@ -55,9 +52,6 @@ const Navbar: React.FC = () => {
             <Link to="/editor" className="flex items-center gap-1 py-2 font-medium text-gray-700 hover:text-brand-blue" onClick={() => setIsMenuOpen(false)}>
               <Pencil size={16} />
               Éditeur
-            </Link>
-            <Link to="/puzzle" className="block py-2 font-medium text-gray-700 hover:text-brand-blue" onClick={() => setIsMenuOpen(false)}>
-              Puzzle
             </Link>
             <Button variant="default" className="mt-2 w-full bg-brand-blue hover:bg-brand-blue/90" onClick={() => setIsMenuOpen(false)}>
               Commencer

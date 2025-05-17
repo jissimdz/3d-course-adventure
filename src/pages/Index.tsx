@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { courses } from "@/data/coursesData";
 import CourseCard from "@/components/CourseCard";
 import { BrainModel3D } from "@/components/brain-model";
-import { Pencil } from "lucide-react";
+import { Pencil, Puzzle } from "lucide-react";
 
 const Index: React.FC = () => {
   // Only show the first 3 courses on the homepage
@@ -55,10 +55,11 @@ const Index: React.FC = () => {
             </p>
             <Button 
               asChild
-              className="mt-6 bg-brand-teal hover:bg-brand-teal/90"
+              className="mt-6 bg-brand-teal hover:bg-brand-teal/90 flex items-center gap-2"
               size="lg"
             >
               <Link to="/puzzle">
+                <Puzzle size={18} />
                 Essayer le Puzzle
               </Link>
             </Button>

@@ -2,8 +2,9 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Award, Clock, BookOpen, Play } from "lucide-react";
+import { Award, Clock, BookOpen, Play, Puzzle } from "lucide-react";
 import { CourseProps } from "@/components/CourseCard";
+import { Link } from "react-router-dom";
 
 interface CourseSidebarProps {
   course: CourseProps;
@@ -38,13 +39,24 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({ course, onPreviewClick })
         <Button className="mb-4 w-full bg-brand-coral hover:bg-brand-coral/90">
           S'inscrire Maintenant
         </Button>
-        <Button 
-          variant="outline" 
-          className="w-full"
-          onClick={onPreviewClick}
-        >
-          Aperçu du Cours
-        </Button>
+        <div className="flex items-center gap-2 mb-4">
+          <Button 
+            variant="outline" 
+            className="flex-1"
+            onClick={onPreviewClick}
+          >
+            Aperçu du Cours
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="flex-none border-brand-teal text-brand-teal hover:bg-brand-teal/10"
+          >
+            <Link to="/puzzle" className="flex items-center p-2">
+              <Puzzle size={18} />
+            </Link>
+          </Button>
+        </div>
 
         <div className="mt-6 space-y-3 text-sm">
           <div className="flex items-center gap-2">
