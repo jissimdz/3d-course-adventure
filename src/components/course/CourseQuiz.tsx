@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, X } from "lucide-react";
+import { Edit2, X, Puzzle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import TextQuizComponent from "./TextQuizComponent";
 import QuizEditor from "./quiz/QuizEditor";
 import ImageQuizPlayer from "./quiz/ImageQuizPlayer";
@@ -207,10 +208,22 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
             </DialogHeader>
             
             <Tabs defaultValue="image">
-              <TabsList className="mb-4">
-                <TabsTrigger value="image">Quiz Images</TabsTrigger>
-                <TabsTrigger value="text">Quiz Texte</TabsTrigger>
-              </TabsList>
+              <div className="flex items-center justify-between mb-4">
+                <TabsList>
+                  <TabsTrigger value="image">Quiz Images</TabsTrigger>
+                  <TabsTrigger value="text">Quiz Texte</TabsTrigger>
+                </TabsList>
+                <Button 
+                  asChild
+                  variant="outline"
+                  className="flex-none border-purple-500 text-purple-500 hover:bg-purple-500/10"
+                >
+                  <Link to="/puzzle" className="flex items-center gap-2">
+                    <Puzzle size={16} />
+                    Puzzle
+                  </Link>
+                </Button>
+              </div>
               
               <TabsContent value="image">
                 <ImageQuizPlayer questions={imageQuestions} />
