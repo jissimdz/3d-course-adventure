@@ -1,7 +1,9 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Plus, Puzzle } from "lucide-react";
 import { toast } from "sonner";
 import QuizSeriesManager from "./QuizSeriesManager";
 import ImageQuestionForm from "./ImageQuestionForm";
@@ -24,7 +26,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({
   currentSeriesId,
   setCurrentSeriesId,
   onFinishEditing,
-  courseId // Use courseId in the component
+  courseId
 }) => {
   const [quizType, setQuizType] = useState<"image" | "text">("image");
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState<number | null>(null);
@@ -188,14 +190,26 @@ const QuizEditor: React.FC<QuizEditorProps> = ({
 
   return (
     <div className="space-y-6 border rounded-lg p-6">
-      <QuizSeriesManager
-        quizSeries={quizSeries}
-        currentSeriesId={currentSeriesId}
-        onChangeSeries={handleChangeSeries}
-        onAddSeries={handleAddSeries}
-        onDeleteSeries={handleDeleteSeries}
-        courseId={courseId} // Pass courseId to QuizSeriesManager
-      />
+      <div className="flex justify-between items-center">
+        <QuizSeriesManager
+          quizSeries={quizSeries}
+          currentSeriesId={currentSeriesId}
+          onChangeSeries={handleChangeSeries}
+          onAddSeries={handleAddSeries}
+          onDeleteSeries={handleDeleteSeries}
+          courseId={courseId}
+        />
+        <Button
+          asChild
+          variant="outline"
+          className="text-purple-500 hover:bg-purple-100 border-purple-500"
+        >
+          <Link to="/puzzle" className="flex items-center gap-2">
+            <Puzzle className="h-4 w-4" />
+            Configurer Puzzle
+          </Link>
+        </Button>
+      </div>
 
       <Tabs defaultValue="image" value={quizType} onValueChange={(v) => setQuizType(v as "image" | "text")}>
         <div className="flex justify-between items-center mb-4">

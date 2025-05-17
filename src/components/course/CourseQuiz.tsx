@@ -155,14 +155,26 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
           <h2 className="text-2xl font-semibold text-brand-blue">Quiz d'Évaluation</h2>
           <p className="mt-2 text-gray-600">Testez vos connaissances avec ce quiz interactif.</p>
         </div>
-        <Button
-          onClick={() => setIsEditMode(true)}
-          variant="outline"
-          className="gap-2 text-brand-blue hover:bg-brand-blue/10"
-        >
-          <Edit2 className="h-4 w-4" />
-          Éditer le Quiz
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setIsEditMode(true)}
+            variant="outline"
+            className="gap-2 text-brand-blue hover:bg-brand-blue/10"
+          >
+            <Edit2 className="h-4 w-4" />
+            Éditer le Quiz
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="gap-2 text-purple-500 hover:bg-purple-500/10 border-purple-500"
+          >
+            <Link to="/puzzle">
+              <Puzzle className="h-4 w-4" />
+              Configurer le Puzzle
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {isEditMode ? (
