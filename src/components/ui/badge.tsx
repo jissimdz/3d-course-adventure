@@ -17,9 +17,9 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
         achievement: 
-          "w-20 h-20 flex items-center justify-center relative p-0 border-2",
+          "w-20 h-20 flex items-center justify-center relative p-0 border-2 rounded-full",
         locked:
-          "w-20 h-20 flex items-center justify-center filter grayscale opacity-50 relative p-0 border-2 border-gray-300 bg-gray-100",
+          "w-20 h-20 flex items-center justify-center filter grayscale opacity-50 relative p-0 border-2 rounded-full border-gray-300 bg-gray-100",
       },
       state: {
         unlocked: "bg-gradient-to-br from-amber-300 to-amber-500 shadow-lg border-amber-400",

@@ -1,15 +1,15 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { 
   Tooltip,
   TooltipTrigger,
   TooltipContent
 } from "@/components/ui/tooltip";
-import { Star, Award, Trophy, BadgeCheck } from "lucide-react";
+import { Search, Flask, Hourglass, Puzzle } from "lucide-react";
 
-interface AchievementBadge {
-  id: string;
+interface Badge {
+  id: number;
   name: string;
   description: string;
   icon: React.ReactNode;
@@ -19,46 +19,46 @@ interface AchievementBadge {
 }
 
 const BadgeSystem: React.FC = () => {
-  // This would normally come from a database or localStorage
-  const [badges, setBadges] = useState<AchievementBadge[]>([
+  // Using the badge data structure from your example
+  const [badges, setBadges] = useState<Badge[]>([
     {
-      id: "puzzle-beginner",
-      name: "Débutant Puzzle",
-      description: "Complétez votre premier puzzle",
-      icon: <Award className="h-8 w-8 text-white" />,
+      id: 1, 
+      name: "Explorateur", 
+      description: "A terminé le module 1", 
+      icon: <Search className="h-8 w-8 text-white" />,
       unlocked: true
     },
     {
-      id: "puzzle-enthusiast",
-      name: "Enthousiaste Puzzle",
-      description: "Complétez 5 puzzles",
-      icon: <Trophy className="h-8 w-8 text-white" />,
-      unlocked: false,
-      progress: 3,
-      maxProgress: 5
-    },
-    {
-      id: "puzzle-master",
-      name: "Maître Puzzle",
-      description: "Complétez un puzzle difficile en moins de 2 minutes",
-      icon: <Star className="h-8 w-8 text-white" />,
+      id: 2, 
+      name: "Génie scientifique", 
+      description: "Score > 80% à un quiz", 
+      icon: <Flask className="h-8 w-8 text-white" />,
       unlocked: false
     },
     {
-      id: "puzzle-collector",
-      name: "Collectionneur",
-      description: "Ajoutez 3 images personnalisées",
-      icon: <BadgeCheck className="h-8 w-8 text-white" />,
+      id: 3, 
+      name: "Maître du temps", 
+      description: "7 jours d'activité consécutifs", 
+      icon: <Hourglass className="h-8 w-8 text-white" />,
       unlocked: false,
-      progress: 1,
-      maxProgress: 3
+      progress: 3,
+      maxProgress: 7
+    },
+    {
+      id: 4, 
+      name: "Puzzle Master", 
+      description: "A résolu 5 puzzles", 
+      icon: <Puzzle className="h-8 w-8 text-white" />,
+      unlocked: false,
+      progress: 2,
+      maxProgress: 5
     }
   ]);
 
   const unlockedBadges = badges.filter(badge => badge.unlocked);
   const lockedBadges = badges.filter(badge => !badge.unlocked);
 
-  const unlockBadge = (id: string) => {
+  const unlockBadge = (id: number) => {
     // This is just for demo purposes - in a real app you'd have proper logic
     setBadges(
       badges.map(badge => 
@@ -71,12 +71,16 @@ const BadgeSystem: React.FC = () => {
     <div className="space-y-6 p-6 bg-white rounded-lg shadow-md">
       <div>
         <h3 className="text-xl font-semibold mb-4 text-brand-blue">Mes Badges</h3>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4" id="badges-earned">
           {unlockedBadges.length > 0 ? (
             unlockedBadges.map(badge => (
               <Tooltip key={badge.id}>
                 <TooltipTrigger asChild>
-                  <Badge variant="achievement" state="unlocked" className="cursor-pointer">
+                  <Badge 
+                    variant="achievement" 
+                    state="unlocked" 
+                    className="cursor-pointer rounded-full bg-gradient-to-br from-amber-300 to-amber-500"
+                  >
                     {badge.icon}
                   </Badge>
                 </TooltipTrigger>
@@ -96,13 +100,13 @@ const BadgeSystem: React.FC = () => {
 
       <div>
         <h3 className="text-xl font-semibold mb-4 text-brand-blue">Badges à Débloquer</h3>
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4" id="badges-locked">
           {lockedBadges.map(badge => (
             <Tooltip key={badge.id}>
               <TooltipTrigger asChild>
                 <Badge 
                   variant="locked" 
-                  className="cursor-pointer group"
+                  className="cursor-pointer group rounded-full"
                   onClick={() => unlockBadge(badge.id)} // Just for demo
                 >
                   {badge.icon}
