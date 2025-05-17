@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/command";
 import { Image, Trash2, Plus, Settings, Upload } from "lucide-react";
 import { toast } from "sonner";
+import BadgeSystem from "@/components/BadgeSystem";
 
 interface PuzzlePiece {
   id: number;
@@ -540,7 +542,7 @@ const PuzzlePage: React.FC = () => {
               </div>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               <Button onClick={shufflePieces} variant="default" className="w-full bg-brand-teal hover:bg-brand-teal/90">
                 Mélanger les pièces
               </Button>
@@ -551,6 +553,9 @@ const PuzzlePage: React.FC = () => {
                 Réinitialiser
               </Button>
             </div>
+            
+            {/* Ajout du système de badges */}
+            <BadgeSystem />
           </div>
           
           <div className="w-full md:w-2/3">
