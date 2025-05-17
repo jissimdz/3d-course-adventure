@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
@@ -19,7 +18,7 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command";
-import { Image, Trash2, Plus, Settings } from "lucide-react";
+import { Image, Trash2, Plus, Settings, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 interface PuzzlePiece {
@@ -83,6 +82,7 @@ const PuzzlePage: React.FC = () => {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageName, setNewImageName] = useState("");
   const [isAddingImage, setIsAddingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Charger les images depuis localStorage au chargement
   useEffect(() => {
@@ -185,6 +185,47 @@ const PuzzlePage: React.FC = () => {
       title: "Image ajoutée",
       description: `"${newImageName}" a été ajouté à la bibliothèque`,
     });
+  };
+
+  const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner un fichier image valide.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Créer un nom par défaut basé sur le nom du fichier
+    const fileName = file.name.split('.')[0] || "Image importée";
+    
+    // Créer une URL pour l'image
+    const imageUrl = URL.createObjectURL(file);
+    const newId = `image-${Date.now()}`;
+    const newImage: PuzzleImage = {
+      id: newId,
+      url: imageUrl,
+      name: fileName
+    };
+    
+    const updatedImages = [...availableImages, newImage];
+    setAvailableImages(updatedImages);
+    setSelectedImage(newImage);
+    
+    toast({
+      title: "Image ajoutée",
+      description: `"${fileName}" a été ajouté à la bibliothèque`,
+    });
+    
+    // Réinitialiser le champ de fichier pour permettre de sélectionner le même fichier à nouveau
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const deleteImage = (id: string) => {
@@ -325,15 +366,33 @@ const PuzzlePage: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-medium">Images</h3>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-brand-blue"
-                      onClick={() => setIsAddingImage(!isAddingImage)}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Ajouter
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-brand-blue"
+                        onClick={() => setIsAddingImage(!isAddingImage)}
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        URL
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-brand-blue"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="h-4 w-4 mr-1" />
+                        Importer
+                      </Button>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef}
+                        className="hidden"
+                        accept="image/*"
+                        onChange={uploadImage}
+                      />
+                    </div>
                   </div>
                   
                   {isAddingImage && (
