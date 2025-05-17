@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
+import { useToast } from "@/hooks/use-toast";
 
 interface PuzzlePiece {
   id: number;
@@ -15,6 +16,7 @@ const PuzzlePage: React.FC = () => {
   const [pieces, setPieces] = useState<PuzzlePiece[]>([]);
   const puzzleContainerRef = useRef<HTMLDivElement>(null);
   const draggedPieceRef = useRef<number | null>(null);
+  const { toast } = useToast();
   
   // Image scientifique de placeholder
   const imageUrl = "https://images.unsplash.com/photo-1518770660439-4636190af475";
@@ -78,8 +80,36 @@ const PuzzlePage: React.FC = () => {
   };
 
   const checkCompletion = () => {
-    // Vérifier si les pièces sont à leur place correcte (à implémenter)
-    alert("Bravo! Vous avez terminé le puzzle!");
+    let correctCount = 0;
+    const threshold = 30; // Seuil de tolérance en pixels
+    
+    pieces.forEach(piece => {
+      // Calculer les positions cibles où la pièce devrait être
+      const targetLeft = (piece.id % 4) * 100;
+      const targetTop = Math.floor(piece.id / 4) * 100;
+      
+      // Vérifier si la pièce est proche de sa position cible
+      if (
+        Math.abs(piece.left - targetLeft) < threshold && 
+        Math.abs(piece.top - targetTop) < threshold
+      ) {
+        correctCount++;
+      }
+    });
+    
+    if (correctCount === pieces.length) {
+      toast({
+        title: "Félicitations !",
+        description: "Vous avez résolu le puzzle !",
+        variant: "default",
+      });
+    } else {
+      toast({
+        title: "Continuez vos efforts !",
+        description: `Vous avez ${correctCount}/${pieces.length} pièces correctement placées.`,
+        variant: "default",
+      });
+    }
   };
 
   return (
