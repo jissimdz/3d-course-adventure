@@ -1,3 +1,4 @@
+
 import { CourseProps } from "@/components/CourseCard";
 
 export const courses: CourseProps[] = [
@@ -19,7 +20,7 @@ export const courses: CourseProps[] = [
     level: "Beginner",
     lessonCount: 8,
     duration: "4 semaines",
-    thumbnailUrl: "/lovable-uploads/c7b43633-f063-4949-9cae-592d39149494.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "cardiovascular-system",
@@ -29,7 +30,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 10,
     duration: "6 semaines",
-    thumbnailUrl: "/lovable-uploads/cardio.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "musculoskeletal-system",
@@ -39,7 +40,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 9,
     duration: "5 semaines",
-    thumbnailUrl: "/lovable-uploads/muscle.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "nervous-system",
@@ -49,7 +50,7 @@ export const courses: CourseProps[] = [
     level: "Advanced",
     lessonCount: 11,
     duration: "7 semaines",
-    thumbnailUrl: "/lovable-uploads/nervous.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "respiratory-system",
@@ -59,7 +60,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 8,
     duration: "4 semaines",
-    thumbnailUrl: "/lovable-uploads/respiratory.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "digestive-system",
@@ -69,7 +70,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 9,
     duration: "5 semaines",
-    thumbnailUrl: "/lovable-uploads/digestive.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "endocrine-system",
@@ -79,7 +80,7 @@ export const courses: CourseProps[] = [
     level: "Advanced",
     lessonCount: 10,
     duration: "6 semaines",
-    thumbnailUrl: "/lovable-uploads/endocrine.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "urinary-system",
@@ -89,7 +90,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 8,
     duration: "4 semaines",
-    thumbnailUrl: "/lovable-uploads/urinary.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "reproductive-system",
@@ -99,7 +100,7 @@ export const courses: CourseProps[] = [
     level: "Intermediate",
     lessonCount: 9,
     duration: "5 semaines",
-    thumbnailUrl: "/lovable-uploads/reproductive.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "immune-system",
@@ -109,7 +110,7 @@ export const courses: CourseProps[] = [
     level: "Advanced",
     lessonCount: 11,
     duration: "7 semaines",
-    thumbnailUrl: "/lovable-uploads/immune.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "integumentary-system",
@@ -119,7 +120,7 @@ export const courses: CourseProps[] = [
     level: "Beginner",
     lessonCount: 7,
     duration: "3 semaines",
-    thumbnailUrl: "/lovable-uploads/skin.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
   {
     id: "brain-anatomy-101",
@@ -129,7 +130,7 @@ export const courses: CourseProps[] = [
     level: "Beginner",
     lessonCount: 8,
     duration: "4 semaines",
-    thumbnailUrl: "/lovable-uploads/brain-anatomy.png",
+    thumbnailUrl: "/lovable-uploads/5231e11d-6a4a-4d3d-8b2b-6ecc8c222b72.png",
   },
 ];
 
