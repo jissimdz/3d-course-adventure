@@ -78,10 +78,12 @@ const CourseDetailContent: React.FC = () => {
 };
 
 const CourseDetail: React.FC = () => {
+  const { courseId } = useParams<{ courseId: string }>();
+  
   return (
     <Layout>
       <CourseContentManager>
-        <QuizProvider>
+        <QuizProvider courseId={courseId || 'default'}>
           <CourseDetailContent />
         </QuizProvider>
       </CourseContentManager>

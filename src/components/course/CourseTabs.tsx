@@ -87,7 +87,7 @@ const CourseTabs: React.FC<CourseTabsProps> = ({
           textQuestions={textQuizQuestions}
           onEditClick={handleQuizEdit}
           seriesId={activeQuizSeries}
-          courseId={courseId || 'default'} 
+          courseId={courseId} 
         />
       </TabsContent>
     </Tabs>

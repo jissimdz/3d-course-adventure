@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Edit2, X, Puzzle } from "lucide-react";
+import { Edit2, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -18,11 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
 import TextQuizComponent from "./TextQuizComponent";
 import QuizEditor from "./quiz/QuizEditor";
 import ImageQuizPlayer from "./quiz/ImageQuizPlayer";
 import { QuizSeries, ImageQuestion, TextQuestion } from "./types/quizTypes";
+import { useQuiz } from "./CourseQuizContext";
 
 interface QuizSectionProps {
   questions?: ImageQuestion[];
@@ -39,12 +39,19 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   seriesId = "default",
   courseId
 }) => {
+  const { courseId: contextCourseId } = useQuiz();
   const [isEditMode, setIsEditMode] = useState(false);
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
 
   // Clé de stockage unique par cours
   const storageKey = `quizSeries_${courseId}`;
+
+  // Log pour vérifier que le bon cours est utilisé
+  useEffect(() => {
+    console.log(`CourseQuiz component rendered with courseId: ${courseId}`);
+    console.log(`Context courseId: ${contextCourseId}`);
+  }, [courseId, contextCourseId]);
 
   // Initialiser les séries de quiz avec les données par défaut ou sauvegardées
   useEffect(() => {
@@ -75,7 +82,7 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
   const createDefaultSeries = () => {
     const defaultSeries: QuizSeries = {
       id: "default",
-      name: "Quiz par défaut",
+      name: `Quiz du cours ${courseId}`,
       courseId: courseId,
       imageQuestions: questions,
       textQuestions: textQuestions
@@ -135,15 +142,16 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
     }
   };
 
+  // Si les questions sont vides, utiliser ces exemples comme fallback
   const sampleTextQuestions: TextQuestion[] = [
     {
       id: 1,
-      question: "Quelle est la capitale de la France ?",
+      question: `Question spécifique au cours ${courseId}`,
       options: [
-        { text: "Paris", isCorrect: true },
-        { text: "Lyon", isCorrect: false },
-        { text: "Marseille", isCorrect: false },
-        { text: "Bordeaux", isCorrect: false }
+        { text: "Réponse correcte", isCorrect: true },
+        { text: "Réponse incorrecte 1", isCorrect: false },
+        { text: "Réponse incorrecte 2", isCorrect: false },
+        { text: "Réponse incorrecte 3", isCorrect: false }
       ]
     }
   ];
@@ -164,16 +172,6 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
             <Edit2 className="h-4 w-4" />
             Éditer le Quiz
           </Button>
-          <Button
-            asChild
-            variant="outline"
-            className="gap-2 text-purple-500 hover:bg-purple-500/10 border-purple-500"
-          >
-            <Link to="/puzzle">
-              <Puzzle className="h-4 w-4" />
-              Configurer le Puzzle
-            </Link>
-          </Button>
         </div>
       </div>
 
@@ -190,14 +188,14 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
         <Dialog>
           <DialogTrigger asChild>
             <Button className="w-full bg-brand-blue hover:bg-brand-blue/90">
-              Commencer le Quiz
+              Commencer le Quiz de {courseId}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[700px]">
             <DialogHeader>
               <DialogTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <span>Quiz sur les méninges</span>
+                  <span>Quiz - {courseId}</span>
                   {quizSeries.length > 0 && (
                     <Select value={currentSeriesId} onValueChange={handleChangeSeries}>
                       <SelectTrigger className="w-[180px]">
@@ -225,20 +223,13 @@ const CourseQuiz: React.FC<QuizSectionProps> = ({
                   <TabsTrigger value="image">Quiz Images</TabsTrigger>
                   <TabsTrigger value="text">Quiz Texte</TabsTrigger>
                 </TabsList>
-                <Button 
-                  asChild
-                  variant="outline"
-                  className="flex-none border-purple-500 text-purple-500 hover:bg-purple-500/10"
-                >
-                  <Link to="/puzzle" className="flex items-center gap-2">
-                    <Puzzle size={16} />
-                    Puzzle
-                  </Link>
-                </Button>
               </div>
               
               <TabsContent value="image">
-                <ImageQuizPlayer questions={imageQuestions} />
+                <ImageQuizPlayer 
+                  questions={imageQuestions} 
+                  courseId={courseId}
+                />
               </TabsContent>
               
               <TabsContent value="text">

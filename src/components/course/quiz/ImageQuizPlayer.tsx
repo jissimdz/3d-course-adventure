@@ -3,15 +3,18 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ImageQuestion } from "../types/quizTypes";
+import { toast } from "sonner";
 
 interface ImageQuizPlayerProps {
   questions: ImageQuestion[];
   onComplete?: (score: number, total: number) => void;
+  courseId?: string;
 }
 
 const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({ 
   questions, 
-  onComplete 
+  onComplete,
+  courseId
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -24,6 +27,14 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
   const correctSoundRef = useRef<HTMLAudioElement | null>(null);
   const wrongSoundRef = useRef<HTMLAudioElement | null>(null);
   const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Afficher un message de débogage pour voir quel cours et quelles questions sont chargés
+  useEffect(() => {
+    if (courseId) {
+      console.log(`ImageQuizPlayer loaded for course: ${courseId}`);
+      console.log(`Questions loaded: ${questions.length}`);
+    }
+  }, [courseId, questions]);
 
   // Initialize audio refs
   React.useEffect(() => {
