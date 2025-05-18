@@ -17,15 +17,13 @@ const QuizHeader: React.FC<QuizHeaderProps> = ({ onEditModeChange, courseId, onS
         <p className="mt-2 text-gray-600">Testez vos connaissances avec ce quiz interactif.</p>
       </div>
       <div className="flex gap-2">
-        {onStartQuiz && (
-          <Button
-            onClick={onStartQuiz}
-            className="gap-2 bg-brand-blue hover:bg-brand-blue/90"
-          >
-            <Play className="h-4 w-4" />
-            Commencer le Quiz
-          </Button>
-        )}
+        <Button
+          onClick={onStartQuiz}
+          className="gap-2 bg-brand-blue hover:bg-brand-blue/90"
+        >
+          <Play className="h-4 w-4" />
+          Commencer le Quiz
+        </Button>
         <Button
           onClick={onEditModeChange}
           variant="outline"

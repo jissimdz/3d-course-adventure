@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,16 +25,18 @@ interface QuizLauncherProps {
   currentSeriesId: string;
   onChangeSeriesId: (id: string) => void;
   courseId: string;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 const QuizLauncher: React.FC<QuizLauncherProps> = ({
   quizSeries,
   currentSeriesId,
   onChangeSeriesId,
-  courseId
+  courseId,
+  isOpen,
+  onOpenChange
 }) => {
-  const [open, setOpen] = useState(false);
-  
   // Get the current series
   const getCurrentSeriesQuestions = (): { imageQuestions: ImageQuestion[], textQuestions: TextQuestion[] } => {
     const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
@@ -64,20 +65,9 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
     }
   ];
 
-  const handleStartQuiz = () => {
-    setOpen(true);
-  };
-
   return (
     <>
-      <Button 
-        className="w-full bg-brand-blue hover:bg-brand-blue/90"
-        onClick={handleStartQuiz}
-      >
-        Commencer le Quiz de {courseId}
-      </Button>
-
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
@@ -98,7 +88,7 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
                   </Select>
                 )}
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
                 <X className="h-4 w-4" />
               </Button>
             </DialogTitle>
