@@ -1,4 +1,3 @@
-
 import React from "react";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
@@ -10,13 +9,10 @@ import { courses } from "@/data/coursesData";
 import CourseCard from "@/components/CourseCard";
 import { BrainModel3D } from "@/components/brain-model";
 import { Pencil } from "lucide-react";
-
 const Index: React.FC = () => {
   // Only show the first 3 courses on the homepage
   const featuredCourses = courses.slice(0, 3);
-
-  return (
-    <Layout>
+  return <Layout>
       <HeroSection />
       <FeaturesSection />
       
@@ -24,9 +20,7 @@ const Index: React.FC = () => {
       <section className="bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl">
-              Système de Badges
-            </h2>
+            <h2 className="text-3xl font-bold text-brand-blue md:text-4xl text-cyan-500">Récompense de progression</h2>
             <p className="mx-auto mt-4 max-w-2xl text-gray-600">
               Suivez votre progression et débloquez des récompenses en complétant diverses activités éducatives.
             </p>
@@ -47,11 +41,7 @@ const Index: React.FC = () => {
             <p className="mx-auto mt-4 max-w-2xl text-gray-600">
               Créez et exportez facilement des schémas personnalisés pour vos études ou présentations.
             </p>
-            <Button 
-              asChild
-              className="mt-6 bg-brand-teal hover:bg-brand-teal/90"
-              size="lg"
-            >
+            <Button asChild className="mt-6 bg-brand-teal hover:bg-brand-teal/90" size="lg">
               <Link to="/editor" className="flex items-center gap-2">
                 <Pencil size={18} />
                 Ouvrir l'Éditeur
@@ -78,12 +68,7 @@ const Index: React.FC = () => {
           </div>
           
           <div className="mt-8 text-center">
-            <Button 
-              asChild
-              variant="outline" 
-              size="lg"
-              className="border-brand-blue text-brand-blue hover:bg-brand-blue/10"
-            >
+            <Button asChild variant="outline" size="lg" className="border-brand-blue text-brand-blue hover:bg-brand-blue/10">
               <Link to="/course/brain-anatomy-101">En Savoir Plus</Link>
             </Button>
           </div>
@@ -103,18 +88,11 @@ const Index: React.FC = () => {
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} {...course} />
-            ))}
+            {featuredCourses.map(course => <CourseCard key={course.id} {...course} />)}
           </div>
 
           <div className="mt-12 text-center">
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="border-brand-teal text-brand-teal hover:bg-brand-teal/10"
-            >
+            <Button asChild variant="outline" size="lg" className="border-brand-teal text-brand-teal hover:bg-brand-teal/10">
               <Link to="/courses">Voir Tous les Cours</Link>
             </Button>
           </div>
@@ -130,17 +108,11 @@ const Index: React.FC = () => {
           <p className="mx-auto mt-4 max-w-2xl text-blue-100">
             Rejoignez des milliers d'étudiants et de professionnels qui utilisent déjà notre plateforme d'apprentissage 3D pour améliorer leur compréhension de l'anatomie et des concepts biologiques et médicaux.
           </p>
-          <Button
-            asChild
-            size="lg"
-            className="mt-8 bg-brand-teal hover:bg-brand-teal/90"
-          >
+          <Button asChild size="lg" className="mt-8 bg-brand-teal hover:bg-brand-teal/90">
             <Link to="/courses">Commencer Aujourd'hui</Link>
           </Button>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Index;
