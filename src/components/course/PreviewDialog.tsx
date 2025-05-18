@@ -14,6 +14,7 @@ interface PreviewSection {
   title: string;
   id: number;
   videoUrl?: string;
+  googleDriveId?: string;
 }
 
 interface PreviewDialogProps {
@@ -61,8 +62,50 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
     }, 1000);
   };
 
-  // Déterminer quelle vidéo afficher: uploadée ou celle du cours
-  const displayVideoUrl = uploadedVideo || selectedPreview?.videoUrl;
+  // Déterminer quelle vidéo afficher: uploadée, Google Drive ou celle du cours
+  const renderVideoContent = () => {
+    if (uploadedVideo) {
+      return (
+        <video 
+          width="100%" 
+          height="100%" 
+          src={uploadedVideo}
+          title={`Aperçu de ${selectedPreview?.title}`}
+          controls
+          className="aspect-video"
+        />
+      );
+    } else if (selectedPreview?.googleDriveId) {
+      return (
+        <iframe 
+          src={`https://drive.google.com/file/d/${selectedPreview.googleDriveId}/preview`}
+          width="100%" 
+          height="100%"
+          title={`Aperçu de ${selectedPreview?.title}`}
+          allow="autoplay; fullscreen"
+          frameBorder="0"
+          className="aspect-video"
+        />
+      );
+    } else if (selectedPreview?.videoUrl) {
+      return (
+        <video 
+          width="100%" 
+          height="100%" 
+          src={selectedPreview.videoUrl}
+          title={`Aperçu de ${selectedPreview?.title}`}
+          controls
+          className="aspect-video"
+        />
+      );
+    } else {
+      return (
+        <div className="flex h-full w-full items-center justify-center bg-gray-100">
+          <p>Vidéo d'aperçu non disponible</p>
+        </div>
+      );
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,20 +114,7 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
           <DialogTitle>{selectedPreview?.title} - Aperçu du cours</DialogTitle>
         </DialogHeader>
         <div className="aspect-video w-full">
-          {displayVideoUrl ? (
-            <video 
-              width="100%" 
-              height="100%" 
-              src={displayVideoUrl}
-              title={`Aperçu de ${selectedPreview?.title}`}
-              controls
-              className="aspect-video"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-100">
-              <p>Vidéo d'aperçu non disponible</p>
-            </div>
-          )}
+          {renderVideoContent()}
         </div>
         <div className="mt-4">
           <p>Cet aperçu vous donne un bref aperçu du contenu de cette section du cours. Pour accéder au cours complet, veuillez vous inscrire.</p>

@@ -10,6 +10,7 @@ interface CourseSection {
   duration: string;
   isPreview: boolean;
   videoUrl?: string;
+  googleDriveId?: string;
   has3DModel?: boolean;
   quizId?: number;
 }
@@ -71,7 +72,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                   <Play className="h-4 w-4" />
                   <span>Commencer le Quiz</span>
                 </Button>
-                {section.videoUrl && (
+                {(section.videoUrl || section.googleDriveId) && (
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -85,7 +86,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
               </div>
               <div className="flex items-center gap-4">
                 <div className="text-sm text-gray-500">{section.duration}</div>
-                {section.isPreview && section.videoUrl && (
+                {section.isPreview && (section.videoUrl || section.googleDriveId) && (
                   <Button 
                     variant="outline" 
                     size="sm"
