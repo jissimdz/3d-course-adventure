@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +39,7 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
       onOpenChange(false);
       // Start the quiz for this section
       handleQuizStart(selectedPreview.id);
-      toast.success(`Quiz de ${selectedPreview.title} lancé`);
+      toast.success(`Quiz d'Introduction lancé`);
     }
   };
 
@@ -107,7 +108,7 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
               onClick={handleStartQuiz}
             >
               <Play className="h-4 w-4" />
-              Commencer le Quiz
+              Commencer le Quiz d'Introduction
             </Button>
           </div>
           <Button className="bg-brand-blue hover:bg-brand-blue/90">
