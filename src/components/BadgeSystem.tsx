@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent
 } from "@/components/ui/tooltip";
-import { Search, Award, Hourglass, Puzzle, Star } from "lucide-react";
+import { Search, Award, Hourglass, Star } from "lucide-react";
 
 interface Badge {
   id: number;
@@ -46,15 +46,6 @@ const BadgeSystem: React.FC = () => {
       unlocked: false,
       progress: 3,
       maxProgress: 7
-    },
-    {
-      id: 4, 
-      name: "Puzzle Master", 
-      description: "A résolu 5 puzzles", 
-      icon: <Puzzle className="h-8 w-8 text-white" />,
-      unlocked: false,
-      progress: 2,
-      maxProgress: 5
     }
   ]);
 
