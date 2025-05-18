@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,6 +34,8 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   onChangeSeriesId,
   courseId
 }) => {
+  const [open, setOpen] = useState(false);
+  
   // Get the current series
   const getCurrentSeriesQuestions = (): { imageQuestions: ImageQuestion[], textQuestions: TextQuestion[] } => {
     const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
@@ -62,63 +64,71 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
     }
   ];
 
+  const handleStartQuiz = () => {
+    setOpen(true);
+  };
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-full bg-brand-blue hover:bg-brand-blue/90">
-          Commencer le Quiz de {courseId}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span>Quiz - {courseId}</span>
-              {quizSeries.length > 0 && (
-                <Select value={currentSeriesId} onValueChange={onChangeSeriesId}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Sélectionner une série" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {quizSeries.map(series => (
-                      <SelectItem key={series.id} value={series.id}>
-                        {series.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+    <>
+      <Button 
+        className="w-full bg-brand-blue hover:bg-brand-blue/90"
+        onClick={handleStartQuiz}
+      >
+        Commencer le Quiz de {courseId}
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span>Quiz - {courseId}</span>
+                {quizSeries.length > 0 && (
+                  <Select value={currentSeriesId} onValueChange={onChangeSeriesId}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Sélectionner une série" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {quizSeries.map(series => (
+                        <SelectItem key={series.id} value={series.id}>
+                          {series.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Tabs defaultValue="image">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="image">Quiz Images</TabsTrigger>
+                <TabsTrigger value="text">Quiz Texte</TabsTrigger>
+              </TabsList>
             </div>
-            <Button variant="ghost" size="icon">
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTitle>
-        </DialogHeader>
-        
-        <Tabs defaultValue="image">
-          <div className="flex items-center justify-between mb-4">
-            <TabsList>
-              <TabsTrigger value="image">Quiz Images</TabsTrigger>
-              <TabsTrigger value="text">Quiz Texte</TabsTrigger>
-            </TabsList>
-          </div>
-          
-          <TabsContent value="image">
-            <ImageQuizPlayer 
-              questions={imageQuestions} 
-              courseId={courseId}
-            />
-          </TabsContent>
-          
-          <TabsContent value="text">
-            <TextQuizComponent 
-              questions={textQuestions.length > 0 ? textQuestions : sampleTextQuestions} 
-              autoAdvance={true}
-            />
-          </TabsContent>
-        </Tabs>
-      </DialogContent>
-    </Dialog>
+            
+            <TabsContent value="image">
+              <ImageQuizPlayer 
+                questions={imageQuestions} 
+                courseId={courseId}
+              />
+            </TabsContent>
+            
+            <TabsContent value="text">
+              <TextQuizComponent 
+                questions={textQuestions.length > 0 ? textQuestions : sampleTextQuestions} 
+                autoAdvance={true}
+              />
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

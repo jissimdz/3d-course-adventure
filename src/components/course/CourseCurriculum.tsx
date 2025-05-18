@@ -22,7 +22,7 @@ interface CourseCurriculumProps {
   };
   onPreviewClick: (section: CourseSection) => void;
   on3DModelClick: (section: CourseSection) => void;
-  onQuizStart: (sectionId: number) => void; // Pass sectionId!
+  onQuizStart: (sectionId: number) => void;
 }
 
 const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
@@ -32,6 +32,11 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
   on3DModelClick,
   onQuizStart,
 }) => {
+  const handleQuizStart = (sectionId: number) => {
+    console.log(`Starting quiz for section ${sectionId}`);
+    onQuizStart(sectionId);
+  };
+
   return (
     <div>
       <h2 className="text-2xl font-semibold text-brand-blue">
@@ -61,7 +66,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
                   variant="outline" 
                   size="sm"
                   className="flex items-center gap-1 text-brand-teal"
-                  onClick={() => onQuizStart(section.id)}
+                  onClick={() => handleQuizStart(section.id)}
                 >
                   <Play className="h-4 w-4" />
                   <span>Commencer le Quiz</span>

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
 import QuizEditor from "./quiz/QuizEditor";
@@ -27,6 +27,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
+  const [isQuizVisible, setIsQuizVisible] = useState(false);
+  const launcherRef = useRef<HTMLButtonElement>(null);
 
   // Log for debugging
   useEffect(() => {
@@ -68,11 +70,21 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     }
   };
 
+  const handleStartQuiz = () => {
+    // Utiliser une référence pour cliquer sur le bouton dans QuizLauncher
+    if (launcherRef.current) {
+      launcherRef.current.click();
+    } else {
+      setIsQuizVisible(true);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <QuizHeader 
         onEditModeChange={() => setIsEditMode(true)} 
-        courseId={courseId} 
+        courseId={courseId}
+        onStartQuiz={handleStartQuiz}
       />
 
       {isEditMode ? (

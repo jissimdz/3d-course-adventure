@@ -50,6 +50,14 @@ const CourseTabs: React.FC<CourseTabsProps> = ({
       ? textQuizzesBySection[activeQuizSection]
       : [];
 
+  // Handle starting a quiz by switching to the quiz tab
+  const handleStartQuiz = (sectionId: number) => {
+    // Switch to quiz tab
+    setActiveTab("quiz");
+    // Call the context handler
+    handleQuizStart(sectionId);
+  };
+
   return (
     <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="mb-6 grid w-full grid-cols-4">
@@ -73,7 +81,7 @@ const CourseTabs: React.FC<CourseTabsProps> = ({
           course={course}
           onPreviewClick={handlePreviewClick}
           on3DModelClick={handle3DModelClick}
-          onQuizStart={handleQuizStart}
+          onQuizStart={handleStartQuiz}
         />
       </TabsContent>
       
