@@ -1,3 +1,4 @@
+
 import { CourseProps } from "@/components/CourseCard";
 
 export const courses: CourseProps[] = [
@@ -142,4 +143,9 @@ export const featuredCourse = {
   lessonCount: 12,
   duration: "8 semaines",
   thumbnailUrl: "/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png",
+};
+
+// Add the missing getCourseById function
+export const getCourseById = (id: string): CourseProps | undefined => {
+  return courses.find(course => course.id === id);
 };
