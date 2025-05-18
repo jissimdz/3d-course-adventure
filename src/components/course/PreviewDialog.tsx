@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,8 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Upload, Video } from "lucide-react";
+import { Play, Video } from "lucide-react";
 import { toast } from "sonner";
+import { useQuiz } from "./CourseQuizContext";
 
 interface PreviewSection {
   title: string;
@@ -30,36 +30,16 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
 }) => {
   const [uploadedVideo, setUploadedVideo] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { handleQuizStart } = useQuiz();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Vérifier si le fichier est une vidéo
-    if (!file.type.startsWith('video/')) {
-      toast.error('Le fichier doit être une vidéo');
-      return;
+  const handleStartQuiz = () => {
+    if (selectedPreview) {
+      // Close the dialog
+      onOpenChange(false);
+      // Start the quiz for this section
+      handleQuizStart(selectedPreview.id);
+      toast.success(`Quiz de ${selectedPreview.title} lancé`);
     }
-
-    // Vérifier la taille du fichier (limite à 100MB)
-    if (file.size > 100 * 1024 * 1024) {
-      toast.error('La vidéo est trop volumineuse (limite 100MB)');
-      return;
-    }
-
-    setIsUploading(true);
-
-    // Créer une URL pour la vidéo uploadée
-    const videoUrl = URL.createObjectURL(file);
-    // Simuler le délai d'upload
-    setTimeout(() => {
-      setUploadedVideo(videoUrl);
-      setIsUploading(false);
-      toast.success('Vidéo téléchargée avec succès!');
-      
-      // En production, vous utiliseriez ici une API pour uploader la vidéo
-      console.log('Vidéo uploadée:', file.name);
-    }, 1000);
   };
 
   // Déterminer quelle vidéo afficher: uploadée, Google Drive ou celle du cours
@@ -123,20 +103,12 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
           <div>
             <Button 
               variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => document.getElementById('video-upload')?.click()}
-              disabled={isUploading}
+              className="flex items-center gap-2 bg-brand-blue text-white hover:bg-brand-blue/90"
+              onClick={handleStartQuiz}
             >
-              <Upload className="h-4 w-4" />
-              {isUploading ? "Téléchargement..." : "Uploader une vidéo"}
+              <Play className="h-4 w-4" />
+              Commencer le Quiz
             </Button>
-            <input
-              id="video-upload"
-              type="file"
-              accept="video/*"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
           </div>
           <Button className="bg-brand-blue hover:bg-brand-blue/90">
             S'inscrire au cours
