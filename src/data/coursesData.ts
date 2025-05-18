@@ -1,4 +1,3 @@
-
 import { CourseProps } from "@/components/CourseCard";
 
 export const courses: CourseProps[] = [
@@ -10,7 +9,7 @@ export const courses: CourseProps[] = [
     level: "Advanced",
     lessonCount: 12,
     duration: "8 semaines",
-    thumbnailUrl: "/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png",
+    thumbnailUrl: "/lovable-uploads/2ee3376b-7fca-4574-9dbe-8b13633ad2c9.png",
   },
   {
     id: "anatomy-101",
@@ -142,7 +141,7 @@ export const featuredCourse = {
   level: "Advanced",
   lessonCount: 12,
   duration: "8 semaines",
-  thumbnailUrl: "/lovable-uploads/daa9d145-aa5f-46a1-92fd-190850071af1.png",
+  thumbnailUrl: "/lovable-uploads/2ee3376b-7fca-4574-9dbe-8b13633ad2c9.png",
 };
 
 // Add the getCourseById function required by CourseDetail.tsx
