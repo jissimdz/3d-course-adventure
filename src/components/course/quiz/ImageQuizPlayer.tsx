@@ -16,6 +16,8 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
   onComplete,
   courseId
 }) => {
+  // Create a shuffled copy of questions
+  const [shuffledQuestions, setShuffledQuestions] = useState<ImageQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [score, setScore] = useState(0);
@@ -28,13 +30,41 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
   const wrongSoundRef = useRef<HTMLAudioElement | null>(null);
   const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Function to shuffle an array using Fisher-Yates algorithm
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Initialize with shuffled questions
+  useEffect(() => {
+    if (questions && questions.length > 0) {
+      // Create a deep copy of the questions array with shuffled options
+      const questionsWithShuffledOptions = questions.map(question => {
+        // Create a deep copy of the question
+        const questionCopy = { ...question };
+        // Shuffle the options
+        questionCopy.options = shuffleArray([...question.options]);
+        return questionCopy;
+      });
+      
+      // Then shuffle the order of questions
+      setShuffledQuestions(shuffleArray(questionsWithShuffledOptions));
+    }
+  }, [questions]);
+
   // Afficher un message de débogage pour voir quel cours et quelles questions sont chargés
   useEffect(() => {
     if (courseId) {
       console.log(`ImageQuizPlayer loaded for course: ${courseId}`);
       console.log(`Questions loaded: ${questions.length}`);
+      console.log(`Questions shuffled: ${shuffledQuestions.length}`);
     }
-  }, [courseId, questions]);
+  }, [courseId, questions, shuffledQuestions]);
 
   // Initialize audio refs
   React.useEffect(() => {
@@ -65,6 +95,15 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
     );
   }
 
+  // Wait for questions to be shuffled before rendering
+  if (shuffledQuestions.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">Préparation des questions...</p>
+      </div>
+    );
+  }
+
   const handleOptionSelect = (optionIndex: number) => {
     if (buttonsDisabled) return; // Prevent selecting when buttons are disabled
     
@@ -72,7 +111,7 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
     setButtonsDisabled(true); // Disable all buttons after selection
     
     // Play sound based on answer correctness
-    const isCorrect = questions[currentQuestion].options[optionIndex].isCorrect;
+    const isCorrect = shuffledQuestions[currentQuestion].options[optionIndex].isCorrect;
     
     if (isCorrect) {
       setAnswerStatus({ ...answerStatus, [optionIndex]: 'correct' });
@@ -101,11 +140,11 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
       clearTimeout(autoAdvanceTimeoutRef.current);
     }
     
-    if (selectedOption !== null && questions[currentQuestion].options[selectedOption].isCorrect) {
+    if (selectedOption !== null && shuffledQuestions[currentQuestion].options[selectedOption].isCorrect) {
       setScore(prev => prev + 1);
     }
 
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < shuffledQuestions.length - 1) {
       setCurrentQuestion(prev => prev + 1);
       setSelectedOption(null);
       setAnswerStatus({});
@@ -114,12 +153,23 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
     } else {
       setIsQuizCompleted(true);
       if (onComplete) {
-        onComplete(score, questions.length);
+        onComplete(score, shuffledQuestions.length);
       }
     }
   };
 
   const resetQuiz = () => {
+    // Reshuffle questions when quiz is reset
+    if (questions && questions.length > 0) {
+      const questionsWithShuffledOptions = questions.map(question => {
+        const questionCopy = { ...question };
+        questionCopy.options = shuffleArray([...question.options]);
+        return questionCopy;
+      });
+      
+      setShuffledQuestions(shuffleArray(questionsWithShuffledOptions));
+    }
+    
     setCurrentQuestion(0);
     setSelectedOption(null);
     setScore(0);
@@ -145,16 +195,16 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
       {!isQuizCompleted ? (
         <div className="space-y-6">
           <div className="text-sm text-gray-500">
-            Question {currentQuestion + 1}/{questions.length}
+            Question {currentQuestion + 1}/{shuffledQuestions.length}
           </div>
           
           <div>
             <h3 className="text-lg font-medium mb-4">
-              {questions[currentQuestion]?.question}
+              {shuffledQuestions[currentQuestion]?.question}
             </h3>
             
             <div className="grid grid-cols-2 gap-4">
-              {questions[currentQuestion]?.options.map((option, index) => (
+              {shuffledQuestions[currentQuestion]?.options.map((option, index) => (
                 <div
                   key={index}
                   onClick={() => handleOptionSelect(index)}
@@ -182,7 +232,7 @@ const ImageQuizPlayer: React.FC<ImageQuizPlayerProps> = ({
         <div className="space-y-4">
           <div className="rounded-lg bg-green-50 p-4 text-center">
             <p className="text-lg font-medium text-green-800">
-              Score: {score} sur {questions.length}
+              Score: {score} sur {shuffledQuestions.length}
             </p>
           </div>
           <Button
