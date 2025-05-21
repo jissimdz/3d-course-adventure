@@ -15,6 +15,7 @@ import TextQuizPlayer from "./TextQuizPlayer";
 import { QuizSeries } from "../types/quizTypes";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { saveQuizProgress, getQuizProgress } from "./QuizStorage";
+import { toast } from "sonner";
 
 interface QuizLauncherProps {
   quizSeries: QuizSeries[];
@@ -35,9 +36,10 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
 }) => {
   const [quizType, setQuizType] = useState<string>("image");
   const [quizResult, setQuizResult] = useState<{score: number, total: number} | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Find current selected series
-  const currentSeries = quizSeries.find(series => series.id === currentSeriesId) || quizSeries[0];
+  const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
   
   // Debug logging
   useEffect(() => {
@@ -51,14 +53,16 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
         textQuestions: currentSeries.textQuestions.length
       } : 'none'
     });
+    
+    setIsLoading(false);
   }, [isOpen, currentSeriesId, quizSeries, currentSeries]);
   
   // Determine which quiz type to show by default
   useEffect(() => {
     if (currentSeries) {
-      if (currentSeries.imageQuestions.length > 0) {
+      if (currentSeries.imageQuestions && currentSeries.imageQuestions.length > 0) {
         setQuizType("image");
-      } else if (currentSeries.textQuestions.length > 0) {
+      } else if (currentSeries.textQuestions && currentSeries.textQuestions.length > 0) {
         setQuizType("text");
       }
     }
@@ -71,12 +75,17 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
     const percentage = Math.round((score / total) * 100);
     
     // Save progress
-    saveQuizProgress(courseId, currentSeriesId, {
-      score,
-      total,
-      percentage,
-      completedAt: new Date().toISOString()
-    });
+    try {
+      saveQuizProgress(courseId, currentSeriesId, {
+        score,
+        total,
+        percentage,
+        completedAt: new Date().toISOString()
+      });
+      toast.success(`Quiz terminé! Score: ${score}/${total}`);
+    } catch (error) {
+      console.error("Error saving quiz progress:", error);
+    }
   };
   
   const closeDialog = () => {
@@ -85,15 +94,49 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   };
   
   // Get existing progress data
-  const progressData = getQuizProgress(courseId, currentSeriesId);
+  const progressData = currentSeriesId ? getQuizProgress(courseId, currentSeriesId) : null;
 
   // Determine if we have questions of each type
-  const hasImageQuestions = currentSeries && currentSeries.imageQuestions.length > 0;
-  const hasTextQuestions = currentSeries && currentSeries.textQuestions.length > 0;
+  const hasImageQuestions = currentSeries && 
+                           currentSeries.imageQuestions && 
+                           currentSeries.imageQuestions.length > 0;
+                           
+  const hasTextQuestions = currentSeries && 
+                          currentSeries.textQuestions && 
+                          currentSeries.textQuestions.length > 0;
+  
+  // Render loading state
+  if (isLoading) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Chargement du quiz...</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    );
+  }
   
   // Handle case where no series is available
   if (!currentSeries) {
-    return null;
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <div className="flex justify-between items-center">
+              <DialogTitle className="text-brand-blue">Quiz non disponible</DialogTitle>
+              <Button variant="ghost" size="icon" onClick={closeDialog}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <DialogDescription>
+              Aucune série de quiz n'est disponible pour ce cours.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    );
   }
   
   return (
@@ -148,54 +191,60 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
             <p className="text-gray-500">Aucune question disponible pour ce quiz.</p>
           </div>
         ) : (
-          /* Only show tabs if both question types exist */
-          hasImageQuestions && hasTextQuestions ? (
-            <Tabs defaultValue={quizType} value={quizType} onValueChange={setQuizType}>
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="image">Quiz avec Images</TabsTrigger>
-                <TabsTrigger value="text">Quiz Textuel</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="image">
-                {hasImageQuestions && (
+          <>
+            {/* Only show tabs if both question types exist */}
+            {hasImageQuestions && hasTextQuestions ? (
+              <Tabs defaultValue={quizType} value={quizType} onValueChange={setQuizType}>
+                <TabsList className="grid grid-cols-2 mb-4">
+                  <TabsTrigger value="image" disabled={!hasImageQuestions}>
+                    Quiz avec Images
+                  </TabsTrigger>
+                  <TabsTrigger value="text" disabled={!hasTextQuestions}>
+                    Quiz Textuel
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="image">
+                  {hasImageQuestions && (
+                    <ImageQuizPlayer 
+                      questions={currentSeries.imageQuestions} 
+                      onComplete={handleComplete}
+                      courseId={courseId}
+                    />
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="text">
+                  {hasTextQuestions && (
+                    <TextQuizPlayer 
+                      questions={currentSeries.textQuestions} 
+                      onComplete={handleComplete}
+                      courseId={courseId}
+                    />
+                  )}
+                </TabsContent>
+              </Tabs>
+            ) : (
+              <div>
+                {/* Render appropriate quiz player based on available questions */}
+                {hasImageQuestions && quizType === "image" && (
                   <ImageQuizPlayer 
                     questions={currentSeries.imageQuestions} 
                     onComplete={handleComplete}
                     courseId={courseId}
                   />
                 )}
-              </TabsContent>
-              
-              <TabsContent value="text">
-                {hasTextQuestions && (
+                
+                {hasTextQuestions && quizType === "text" && (
                   <TextQuizPlayer 
                     questions={currentSeries.textQuestions} 
                     onComplete={handleComplete}
                     courseId={courseId}
                   />
                 )}
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div>
-              {/* Render appropriate quiz player based on available questions */}
-              {hasImageQuestions && (
-                <ImageQuizPlayer 
-                  questions={currentSeries.imageQuestions} 
-                  onComplete={handleComplete}
-                  courseId={courseId}
-                />
-              )}
-              
-              {hasTextQuestions && (
-                <TextQuizPlayer 
-                  questions={currentSeries.textQuestions} 
-                  onComplete={handleComplete}
-                  courseId={courseId}
-                />
-              )}
-            </div>
-          )
+              </div>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>

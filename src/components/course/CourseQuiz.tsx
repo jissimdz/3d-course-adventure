@@ -30,6 +30,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   // Log for debugging
   useEffect(() => {
@@ -39,26 +41,41 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   // Initialize quiz series with default or saved data
   useEffect(() => {
-    const loadedSeries = loadQuizSeries(courseId);
-    
-    if (loadedSeries.length > 0) {
-      setQuizSeries(loadedSeries);
-      console.log("Quiz series loaded:", loadedSeries);
-    } else {
-      // Initialize with default series
-      const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
-      setQuizSeries([defaultSeries]);
-      saveQuizSeries(courseId, [defaultSeries]);
-      console.log("Default quiz series created:", defaultSeries);
+    try {
+      setIsLoading(true);
+      const loadedSeries = loadQuizSeries(courseId);
+      
+      if (loadedSeries.length > 0) {
+        setQuizSeries(loadedSeries);
+        console.log("Quiz series loaded:", loadedSeries);
+      } else {
+        // Initialize with default series
+        const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
+        setQuizSeries([defaultSeries]);
+        saveQuizSeries(courseId, [defaultSeries]);
+        console.log("Default quiz series created:", defaultSeries);
+      }
+      setHasError(false);
+    } catch (error) {
+      console.error("Error loading quiz series:", error);
+      setHasError(true);
+      toast.error("Erreur lors du chargement du quiz");
+    } finally {
+      setIsLoading(false);
     }
   }, [courseId, questions, textQuestions]);
 
   // Save quiz series to localStorage on change
   useEffect(() => {
-    if (quizSeries.length > 0) {
-      saveQuizSeries(courseId, quizSeries);
+    if (quizSeries.length > 0 && !isLoading) {
+      try {
+        saveQuizSeries(courseId, quizSeries);
+      } catch (error) {
+        console.error("Error saving quiz series:", error);
+        toast.error("Erreur lors de l'enregistrement du quiz");
+      }
     }
-  }, [quizSeries, courseId]);
+  }, [quizSeries, courseId, isLoading]);
 
   const handleEditModeChange = () => {
     setIsEditMode(prev => !prev);
@@ -78,15 +95,36 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleStartQuiz = () => {
     console.log("Starting quiz...");
+    if (quizSeries.length === 0) {
+      toast.error("Aucune série de quiz disponible");
+      return;
+    }
+    
+    // Make sure currentSeriesId exists
+    const seriesExists = quizSeries.some(series => series.id === currentSeriesId);
+    if (!seriesExists && quizSeries.length > 0) {
+      setCurrentSeriesId(quizSeries[0].id);
+    }
+    
     setIsQuizOpen(true);
-    // Force the quiz to open
-    setTimeout(() => {
-      if (!isQuizOpen) {
-        console.log("Forcing quiz to open...");
-        setIsQuizOpen(true);
-      }
-    }, 100);
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-8 text-center">
+        <p>Chargement du quiz...</p>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-500 mb-4">Erreur lors du chargement du quiz</p>
+        <Button onClick={() => window.location.reload()}>Réessayer</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -110,6 +148,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           <Button 
             className="w-full bg-brand-blue hover:bg-brand-blue/90"
             onClick={handleStartQuiz}
+            disabled={isLoading || quizSeries.length === 0}
           >
             <Book className="h-4 w-4 mr-2" />
             Commencer le Quiz de {courseId}
