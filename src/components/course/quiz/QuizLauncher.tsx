@@ -39,6 +39,20 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   // Find current selected series
   const currentSeries = quizSeries.find(series => series.id === currentSeriesId) || quizSeries[0];
   
+  // Debug logging
+  useEffect(() => {
+    console.log("QuizLauncher rendered", {
+      isOpen,
+      currentSeriesId,
+      seriesCount: quizSeries.length,
+      currentSeries: currentSeries ? {
+        name: currentSeries.name,
+        imageQuestions: currentSeries.imageQuestions.length,
+        textQuestions: currentSeries.textQuestions.length
+      } : 'none'
+    });
+  }, [isOpen, currentSeriesId, quizSeries, currentSeries]);
+  
   // Determine which quiz type to show by default
   useEffect(() => {
     if (currentSeries) {
@@ -76,6 +90,11 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   // Determine if we have questions of each type
   const hasImageQuestions = currentSeries && currentSeries.imageQuestions.length > 0;
   const hasTextQuestions = currentSeries && currentSeries.textQuestions.length > 0;
+  
+  // Handle case where no series is available
+  if (!currentSeries) {
+    return null;
+  }
   
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -123,15 +142,43 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
           </div>
         )}
         
-        {/* Only show tabs if both question types exist */}
-        {hasImageQuestions && hasTextQuestions ? (
-          <Tabs defaultValue={quizType} value={quizType} onValueChange={setQuizType}>
-            <TabsList className="grid grid-cols-2 mb-4">
-              <TabsTrigger value="image">Quiz avec Images</TabsTrigger>
-              <TabsTrigger value="text">Quiz Textuel</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="image">
+        {/* Verify that we have questions */}
+        {!hasImageQuestions && !hasTextQuestions ? (
+          <div className="text-center py-4">
+            <p className="text-gray-500">Aucune question disponible pour ce quiz.</p>
+          </div>
+        ) : (
+          /* Only show tabs if both question types exist */
+          hasImageQuestions && hasTextQuestions ? (
+            <Tabs defaultValue={quizType} value={quizType} onValueChange={setQuizType}>
+              <TabsList className="grid grid-cols-2 mb-4">
+                <TabsTrigger value="image">Quiz avec Images</TabsTrigger>
+                <TabsTrigger value="text">Quiz Textuel</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="image">
+                {hasImageQuestions && (
+                  <ImageQuizPlayer 
+                    questions={currentSeries.imageQuestions} 
+                    onComplete={handleComplete}
+                    courseId={courseId}
+                  />
+                )}
+              </TabsContent>
+              
+              <TabsContent value="text">
+                {hasTextQuestions && (
+                  <TextQuizPlayer 
+                    questions={currentSeries.textQuestions} 
+                    onComplete={handleComplete}
+                    courseId={courseId}
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div>
+              {/* Render appropriate quiz player based on available questions */}
               {hasImageQuestions && (
                 <ImageQuizPlayer 
                   questions={currentSeries.imageQuestions} 
@@ -139,9 +186,7 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
                   courseId={courseId}
                 />
               )}
-            </TabsContent>
-            
-            <TabsContent value="text">
+              
               {hasTextQuestions && (
                 <TextQuizPlayer 
                   questions={currentSeries.textQuestions} 
@@ -149,34 +194,8 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
                   courseId={courseId}
                 />
               )}
-            </TabsContent>
-          </Tabs>
-        ) : (
-          <div>
-            {/* Render appropriate quiz player based on available questions */}
-            {hasImageQuestions && (
-              <ImageQuizPlayer 
-                questions={currentSeries.imageQuestions} 
-                onComplete={handleComplete}
-                courseId={courseId}
-              />
-            )}
-            
-            {hasTextQuestions && (
-              <TextQuizPlayer 
-                questions={currentSeries.textQuestions} 
-                onComplete={handleComplete}
-                courseId={courseId}
-              />
-            )}
-            
-            {/* If no questions are available */}
-            {!hasImageQuestions && !hasTextQuestions && (
-              <div className="text-center py-4">
-                <p className="text-gray-500">Aucune question disponible pour ce quiz.</p>
-              </div>
-            )}
-          </div>
+            </div>
+          )
         )}
       </DialogContent>
     </Dialog>

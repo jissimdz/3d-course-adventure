@@ -43,11 +43,13 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     
     if (loadedSeries.length > 0) {
       setQuizSeries(loadedSeries);
+      console.log("Quiz series loaded:", loadedSeries);
     } else {
       // Initialize with default series
       const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
       setQuizSeries([defaultSeries]);
       saveQuizSeries(courseId, [defaultSeries]);
+      console.log("Default quiz series created:", defaultSeries);
     }
   }, [courseId, questions, textQuestions]);
 
@@ -75,7 +77,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   };
 
   const handleStartQuiz = () => {
+    console.log("Starting quiz...");
     setIsQuizOpen(true);
+    // Force the quiz to open
+    setTimeout(() => {
+      if (!isQuizOpen) {
+        console.log("Forcing quiz to open...");
+        setIsQuizOpen(true);
+      }
+    }, 100);
   };
 
   return (
