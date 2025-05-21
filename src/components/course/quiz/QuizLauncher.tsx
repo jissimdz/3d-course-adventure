@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,17 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   // Find current selected series
   const currentSeries = quizSeries.find(series => series.id === currentSeriesId) || quizSeries[0];
   
+  // Determine which quiz type to show by default
+  useEffect(() => {
+    if (currentSeries) {
+      if (currentSeries.imageQuestions.length > 0) {
+        setQuizType("image");
+      } else if (currentSeries.textQuestions.length > 0) {
+        setQuizType("text");
+      }
+    }
+  }, [currentSeries]);
+
   const handleComplete = (score: number, total: number) => {
     setQuizResult({ score, total });
     
@@ -61,6 +72,10 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
   
   // Get existing progress data
   const progressData = getQuizProgress(courseId, currentSeriesId);
+
+  // Determine if we have questions of each type
+  const hasImageQuestions = currentSeries && currentSeries.imageQuestions.length > 0;
+  const hasTextQuestions = currentSeries && currentSeries.textQuestions.length > 0;
   
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -109,33 +124,37 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
         )}
         
         {/* Only show tabs if both question types exist */}
-        {currentSeries && currentSeries.imageQuestions.length > 0 && currentSeries.textQuestions.length > 0 ? (
-          <Tabs defaultValue="image" value={quizType} onValueChange={setQuizType}>
+        {hasImageQuestions && hasTextQuestions ? (
+          <Tabs defaultValue={quizType} value={quizType} onValueChange={setQuizType}>
             <TabsList className="grid grid-cols-2 mb-4">
               <TabsTrigger value="image">Quiz avec Images</TabsTrigger>
               <TabsTrigger value="text">Quiz Textuel</TabsTrigger>
             </TabsList>
             
             <TabsContent value="image">
-              <ImageQuizPlayer 
-                questions={currentSeries.imageQuestions} 
-                onComplete={handleComplete}
-                courseId={courseId}
-              />
+              {hasImageQuestions && (
+                <ImageQuizPlayer 
+                  questions={currentSeries.imageQuestions} 
+                  onComplete={handleComplete}
+                  courseId={courseId}
+                />
+              )}
             </TabsContent>
             
             <TabsContent value="text">
-              <TextQuizPlayer 
-                questions={currentSeries.textQuestions} 
-                onComplete={handleComplete}
-                courseId={courseId}
-              />
+              {hasTextQuestions && (
+                <TextQuizPlayer 
+                  questions={currentSeries.textQuestions} 
+                  onComplete={handleComplete}
+                  courseId={courseId}
+                />
+              )}
             </TabsContent>
           </Tabs>
         ) : (
-          <>
-            {/* If only one question type is available, show it directly */}
-            {currentSeries && currentSeries.imageQuestions.length > 0 && (
+          <div>
+            {/* Render appropriate quiz player based on available questions */}
+            {hasImageQuestions && (
               <ImageQuizPlayer 
                 questions={currentSeries.imageQuestions} 
                 onComplete={handleComplete}
@@ -143,7 +162,7 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
               />
             )}
             
-            {currentSeries && currentSeries.textQuestions.length > 0 && (
+            {hasTextQuestions && (
               <TextQuizPlayer 
                 questions={currentSeries.textQuestions} 
                 onComplete={handleComplete}
@@ -152,14 +171,12 @@ const QuizLauncher: React.FC<QuizLauncherProps> = ({
             )}
             
             {/* If no questions are available */}
-            {currentSeries && 
-             currentSeries.imageQuestions.length === 0 && 
-             currentSeries.textQuestions.length === 0 && (
+            {!hasImageQuestions && !hasTextQuestions && (
               <div className="text-center py-4">
                 <p className="text-gray-500">Aucune question disponible pour ce quiz.</p>
               </div>
             )}
-          </>
+          </div>
         )}
       </DialogContent>
     </Dialog>
