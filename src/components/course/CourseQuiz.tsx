@@ -58,6 +58,10 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     }
   }, [quizSeries, courseId]);
 
+  const handleEditModeChange = () => {
+    setIsEditMode(prev => !prev);
+  };
+
   const handleFinishEditing = () => {
     setIsEditMode(false);
     try {
@@ -92,14 +96,22 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         
         <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte.</p>
         
-        <Button 
-          className="w-full bg-brand-blue hover:bg-brand-blue/90"
-          onClick={handleStartQuiz}
-        >
-          <Book className="h-4 w-4 mr-2" />
-          Commencer le Quiz de {courseId}
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            onClick={handleStartQuiz}
+          >
+            <Book className="h-4 w-4 mr-2" />
+            Commencer le Quiz de {courseId}
+          </Button>
+        </div>
       </div>
+
+      <QuizHeader 
+        courseId={courseId}
+        onStartQuiz={handleStartQuiz}
+        onEditModeChange={handleEditModeChange}
+      />
 
       {isEditMode ? (
         <QuizEditor 
