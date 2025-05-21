@@ -1,38 +1,36 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Edit2, Play } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface QuizHeaderProps {
-  onEditModeChange: () => void;
-  courseId: string;
+  onEditModeChange?: () => void;
+  courseId?: string;
   onStartQuiz?: () => void;
 }
 
-const QuizHeader: React.FC<QuizHeaderProps> = ({ onEditModeChange, courseId, onStartQuiz }) => {
+const QuizHeader: React.FC<QuizHeaderProps> = ({
+  onStartQuiz,
+  courseId
+}) => {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
       <div>
-        <h2 className="text-2xl font-semibold text-brand-blue">Quiz d'Évaluation</h2>
-        <p className="mt-2 text-gray-600">Testez vos connaissances avec ce quiz interactif.</p>
+        <h2 className="text-2xl font-bold text-brand-blue">Quiz: {courseId}</h2>
+        <p className="text-gray-500">
+          Évaluez vos connaissances avec ce quiz interactif.
+        </p>
       </div>
-      <div className="flex gap-2">
-        <Button
+      
+      {onStartQuiz && (
+        <Button 
           onClick={onStartQuiz}
-          className="gap-2 bg-brand-blue hover:bg-brand-blue/90"
+          className="bg-brand-blue hover:bg-brand-blue/90"
         >
-          <Play className="h-4 w-4" />
+          <Play className="h-4 w-4 mr-2" />
           Commencer le Quiz
         </Button>
-        <Button
-          onClick={onEditModeChange}
-          variant="outline"
-          className="gap-2 text-brand-blue hover:bg-brand-blue/10"
-        >
-          <Edit2 className="h-4 w-4" />
-          Éditer le Quiz
-        </Button>
-      </div>
+      )}
     </div>
   );
 };

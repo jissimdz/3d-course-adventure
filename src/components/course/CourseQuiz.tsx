@@ -60,7 +60,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleFinishEditing = () => {
     setIsEditMode(false);
-    // Check if modifications were successfully saved
     try {
       const loadedSeries = loadQuizSeries(courseId);
       if (loadedSeries.length === quizSeries.length) {
@@ -77,11 +76,30 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   return (
     <div className="space-y-6">
-      <QuizHeader 
-        onEditModeChange={() => setIsEditMode(true)} 
-        courseId={courseId}
-        onStartQuiz={handleStartQuiz}
-      />
+      <div className="bg-blue-50 p-6 rounded-lg">
+        <h3 className="text-xl font-medium mb-4 text-brand-blue">Quiz d'évaluation : {courseId}</h3>
+        
+        {/* Ajout de la vidéo */}
+        <div className="mb-6 aspect-video w-full overflow-hidden rounded-md">
+          <iframe 
+            src="https://drive.google.com/file/d/1D192QjWoOHRerEDG6P3LSkABrZo-Ih-H/preview" 
+            className="w-full h-full"
+            title="Introduction à la neuroanatomie"
+            allow="autoplay; fullscreen" 
+            frameBorder="0"
+          ></iframe>
+        </div>
+        
+        <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte.</p>
+        
+        <Button 
+          className="w-full bg-brand-blue hover:bg-brand-blue/90"
+          onClick={handleStartQuiz}
+        >
+          <Book className="h-4 w-4 mr-2" />
+          Commencer le Quiz de {courseId}
+        </Button>
+      </div>
 
       {isEditMode ? (
         <QuizEditor 
@@ -93,41 +111,14 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           courseId={courseId}
         />
       ) : (
-        <>
-          <div className="bg-blue-50 p-6 rounded-lg">
-            <h3 className="text-xl font-medium mb-4 text-brand-blue">Quiz d'évaluation : {courseId}</h3>
-            
-            {/* Ajout de la vidéo */}
-            <div className="mb-6 aspect-video w-full overflow-hidden rounded-md">
-              <iframe 
-                src="https://drive.google.com/file/d/1D192QjWoOHRerEDG6P3LSkABrZo-Ih-H/preview" 
-                className="w-full h-full"
-                title="Introduction à la neuroanatomie"
-                allow="autoplay; fullscreen" 
-                frameBorder="0"
-              ></iframe>
-            </div>
-            
-            <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte.</p>
-            
-            <Button 
-              className="w-full bg-brand-blue hover:bg-brand-blue/90"
-              onClick={handleStartQuiz}
-            >
-              <Book className="h-4 w-4 mr-2" />
-              Commencer le Quiz de {courseId}
-            </Button>
-          </div>
-
-          <QuizLauncher 
-            quizSeries={quizSeries}
-            currentSeriesId={currentSeriesId}
-            onChangeSeriesId={setCurrentSeriesId}
-            courseId={courseId}
-            isOpen={isQuizOpen}
-            onOpenChange={setIsQuizOpen}
-          />
-        </>
+        <QuizLauncher 
+          quizSeries={quizSeries}
+          currentSeriesId={currentSeriesId}
+          onChangeSeriesId={setCurrentSeriesId}
+          courseId={courseId}
+          isOpen={isQuizOpen}
+          onOpenChange={setIsQuizOpen}
+        />
       )}
     </div>
   );
