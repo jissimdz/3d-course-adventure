@@ -2,10 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
-import QuizEditor from "./quiz/QuizEditor";
 import QuizHeader from "./quiz/QuizHeader";
 import QuizLauncher from "./quiz/QuizLauncher";
-import { loadQuizSeries, saveQuizSeries, createDefaultSeries } from "./quiz/QuizStorage";
+import { loadQuizSeries, createDefaultSeries } from "./quiz/QuizStorage";
 import { useQuiz } from "./CourseQuizContext";
 import { Button } from "@/components/ui/button";
 import { Book } from "lucide-react";
@@ -21,12 +20,10 @@ interface CourseQuizProps {
 const CourseQuiz: React.FC<CourseQuizProps> = ({ 
   questions = [], 
   textQuestions = [],
-  onEditClick,
   seriesId = "default",
   courseId
 }) => {
   const { courseId: contextCourseId } = useQuiz();
-  const [isEditMode, setIsEditMode] = useState(false);
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
@@ -52,7 +49,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         // Initialize with default series
         const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
         setQuizSeries([defaultSeries]);
-        saveQuizSeries(courseId, [defaultSeries]);
         console.log("Default quiz series created:", defaultSeries);
       }
       setHasError(false);
@@ -64,34 +60,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       setIsLoading(false);
     }
   }, [courseId, questions, textQuestions]);
-
-  // Save quiz series to localStorage on change
-  useEffect(() => {
-    if (quizSeries.length > 0 && !isLoading) {
-      try {
-        saveQuizSeries(courseId, quizSeries);
-      } catch (error) {
-        console.error("Error saving quiz series:", error);
-        toast.error("Erreur lors de l'enregistrement du quiz");
-      }
-    }
-  }, [quizSeries, courseId, isLoading]);
-
-  const handleEditModeChange = () => {
-    setIsEditMode(prev => !prev);
-  };
-
-  const handleFinishEditing = () => {
-    setIsEditMode(false);
-    try {
-      const loadedSeries = loadQuizSeries(courseId);
-      if (loadedSeries.length === quizSeries.length) {
-        toast.success("Modifications enregistrées avec succès");
-      }
-    } catch (error) {
-      console.error("Error checking saved data:", error);
-    }
-  };
 
   const handleStartQuiz = () => {
     console.log("Starting quiz...");
@@ -159,28 +127,16 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       <QuizHeader 
         courseId={courseId}
         onStartQuiz={handleStartQuiz}
-        onEditModeChange={handleEditModeChange}
       />
 
-      {isEditMode ? (
-        <QuizEditor 
-          quizSeries={quizSeries}
-          setQuizSeries={setQuizSeries}
-          currentSeriesId={currentSeriesId}
-          setCurrentSeriesId={setCurrentSeriesId}
-          onFinishEditing={handleFinishEditing}
-          courseId={courseId}
-        />
-      ) : (
-        <QuizLauncher 
-          quizSeries={quizSeries}
-          currentSeriesId={currentSeriesId}
-          onChangeSeriesId={setCurrentSeriesId}
-          courseId={courseId}
-          isOpen={isQuizOpen}
-          onOpenChange={setIsQuizOpen}
-        />
-      )}
+      <QuizLauncher 
+        quizSeries={quizSeries}
+        currentSeriesId={currentSeriesId}
+        onChangeSeriesId={setCurrentSeriesId}
+        courseId={courseId}
+        isOpen={isQuizOpen}
+        onOpenChange={setIsQuizOpen}
+      />
     </div>
   );
 };

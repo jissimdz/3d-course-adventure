@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Pencil } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface QuizHeaderProps {
   onEditModeChange?: () => void;
@@ -11,8 +11,7 @@ interface QuizHeaderProps {
 
 const QuizHeader: React.FC<QuizHeaderProps> = ({
   onStartQuiz,
-  courseId,
-  onEditModeChange
+  courseId
 }) => {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -24,17 +23,6 @@ const QuizHeader: React.FC<QuizHeaderProps> = ({
       </div>
       
       <div className="flex flex-wrap gap-3">
-        {onEditModeChange && (
-          <Button 
-            onClick={onEditModeChange}
-            variant="outline"
-            className="border-brand-blue text-brand-blue hover:bg-blue-50"
-          >
-            <Pencil className="h-4 w-4 mr-2" />
-            Éditer le Quiz
-          </Button>
-        )}
-        
         {onStartQuiz && (
           <Button 
             onClick={onStartQuiz}

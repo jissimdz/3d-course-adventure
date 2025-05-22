@@ -32,11 +32,9 @@ const ImageQuestionDisplay: React.FC<ImageQuestionDisplayProps> = ({
             className={cn(
               "relative cursor-pointer rounded-lg border-2 p-2 transition-all hover:border-brand-blue",
               selectedOption === index ? "border-brand-blue" : "border-gray-200",
-              {
-                "correct": answerStatus[index] === 'correct',
-                "wrong": answerStatus[index] === 'wrong',
-                "flash-effect": flashEffect === index
-              }
+              answerStatus[index] === 'correct' && "border-green-500 bg-green-50",
+              answerStatus[index] === 'wrong' && "border-red-500 bg-red-50",
+              flashEffect === index && "animate-pulse"
             )}
           >
             <img
