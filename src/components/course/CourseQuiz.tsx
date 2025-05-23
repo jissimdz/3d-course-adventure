@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
 import QuizHeader from "./quiz/QuizHeader";
 import QuizLauncher from "./quiz/QuizLauncher";
-import { loadQuizSeries, createDefaultSeries } from "./quiz/QuizStorage";
+import { loadQuizSeries, createDefaultSeries, saveQuizSeries } from "./quiz/QuizStorage";
 import { useQuiz } from "./CourseQuizContext";
 import { Button } from "@/components/ui/button";
 import { Book } from "lucide-react";
@@ -29,6 +29,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [initializationDone, setInitializationDone] = useState(false);
 
   // Log for debugging
   useEffect(() => {
@@ -40,7 +41,11 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   useEffect(() => {
     try {
       setIsLoading(true);
-      const loadedSeries = loadQuizSeries(courseId);
+      console.log(`Initializing quiz series for course ${courseId}...`);
+      
+      // Tentative de chargement des séries existantes
+      let loadedSeries = loadQuizSeries(courseId);
+      console.log(`Loaded series:`, loadedSeries);
       
       if (loadedSeries.length > 0) {
         setQuizSeries(loadedSeries);
@@ -50,7 +55,11 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
         setQuizSeries([defaultSeries]);
         console.log("Default quiz series created:", defaultSeries);
+        
+        // Sauvegarde immédiate pour s'assurer que les données sont persistantes
+        saveQuizSeries(courseId, [defaultSeries]);
       }
+      
       setHasError(false);
     } catch (error) {
       console.error("Error loading quiz series:", error);
@@ -58,8 +67,17 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       toast.error("Erreur lors du chargement du quiz");
     } finally {
       setIsLoading(false);
+      setInitializationDone(true); // Marquer l'initialisation comme terminée
     }
   }, [courseId, questions, textQuestions]);
+
+  // Ensure series are saved whenever they change
+  useEffect(() => {
+    if (initializationDone && quizSeries.length > 0) {
+      console.log("Saving quiz series after change:", quizSeries);
+      saveQuizSeries(courseId, quizSeries);
+    }
+  }, [quizSeries, courseId, initializationDone]);
 
   const handleStartQuiz = () => {
     console.log("Starting quiz...");

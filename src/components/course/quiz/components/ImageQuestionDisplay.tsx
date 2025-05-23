@@ -20,6 +20,12 @@ const ImageQuestionDisplay: React.FC<ImageQuestionDisplayProps> = ({
   onOptionSelect,
   buttonsDisabled,
 }) => {
+  // Vérifier si la question et les options sont correctement chargées
+  React.useEffect(() => {
+    console.log("Question rendue:", question);
+    console.log("Options disponibles:", question.options.length);
+  }, [question]);
+
   return (
     <div>
       <h3 className="text-lg font-medium mb-4">{question.question}</h3>
@@ -39,8 +45,12 @@ const ImageQuestionDisplay: React.FC<ImageQuestionDisplayProps> = ({
           >
             <img
               src={option.image}
-              alt={option.alt}
+              alt={option.alt || "Option d'image"}
               className="w-full h-auto rounded"
+              onError={(e) => {
+                console.error(`Erreur de chargement d'image:`, option.image);
+                e.currentTarget.src = "https://via.placeholder.com/150?text=Image+non+disponible";
+              }}
             />
           </div>
         ))}
