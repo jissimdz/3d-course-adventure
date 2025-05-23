@@ -4,10 +4,11 @@ import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
 import QuizHeader from "./quiz/QuizHeader";
 import QuizLauncher from "./quiz/QuizLauncher";
+import QuizEditor from "./quiz/QuizEditor";
 import { loadQuizSeries, createDefaultSeries, saveQuizSeries } from "./quiz/QuizStorage";
 import { useQuiz } from "./CourseQuizContext";
 import { Button } from "@/components/ui/button";
-import { Book } from "lucide-react";
+import { Book, Edit } from "lucide-react";
 
 interface CourseQuizProps {
   questions?: any[];
@@ -27,6 +28,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   const [quizSeries, setQuizSeries] = useState<QuizSeries[]>([]);
   const [currentSeriesId, setCurrentSeriesId] = useState<string>(seriesId);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [initializationDone, setInitializationDone] = useState(false);
@@ -51,7 +53,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         setQuizSeries(loadedSeries);
         console.log("Quiz series loaded:", loadedSeries);
       } else {
-        // Initialize with default series
+        // Initialize with default series that includes both image and text questions
         const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
         setQuizSeries([defaultSeries]);
         console.log("Default quiz series created:", defaultSeries);
@@ -67,7 +69,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       toast.error("Erreur lors du chargement du quiz");
     } finally {
       setIsLoading(false);
-      setInitializationDone(true); // Marquer l'initialisation comme terminée
+      setInitializationDone(true);
     }
   }, [courseId, questions, textQuestions]);
 
@@ -95,6 +97,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     setIsQuizOpen(true);
   };
 
+  const handleEditQuiz = () => {
+    setIsEditMode(true);
+  };
+
+  const handleFinishEditing = () => {
+    setIsEditMode(false);
+    toast.success("Modifications sauvegardées");
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -109,6 +120,19 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         <p className="text-red-500 mb-4">Erreur lors du chargement du quiz</p>
         <Button onClick={() => window.location.reload()}>Réessayer</Button>
       </div>
+    );
+  }
+
+  if (isEditMode) {
+    return (
+      <QuizEditor
+        quizSeries={quizSeries}
+        setQuizSeries={setQuizSeries}
+        currentSeriesId={currentSeriesId}
+        setCurrentSeriesId={setCurrentSeriesId}
+        onFinishEditing={handleFinishEditing}
+        courseId={courseId}
+      />
     );
   }
 
@@ -128,16 +152,25 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           ></iframe>
         </div>
         
-        <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte.</p>
+        <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte dans la même série.</p>
         
         <div className="flex flex-wrap gap-3">
           <Button 
-            className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            className="bg-brand-blue hover:bg-brand-blue/90"
             onClick={handleStartQuiz}
             disabled={isLoading || quizSeries.length === 0}
           >
             <Book className="h-4 w-4 mr-2" />
             Commencer le Quiz de {courseId}
+          </Button>
+          
+          <Button 
+            variant="outline"
+            className="text-brand-blue border-brand-blue hover:bg-brand-blue/10"
+            onClick={handleEditQuiz}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Éditer le Quiz
           </Button>
         </div>
       </div>
