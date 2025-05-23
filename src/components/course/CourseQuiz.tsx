@@ -31,7 +31,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [initializationDone, setInitializationDone] = useState(false);
 
   // Log for debugging
   useEffect(() => {
@@ -69,17 +68,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       toast.error("Erreur lors du chargement du quiz");
     } finally {
       setIsLoading(false);
-      setInitializationDone(true);
     }
-  }, [courseId, questions, textQuestions]);
-
-  // Ensure series are saved whenever they change
-  useEffect(() => {
-    if (initializationDone && quizSeries.length > 0) {
-      console.log("Saving quiz series after change:", quizSeries);
-      saveQuizSeries(courseId, quizSeries);
-    }
-  }, [quizSeries, courseId, initializationDone]);
+  }, [courseId]); // Retirer questions et textQuestions des dépendances
 
   const handleStartQuiz = () => {
     console.log("Starting quiz...");
@@ -103,7 +93,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleFinishEditing = () => {
     setIsEditMode(false);
+    // Recharger les séries après édition
+    const updatedSeries = loadQuizSeries(courseId);
+    setQuizSeries(updatedSeries);
     toast.success("Modifications sauvegardées");
+  };
+
+  const handleQuizSeriesUpdate = (updatedSeries: QuizSeries[]) => {
+    setQuizSeries(updatedSeries);
+    saveQuizSeries(courseId, updatedSeries);
   };
 
   if (isLoading) {
@@ -127,7 +125,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     return (
       <QuizEditor
         quizSeries={quizSeries}
-        setQuizSeries={setQuizSeries}
+        setQuizSeries={handleQuizSeriesUpdate}
         currentSeriesId={currentSeriesId}
         setCurrentSeriesId={setCurrentSeriesId}
         onFinishEditing={handleFinishEditing}
