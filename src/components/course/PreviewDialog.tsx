@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,9 +36,9 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
     if (selectedPreview) {
       // Close the dialog
       onOpenChange(false);
-      // Start the quiz for this section
-      handleQuizStart(selectedPreview.id);
-      toast.success(`Quiz d'Introduction lancé`);
+      // Always start quiz for neuroanatomy course (section 1) to use the correct questions
+      handleQuizStart(1);
+      toast.success(`Quiz de Neuroanatomie lancé`);
     }
   };
 
@@ -108,7 +107,7 @@ const PreviewDialog: React.FC<PreviewDialogProps> = ({
               onClick={handleStartQuiz}
             >
               <Play className="h-4 w-4" />
-              Commencer le Quiz d'Introduction
+              Commencer le Quiz de Neuroanatomie
             </Button>
           </div>
           <Button className="bg-brand-blue hover:bg-brand-blue/90">
