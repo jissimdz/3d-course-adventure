@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
@@ -38,38 +37,39 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     console.log(`Context courseId: ${contextCourseId}`);
   }, [courseId, contextCourseId]);
 
-  // Initialize quiz series with default or saved data
+  // Initialize quiz series - only load once when component mounts
   useEffect(() => {
-    try {
-      setIsLoading(true);
-      console.log(`Initializing quiz series for course ${courseId}...`);
-      
-      // Tentative de chargement des séries existantes
-      let loadedSeries = loadQuizSeries(courseId);
-      console.log(`Loaded series:`, loadedSeries);
-      
-      if (loadedSeries.length > 0) {
-        setQuizSeries(loadedSeries);
-        console.log("Quiz series loaded:", loadedSeries);
-      } else {
-        // Initialize with default series that includes both image and text questions
-        const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
-        setQuizSeries([defaultSeries]);
-        console.log("Default quiz series created:", defaultSeries);
+    const initializeQuizSeries = () => {
+      try {
+        setIsLoading(true);
+        console.log(`Initializing quiz series for course ${courseId}...`);
         
-        // Sauvegarde immédiate pour s'assurer que les données sont persistantes
-        saveQuizSeries(courseId, [defaultSeries]);
+        // Charger les séries existantes
+        const loadedSeries = loadQuizSeries(courseId);
+        console.log(`Loaded series:`, loadedSeries);
+        
+        if (loadedSeries.length > 0) {
+          setQuizSeries(loadedSeries);
+          console.log("Quiz series loaded successfully:", loadedSeries);
+        } else {
+          // Créer une série par défaut seulement si aucune n'existe
+          const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
+          setQuizSeries([defaultSeries]);
+          console.log("Default quiz series created:", defaultSeries);
+        }
+        
+        setHasError(false);
+      } catch (error) {
+        console.error("Error loading quiz series:", error);
+        setHasError(true);
+        toast.error("Erreur lors du chargement du quiz");
+      } finally {
+        setIsLoading(false);
       }
-      
-      setHasError(false);
-    } catch (error) {
-      console.error("Error loading quiz series:", error);
-      setHasError(true);
-      toast.error("Erreur lors du chargement du quiz");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [courseId]); // Retirer questions et textQuestions des dépendances
+    };
+
+    initializeQuizSeries();
+  }, [courseId]); // Seulement courseId comme dépendance
 
   const handleStartQuiz = () => {
     console.log("Starting quiz...");
@@ -101,7 +101,10 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleQuizSeriesUpdate = (updatedSeries: QuizSeries[]) => {
     setQuizSeries(updatedSeries);
-    saveQuizSeries(courseId, updatedSeries);
+    const success = saveQuizSeries(courseId, updatedSeries);
+    if (success) {
+      console.log("Quiz series updated and saved successfully");
+    }
   };
 
   if (isLoading) {

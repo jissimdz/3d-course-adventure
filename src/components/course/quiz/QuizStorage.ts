@@ -235,10 +235,10 @@ export const loadQuizSeries = (courseId: string): QuizSeries[] => {
     console.log(`Loading quiz series for course: ${courseId}`);
     const savedSeries = localStorage.getItem(storageKey);
     
-    if (savedSeries && savedSeries !== 'undefined') {
+    if (savedSeries && savedSeries !== 'undefined' && savedSeries !== 'null') {
       try {
         const parsedSeries = JSON.parse(savedSeries);
-        console.log(`Loaded ${parsedSeries.length} quiz series for course: ${courseId}`);
+        console.log(`Found saved quiz series for course: ${courseId}`, parsedSeries);
         
         // Vérifier que les données sont valides et non vides
         if (Array.isArray(parsedSeries) && parsedSeries.length > 0) {
@@ -248,6 +248,7 @@ export const loadQuizSeries = (courseId: string): QuizSeries[] => {
           );
           
           if (hasQuestions) {
+            console.log(`Using saved quiz series with ${parsedSeries.length} series`);
             return parsedSeries;
           }
         }
@@ -256,23 +257,17 @@ export const loadQuizSeries = (courseId: string): QuizSeries[] => {
       }
     }
     
-    // Si aucune donnée valide n'a été chargée, utiliser les données par défaut
-    console.log(`Aucune série de quiz valide trouvée, utilisation des données par défaut`);
+    // Seulement utiliser les données par défaut si aucune donnée sauvegardée n'existe
+    console.log(`No valid saved data found, checking for default data for ${courseId}`);
     const defaultSeries = defaultQuizData[courseId as keyof typeof defaultQuizData];
     
     if (defaultSeries) {
-      console.log(`Données par défaut trouvées pour ${courseId}:`, defaultSeries);
-      // Sauvegarder les données par défaut dans localStorage pour les utilisations futures
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(defaultSeries));
-      } catch (saveError) {
-        console.error(`Erreur lors de la sauvegarde des données par défaut:`, saveError);
-      }
+      console.log(`Using default data for ${courseId}:`, defaultSeries);
+      // NE PAS sauvegarder automatiquement les données par défaut pour éviter d'écraser les données éditées
       return defaultSeries;
     }
     
-    // Si même les données par défaut n'existent pas, retourner un tableau vide
-    console.log(`Aucune donnée par défaut trouvée pour ${courseId}`);
+    console.log(`No default data found for ${courseId}`);
     return [];
   } catch (error) {
     console.error(`Error loading quiz series from localStorage for course ${courseId}:`, error);
@@ -283,8 +278,9 @@ export const loadQuizSeries = (courseId: string): QuizSeries[] => {
 export const saveQuizSeries = (courseId: string, quizSeries: QuizSeries[]): boolean => {
   try {
     const storageKey = `quizSeries_${courseId}`;
-    localStorage.setItem(storageKey, JSON.stringify(quizSeries));
-    console.log(`Saved ${quizSeries.length} quiz series for course: ${courseId}`);
+    const serializedData = JSON.stringify(quizSeries);
+    localStorage.setItem(storageKey, serializedData);
+    console.log(`Successfully saved ${quizSeries.length} quiz series for course: ${courseId}`);
     return true;
   } catch (error) {
     console.error(`Error saving quiz series to localStorage for course ${courseId}:`, error);
