@@ -1,4 +1,3 @@
-
 import { QuizSeries } from "../types/quizTypes";
 import { toast } from "sonner";
 
@@ -7,221 +6,108 @@ const defaultQuizData = {
   "neuroanatomy": [
     {
       id: "default",
-      name: "Quiz de Neuroanatomie",
+      name: "Quiz de Neuroanatomie - Tronc cérébral et Lobes",
       courseId: "neuroanatomy",
-      imageQuestions: [
-        {
-          id: 1,
-          question: "Quelle image représente la dure-mère ?",
-          options: [
-            {
-              image: "https://via.placeholder.com/150?text=Dure-mère",
-              alt: "Dure-mère",
-              isCorrect: true
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Arachnoïde",
-              alt: "Arachnoïde",
-              isCorrect: false
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Pie-mère",
-              alt: "Pie-mère",
-              isCorrect: false
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Autre",
-              alt: "Autre",
-              isCorrect: false
-            }
-          ]
-        },
-        {
-          id: 2,
-          question: "Quelle image montre l'arachnoïde ?",
-          options: [
-            {
-              image: "https://via.placeholder.com/150?text=Arachnoïde",
-              alt: "Arachnoïde",
-              isCorrect: true
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Dure-mère",
-              alt: "Dure-mère",
-              isCorrect: false
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Pie-mère",
-              alt: "Pie-mère",
-              isCorrect: false
-            },
-            {
-              image: "https://via.placeholder.com/150?text=Autre",
-              alt: "Autre",
-              isCorrect: false
-            }
-          ]
-        }
-      ],
+      imageQuestions: [],
       textQuestions: [
         {
           id: 1,
-          question: "Quelle partie du cerveau est responsable de la coordination motrice ?",
+          question: "Quelle est la fonction principale du tronc cérébral ?",
           options: [
-            { text: "Le cervelet", isCorrect: true },
-            { text: "Le cortex préfrontal", isCorrect: false },
-            { text: "L'hippocampe", isCorrect: false },
-            { text: "Le thalamus", isCorrect: false }
+            { text: "Réguler les émotions et la mémoire", isCorrect: false },
+            { text: "Contrôler les fonctions vitales comme la respiration", isCorrect: true },
+            { text: "Coordonner les mouvements volontaires", isCorrect: false },
+            { text: "Traiter l'information visuelle", isCorrect: false }
           ]
         },
         {
           id: 2,
-          question: "Quel neurotransmetteur est principalement associé à la maladie de Parkinson ?",
+          question: "Le tronc cérébral est composé de trois parties. Laquelle de ces combinaisons est correcte ?",
           options: [
-            { text: "La dopamine", isCorrect: true },
-            { text: "La sérotonine", isCorrect: false },
-            { text: "L'acétylcholine", isCorrect: false },
-            { text: "Le glutamate", isCorrect: false }
+            { text: "Moelle, cervelet, cortex", isCorrect: false },
+            { text: "Bulbe, pont, mésencéphale", isCorrect: true },
+            { text: "Thalamus, hippocampe, amygdale", isCorrect: false },
+            { text: "Frontal, pariétal, temporal", isCorrect: false }
           ]
         },
         {
           id: 3,
-          question: "Quelle structure fait partie du système nerveux central ?",
+          question: "Quelle est l'une des fonctions principales du cervelet ?",
           options: [
-            { text: "La moelle épinière", isCorrect: true },
-            { text: "Le nerf sciatique", isCorrect: false },
-            { text: "Le nerf facial", isCorrect: false },
-            { text: "Le nerf vague", isCorrect: false }
+            { text: "Produire le langage", isCorrect: false },
+            { text: "Réguler la température corporelle", isCorrect: false },
+            { text: "Maintenir l'équilibre et la posture", isCorrect: true },
+            { text: "Interpréter les émotions", isCorrect: false }
           ]
         },
         {
           id: 4,
-          question: "Combien de nerfs crâniens y a-t-il ?",
+          question: "Quel élément ne fait pas partie du diencéphale ?",
           options: [
-            { text: "12", isCorrect: true },
-            { text: "10", isCorrect: false },
-            { text: "14", isCorrect: false },
-            { text: "8", isCorrect: false }
+            { text: "Hypothalamus", isCorrect: false },
+            { text: "Thalamus", isCorrect: false },
+            { text: "Mésencéphale", isCorrect: true },
+            { text: "Épithalamus", isCorrect: false }
           ]
         },
         {
           id: 5,
-          question: "Quelle lobe du cerveau est responsable de la vision ?",
+          question: "Parmi ces fonctions, laquelle est liée au lobe frontal ?",
           options: [
-            { text: "Lobe occipital", isCorrect: true },
-            { text: "Lobe frontal", isCorrect: false },
-            { text: "Lobe pariétal", isCorrect: false },
-            { text: "Lobe temporal", isCorrect: false }
+            { text: "Contrôle des mouvements volontaires", isCorrect: true },
+            { text: "Coordination motrice automatique", isCorrect: false },
+            { text: "Traitement visuel", isCorrect: false },
+            { text: "Réception des sensations tactiles", isCorrect: false }
           ]
         },
         {
           id: 6,
-          question: "Quelle est la fonction principale de l'hippocampe ?",
+          question: "Quel rôle joue le lobe pariétal ?",
           options: [
-            { text: "Mémoire", isCorrect: true },
-            { text: "Vision", isCorrect: false },
-            { text: "Audition", isCorrect: false },
-            { text: "Équilibre", isCorrect: false }
+            { text: "Interpréter les sons", isCorrect: false },
+            { text: "Planifier les mouvements", isCorrect: false },
+            { text: "Traiter les informations sensorielles tactiles", isCorrect: true },
+            { text: "Contrôler la respiration", isCorrect: false }
           ]
         },
         {
           id: 7,
-          question: "Quel est le plus gros nerf du corps humain ?",
+          question: "À quoi est principalement associé le lobe occipital ?",
           options: [
-            { text: "Le nerf sciatique", isCorrect: true },
-            { text: "Le nerf optique", isCorrect: false },
-            { text: "Le nerf facial", isCorrect: false },
-            { text: "Le nerf vague", isCorrect: false }
+            { text: "La mémoire à long terme", isCorrect: false },
+            { text: "La vision", isCorrect: true },
+            { text: "La douleur", isCorrect: false },
+            { text: "La régulation hormonale", isCorrect: false }
           ]
         },
         {
           id: 8,
-          question: "Combien de segments a la moelle épinière ?",
+          question: "Un accident vasculaire cérébral (AVC) dans le lobe pariétal peut provoquer :",
           options: [
-            { text: "31", isCorrect: true },
-            { text: "24", isCorrect: false },
-            { text: "33", isCorrect: false },
-            { text: "28", isCorrect: false }
+            { text: "Une surdité", isCorrect: false },
+            { text: "Des troubles de la mémoire", isCorrect: false },
+            { text: "Une paralysie faciale", isCorrect: false },
+            { text: "Des difficultés de lecture (alexie)", isCorrect: true }
           ]
         },
         {
           id: 9,
-          question: "Quelle structure connecte les deux hémisphères cérébraux ?",
+          question: "Quel rôle joue le lobe temporal ?",
           options: [
-            { text: "Corps calleux", isCorrect: true },
-            { text: "Thalamus", isCorrect: false },
-            { text: "Hypothalamus", isCorrect: false },
-            { text: "Cervelet", isCorrect: false }
+            { text: "Interpréter les sons", isCorrect: false },
+            { text: "Traiter les informations auditives", isCorrect: true },
+            { text: "Traiter la vision", isCorrect: false },
+            { text: "Contrôler l'équilibre", isCorrect: false }
           ]
         },
         {
           id: 10,
-          question: "Quelle est la cellule principale du système nerveux ?",
+          question: "Quelles sont les conséquences d'un AVC dans le lobe frontal ?",
           options: [
-            { text: "Le neurone", isCorrect: true },
-            { text: "La cellule gliale", isCorrect: false },
-            { text: "L'astrocyte", isCorrect: false },
-            { text: "L'oligodendrocyte", isCorrect: false }
-          ]
-        },
-        {
-          id: 11,
-          question: "Quel lobe contrôle les fonctions exécutives ?",
-          options: [
-            { text: "Lobe frontal", isCorrect: true },
-            { text: "Lobe pariétal", isCorrect: false },
-            { text: "Lobe temporal", isCorrect: false },
-            { text: "Lobe occipital", isCorrect: false }
-          ]
-        },
-        {
-          id: 12,
-          question: "Quelle structure régule la température corporelle ?",
-          options: [
-            { text: "L'hypothalamus", isCorrect: true },
-            { text: "Le thalamus", isCorrect: false },
-            { text: "L'hypophyse", isCorrect: false },
-            { text: "Le cervelet", isCorrect: false }
-          ]
-        },
-        {
-          id: 13,
-          question: "Combien de paires de nerfs spinaux y a-t-il ?",
-          options: [
-            { text: "31", isCorrect: true },
-            { text: "33", isCorrect: false },
-            { text: "24", isCorrect: false },
-            { text: "28", isCorrect: false }
-          ]
-        },
-        {
-          id: 14,
-          question: "Quelle partie du cerveau contrôle l'équilibre ?",
-          options: [
-            { text: "Le cervelet", isCorrect: true },
-            { text: "Le cortex moteur", isCorrect: false },
-            { text: "Le thalamus", isCorrect: false },
-            { text: "L'hypothalamus", isCorrect: false }
-          ]
-        },
-        {
-          id: 15,
-          question: "Quel neurotransmetteur est associé au plaisir et à la récompense ?",
-          options: [
-            { text: "La dopamine", isCorrect: true },
-            { text: "La sérotonine", isCorrect: false },
-            { text: "L'acétylcholine", isCorrect: false },
-            { text: "Le GABA", isCorrect: false }
-          ]
-        },
-        {
-          id: 16,
-          question: "Quelle méninges est la plus externe ?",
-          options: [
-            { text: "La dure-mère", isCorrect: true },
-            { text: "L'arachnoïde", isCorrect: false },
-            { text: "La pie-mère", isCorrect: false },
-            { text: "Aucune de ces réponses", isCorrect: false }
+            { text: "Problèmes de prise de décision et de contrôle des mouvements", isCorrect: true },
+            { text: "Trouble de l'équilibre", isCorrect: false },
+            { text: "Problèmes de mémoire", isCorrect: false },
+            { text: "Troubles de la vision", isCorrect: false }
           ]
         }
       ]
