@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
@@ -175,11 +176,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           </Button>
         </div>
       </div>
-
-      <QuizHeader 
-        courseId={courseId}
-        onStartQuiz={handleStartQuiz}
-      />
 
       <QuizLauncher 
         quizSeries={quizSeries}
