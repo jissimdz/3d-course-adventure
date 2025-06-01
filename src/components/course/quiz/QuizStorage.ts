@@ -1,7 +1,7 @@
 import { QuizSeries } from "../types/quizTypes";
 import { toast } from "sonner";
 
-// Données de quiz par défaut pour assurer qu'il y a toujours du contenu
+// Données de quiz par défaut - SEULEMENT utilisées si aucune donnée n'existe
 const defaultQuizData = {
   "neuroanatomy": [
     {
@@ -121,39 +121,32 @@ export const loadQuizSeries = (courseId: string): QuizSeries[] => {
     console.log(`Loading quiz series for course: ${courseId}`);
     const savedSeries = localStorage.getItem(storageKey);
     
+    // PRIORITÉ ABSOLUE aux données sauvegardées
     if (savedSeries && savedSeries !== 'undefined' && savedSeries !== 'null') {
       try {
         const parsedSeries = JSON.parse(savedSeries);
         console.log(`Found saved quiz series for course: ${courseId}`, parsedSeries);
         
-        // Vérifier que les données sont valides et non vides
-        if (Array.isArray(parsedSeries) && parsedSeries.length > 0) {
-          const hasQuestions = parsedSeries.some(series => 
-            (series.imageQuestions && series.imageQuestions.length > 0) ||
-            (series.textQuestions && series.textQuestions.length > 0)
-          );
-          
-          if (hasQuestions) {
-            console.log(`Using saved quiz series with ${parsedSeries.length} series`);
-            return parsedSeries;
-          }
+        // Vérifier que les données sont un tableau valide
+        if (Array.isArray(parsedSeries)) {
+          console.log(`Using saved quiz series with ${parsedSeries.length} series`);
+          return parsedSeries; // TOUJOURS retourner les données sauvegardées, même si elles sont vides
         }
       } catch (parseError) {
         console.error(`Erreur de parsing pour quiz series:`, parseError);
       }
     }
     
-    // Seulement utiliser les données par défaut si aucune donnée sauvegardée n'existe
-    console.log(`No valid saved data found, checking for default data for ${courseId}`);
+    // SEULEMENT si aucune donnée sauvegardée valide n'existe, utiliser les données par défaut
+    console.log(`No saved data found, using default data for ${courseId}`);
     const defaultSeries = defaultQuizData[courseId as keyof typeof defaultQuizData];
     
     if (defaultSeries) {
       console.log(`Using default data for ${courseId}:`, defaultSeries);
-      // NE PAS sauvegarder automatiquement les données par défaut pour éviter d'écraser les données éditées
       return defaultSeries;
     }
     
-    console.log(`No default data found for ${courseId}`);
+    console.log(`No default data found for ${courseId}, returning empty array`);
     return [];
   } catch (error) {
     console.error(`Error loading quiz series from localStorage for course ${courseId}:`, error);
@@ -167,6 +160,7 @@ export const saveQuizSeries = (courseId: string, quizSeries: QuizSeries[]): bool
     const serializedData = JSON.stringify(quizSeries);
     localStorage.setItem(storageKey, serializedData);
     console.log(`Successfully saved ${quizSeries.length} quiz series for course: ${courseId}`);
+    console.log(`Saved data:`, quizSeries);
     return true;
   } catch (error) {
     console.error(`Error saving quiz series to localStorage for course ${courseId}:`, error);
@@ -176,13 +170,14 @@ export const saveQuizSeries = (courseId: string, quizSeries: QuizSeries[]): bool
 };
 
 export const createDefaultSeries = (courseId: string, initialImageQuestions = [], initialTextQuestions = []): QuizSeries => {
-  // Utiliser les données par défaut si disponibles
-  const defaultSeries = defaultQuizData[courseId as keyof typeof defaultQuizData];
-  if (defaultSeries && defaultSeries.length > 0) {
-    return defaultSeries[0];
+  // NE JAMAIS utiliser les données par défaut si des données existent déjà
+  const existingData = loadQuizSeries(courseId);
+  if (existingData.length > 0) {
+    console.log("Existing data found, returning first series instead of creating new default");
+    return existingData[0];
   }
   
-  // Sinon créer une série avec les questions fournies
+  // Créer une série vide pour permettre à l'utilisateur d'ajouter ses propres questions
   const newSeries = {
     id: "default",
     name: `Quiz du cours ${courseId}`,
@@ -191,6 +186,7 @@ export const createDefaultSeries = (courseId: string, initialImageQuestions = []
     textQuestions: initialTextQuestions
   };
   
+  console.log("Created new default series:", newSeries);
   return newSeries;
 };
 

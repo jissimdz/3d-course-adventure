@@ -38,26 +38,20 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     console.log(`Context courseId: ${contextCourseId}`);
   }, [courseId, contextCourseId]);
 
-  // Initialize quiz series - only load once when component mounts
+  // Initialize quiz series - SEULEMENT charger les données sauvegardées
   useEffect(() => {
     const initializeQuizSeries = () => {
       try {
         setIsLoading(true);
         console.log(`Initializing quiz series for course ${courseId}...`);
         
-        // Charger les séries existantes
+        // Charger UNIQUEMENT les séries existantes sauvegardées
         const loadedSeries = loadQuizSeries(courseId);
-        console.log(`Loaded series:`, loadedSeries);
+        console.log(`Loaded series from storage:`, loadedSeries);
         
-        if (loadedSeries.length > 0) {
-          setQuizSeries(loadedSeries);
-          console.log("Quiz series loaded successfully:", loadedSeries);
-        } else {
-          // Créer une série par défaut seulement si aucune n'existe
-          const defaultSeries = createDefaultSeries(courseId, questions, textQuestions);
-          setQuizSeries([defaultSeries]);
-          console.log("Default quiz series created:", defaultSeries);
-        }
+        // TOUJOURS utiliser les données chargées, même si elles sont vides ou différentes
+        setQuizSeries(loadedSeries);
+        console.log("Quiz series set to loaded data:", loadedSeries);
         
         setHasError(false);
       } catch (error) {
@@ -73,9 +67,9 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   }, [courseId]); // Seulement courseId comme dépendance
 
   const handleStartQuiz = () => {
-    console.log("Starting quiz...");
+    console.log("Starting quiz with current series:", quizSeries);
     if (quizSeries.length === 0) {
-      toast.error("Aucune série de quiz disponible");
+      toast.error("Aucune série de quiz disponible. Veuillez créer des questions d'abord.");
       return;
     }
     
@@ -94,13 +88,14 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleFinishEditing = () => {
     setIsEditMode(false);
-    // Recharger les séries après édition
+    // Recharger les séries après édition pour s'assurer qu'on a les dernières données
     const updatedSeries = loadQuizSeries(courseId);
     setQuizSeries(updatedSeries);
     toast.success("Modifications sauvegardées");
   };
 
   const handleQuizSeriesUpdate = (updatedSeries: QuizSeries[]) => {
+    console.log("Updating quiz series:", updatedSeries);
     setQuizSeries(updatedSeries);
     const success = saveQuizSeries(courseId, updatedSeries);
     if (success) {
@@ -160,7 +155,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           <Button 
             className="bg-brand-blue hover:bg-brand-blue/90"
             onClick={handleStartQuiz}
-            disabled={isLoading || quizSeries.length === 0}
+            disabled={isLoading}
           >
             <Book className="h-4 w-4 mr-2" />
             Commencer le Quiz de {courseId}
@@ -175,6 +170,16 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
             Éditer le Quiz
           </Button>
         </div>
+        
+        {quizSeries.length > 0 && (
+          <div className="mt-4 text-sm text-gray-600">
+            {quizSeries.map(series => (
+              <div key={series.id}>
+                Série "{series.name}": {series.imageQuestions.length + series.textQuestions.length} questions
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <QuizLauncher 
