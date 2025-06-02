@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
@@ -172,10 +173,10 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           <Button 
             variant="outline"
             className="text-brand-blue border-brand-blue hover:bg-brand-blue/10"
-            onClick={() => window.open("https://drive.google.com/drive/folders/1f6WptrxC77lj-IEbz3Y6keLchb_MtjVv", "_blank")}
+            onClick={() => window.open("https://drive.google.com/file/d/1H4mJa9YpkRugRRH7Moz3-WixlFjS3PKF/view?usp=sharing", "_blank")}
           >
             <ExternalLink className="h-4 w-4 mr-2" />
-            Voir les Ressources
+            Voir la Vidéo
           </Button>
         </div>
         
