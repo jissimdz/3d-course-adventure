@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,7 +51,7 @@ const CourseCurriculum: React.FC<CourseCurriculumProps> = ({
           <div key={section.id} className="rounded-md border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-wrap">
-                <h3 className="font-semibold">{section.title}</h3>
+                <h3 className="font-semibold">Aperçu du cerveau</h3>
                 {section.isPreview && (
                   <Badge variant="outline" className="border-brand-teal text-brand-teal">
                     Cours vidéo
