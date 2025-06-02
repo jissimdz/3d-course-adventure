@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
@@ -8,7 +7,7 @@ import QuizEditor from "./quiz/QuizEditor";
 import { loadQuizSeries, createDefaultSeries, saveQuizSeries } from "./quiz/QuizStorage";
 import { useQuiz } from "./CourseQuizContext";
 import { Button } from "@/components/ui/button";
-import { Book, Edit } from "lucide-react";
+import { Book, Edit, ExternalLink } from "lucide-react";
 
 interface CourseQuizProps {
   questions?: any[];
@@ -136,7 +135,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 p-6 rounded-lg">
-        <h3 className="text-xl font-medium mb-4 text-brand-blue">Quiz d'évaluation : {courseId}</h3>
+        <h3 className="text-xl font-medium mb-4 text-brand-blue">Quiz d'évaluation : Aperçu du cerveau</h3>
         
         {/* Ajout de la vidéo */}
         <div className="mb-6 aspect-video w-full overflow-hidden rounded-md">
@@ -149,7 +148,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           ></iframe>
         </div>
         
-        <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur la neuroanatomie. Ce quiz comporte des questions à choix multiples avec des images et du texte dans la même série.</p>
+        <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur l'aperçu du cerveau. Ce quiz comporte des questions à choix multiples avec des images et du texte dans la même série.</p>
         
         <div className="flex flex-wrap gap-3">
           <Button 
@@ -158,7 +157,7 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
             disabled={isLoading}
           >
             <Book className="h-4 w-4 mr-2" />
-            Commencer le Quiz de {courseId}
+            Commencer le Quiz
           </Button>
           
           <Button 
@@ -168,6 +167,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           >
             <Edit className="h-4 w-4 mr-2" />
             Éditer le Quiz
+          </Button>
+
+          <Button 
+            variant="outline"
+            className="text-brand-blue border-brand-blue hover:bg-brand-blue/10"
+            onClick={() => window.open("https://drive.google.com/drive/folders/1f6WptrxC77lj-IEbz3Y6keLchb_MtjVv", "_blank")}
+          >
+            <ExternalLink className="h-4 w-4 mr-2" />
+            Voir les Ressources
           </Button>
         </div>
         
