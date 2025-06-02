@@ -1,12 +1,12 @@
 
-import { QuizSeries } from "../types/quizTypes";
+import { QuizSeries } from "../../types/quizTypes";
 
 // Données de quiz par défaut - SEULEMENT utilisées si aucune donnée n'existe
 export const defaultQuizData: Record<string, QuizSeries[]> = {
   "neuroanatomy": [
     {
       id: "default",
-      name: "Quiz de Neuroanatomie - Tronc cérébral et Lobes",
+      name: "Quiz de Neuroanatomie - Aperçu de l'encéphale",
       courseId: "neuroanatomy",
       imageQuestions: [],
       textQuestions: [
@@ -22,10 +22,10 @@ export const defaultQuizData: Record<string, QuizSeries[]> = {
         },
         {
           id: 2,
-          question: "Le tronc cérébral est composé de trois parties. Laquelle de ces combinaisons est correcte ?",
+          question: "L'encéphale est composé de trois parties principales. Laquelle de ces combinaisons est correcte ?",
           options: [
             { text: "Moelle, cervelet, cortex", isCorrect: false },
-            { text: "Bulbe, pont, mésencéphale", isCorrect: true },
+            { text: "Cerveau, cervelet, tronc cérébral", isCorrect: true },
             { text: "Thalamus, hippocampe, amygdale", isCorrect: false },
             { text: "Frontal, pariétal, temporal", isCorrect: false }
           ]

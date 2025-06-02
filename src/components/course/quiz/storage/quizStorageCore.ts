@@ -1,5 +1,5 @@
 
-import { QuizSeries } from "../types/quizTypes";
+import { QuizSeries } from "../../types/quizTypes";
 import { toast } from "sonner";
 import { defaultQuizData } from "./defaultQuizData";
 
