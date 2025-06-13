@@ -1,3 +1,4 @@
+
 import React from "react";
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
@@ -9,10 +10,13 @@ import { courses } from "@/data/coursesData";
 import CourseCard from "@/components/CourseCard";
 import { BrainModel3D } from "@/components/brain-model";
 import { Pencil } from "lucide-react";
+
 const Index: React.FC = () => {
   // Only show the first 3 courses on the homepage
   const featuredCourses = courses.slice(0, 3);
-  return <Layout>
+  
+  return (
+    <Layout>
       <HeroSection />
       <FeaturesSection />
       
@@ -95,6 +99,9 @@ const Index: React.FC = () => {
             <Button asChild variant="outline" size="lg" className="border-brand-teal text-brand-teal hover:bg-brand-teal/10">
               <Link to="/courses">Voir Tous les Cours</Link>
             </Button>
+            <p className="mt-4 text-sm text-gray-500">
+              Certaines icônes utilisées sur cette plateforme proviennent de BioRender et sont sous licence CC0.
+            </p>
           </div>
         </div>
       </section>
@@ -113,6 +120,8 @@ const Index: React.FC = () => {
           </Button>
         </div>
       </section>
-    </Layout>;
+    </Layout>
+  );
 };
+
 export default Index;
