@@ -66,11 +66,18 @@ const CanvasElements: React.FC<CanvasElementsProps> = ({
               }}
             />
           );
-        } else if (element.type === 'image') {
+        } else if (element.type === 'image' && element.src) {
           return (
             <ImageElement
               key={element.id}
-              element={element}
+              element={{
+                id: element.id,
+                x: element.x,
+                y: element.y,
+                src: element.src,
+                width: element.width,
+                height: element.height
+              }}
               onUpdate={onUpdateElement}
               onDelete={onDeleteElement}
             />
