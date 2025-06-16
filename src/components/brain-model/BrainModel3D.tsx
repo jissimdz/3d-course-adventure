@@ -1,7 +1,6 @@
-
 import React, { useState, useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import BrainModelMesh from './BrainModelMesh';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
@@ -165,9 +164,10 @@ const BrainModel3D: React.FC<BrainModel3DProps> = ({ height = "500px" }) => {
       <Canvas style={{ background: backgroundColor }}>
         <Suspense fallback={null}>
           <PerspectiveCamera makeDefault position={[0, 0, 5]} />
-          <ambientLight intensity={0.5} />
+          <ambientLight intensity={0.8} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
           <pointLight position={[-10, -10, -10]} intensity={0.5} />
+          <directionalLight position={[5, 5, 5]} intensity={0.5} />
           <BrainModelMesh activeParts={activeParts} />
           <OrbitControls 
             ref={controlsRef} 
@@ -176,7 +176,6 @@ const BrainModel3D: React.FC<BrainModel3DProps> = ({ height = "500px" }) => {
             enableDamping={true}
             dampingFactor={0.1}
           />
-          <Environment preset="city" />
         </Suspense>
       </Canvas>
     </div>
