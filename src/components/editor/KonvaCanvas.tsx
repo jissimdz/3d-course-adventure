@@ -1,87 +1,78 @@
 
-import React, { forwardRef, useEffect } from 'react';
-import { Stage, Layer, Line } from 'react-konva';
-import { useCanvasInteractions } from './hooks/useCanvasInteractions';
+import React, { useRef, forwardRef, useImperativeHandle } from 'react';
+import { Stage, Layer } from 'react-konva';
 import CanvasElements from './elements/CanvasElements';
 
-interface Element {
-  id: number;
-  type: 'circle' | 'text' | 'image' | 'line';
-  x: number;
-  y: number;
-  [key: string]: any;
-}
-
 interface KonvaCanvasProps {
-  elements: Element[];
-  selectedTool: string;
-  onUpdateElement: (id: number, updates: any) => void;
-  onDeleteElement: (id: number) => void;
-  onAddElement: (element: any) => void;
+  width: number;
+  height: number;
+  elements: any[];
+  selectedElementId: string | null;
+  onElementSelect: (id: string | null) => void;
+  onElementUpdate: (id: string, updates: any) => void;
+  onCanvasClick: (e: any) => void;
+  className?: string;
 }
 
-const KonvaCanvas = forwardRef<any, KonvaCanvasProps>(({
-  elements,
-  selectedTool,
-  onUpdateElement,
-  onDeleteElement,
-  onAddElement
-}, ref) => {
-  const {
-    isDrawing,
-    currentLine,
-    handleStageClick,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp
-  } = useCanvasInteractions({ selectedTool, onAddElement });
+export interface KonvaCanvasRef {
+  exportCanvas: () => string;
+}
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      // Implémenter la suppression d'éléments sélectionnés
+const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
+  width,
+  height,
+  elements,
+  selectedElementId,
+  onElementSelect,
+  onElementUpdate,
+  onCanvasClick,
+  className = ""
+}, ref) => {
+  const stageRef = useRef<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    exportCanvas: () => {
+      if (stageRef.current) {
+        return stageRef.current.toDataURL();
+      }
+      return '';
+    }
+  }));
+
+  const handleMouseDown = (e: any) => {
+    if (e.target === e.target.getStage()) {
+      onElementSelect(null);
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  const handleMouseMove = () => {
+    // Handle mouse move if needed
+  };
+
+  const handleMouseUp = () => {
+    // Handle mouse up if needed
+  };
 
   return (
-    <div className="relative">
-      <Stage
-        width={800}
-        height={600}
-        ref={ref}
-        onClick={handleStageClick}
-        onMouseDown={handleMouseDown}
-        onMousemove={handleMouseMove}
-        onMouseup={handleMouseUp}
-        className="border border-gray-300 bg-white"
-      >
-        <Layer>
-          <CanvasElements
-            elements={elements}
-            onUpdateElement={onUpdateElement}
-            onDeleteElement={onDeleteElement}
-          />
-          
-          {/* Ligne en cours de dessin */}
-          {isDrawing && selectedTool === 'line' && (
-            <Line
-              points={currentLine}
-              stroke="#999999"
-              strokeWidth={2}
-              dash={[5, 5]}
-            />
-          )}
-        </Layer>
-      </Stage>
-      
-      <div className="p-2 text-xs text-gray-500">
-        Cliquez pour ajouter des éléments. Glissez pour déplacer. Double-cliquez sur le texte pour l'éditer.
-      </div>
-    </div>
+    <Stage
+      width={width}
+      height={height}
+      ref={stageRef}
+      onClick={onCanvasClick}
+      onMouseDown={handleMouseDown}
+      onMousemove={handleMouseMove}
+      onMouseup={handleMouseUp}
+      className={className}
+    >
+      <Layer>
+        <CanvasElements 
+          elements={elements}
+          selectedElementId={selectedElementId}
+          onElementSelect={onElementSelect}
+          onElementUpdate={onElementUpdate}
+        />
+      </Layer>
+    </Stage>
   );
 });
 

@@ -51,8 +51,23 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         
         // TOUJOURS utiliser les données chargées, même si elles sont vides ou différentes
         setQuizSeries(loadedSeries);
-        console.log("Quiz series set to loaded data:", loadedSeries);
         
+        // Pour le cours neuroanatomy, chercher automatiquement la série "neuroanatomie"
+        if (courseId === "neuroanatomy" && loadedSeries.length > 0) {
+          const neuroanatomySeries = loadedSeries.find(series => 
+            series.name.toLowerCase().includes('neuroanatomie') || 
+            series.id.toLowerCase().includes('neuroanatomie')
+          );
+          if (neuroanatomySeries) {
+            setCurrentSeriesId(neuroanatomySeries.id);
+            console.log(`Found neuroanatomie series: ${neuroanatomySeries.id}`);
+          } else {
+            // Utiliser la première série disponible
+            setCurrentSeriesId(loadedSeries[0].id);
+          }
+        }
+        
+        console.log("Quiz series set to loaded data:", loadedSeries);
         setHasError(false);
       } catch (error) {
         console.error("Error loading quiz series:", error);
@@ -68,6 +83,8 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
 
   const handleStartQuiz = () => {
     console.log("Starting quiz with current series:", quizSeries);
+    console.log("Current series ID:", currentSeriesId);
+    
     if (quizSeries.length === 0) {
       toast.error("Aucune série de quiz disponible. Veuillez créer des questions d'abord.");
       return;
@@ -76,7 +93,21 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     // Make sure currentSeriesId exists
     const seriesExists = quizSeries.some(series => series.id === currentSeriesId);
     if (!seriesExists && quizSeries.length > 0) {
-      setCurrentSeriesId(quizSeries[0].id);
+      // Pour neuroanatomy, chercher la série neuroanatomie
+      if (courseId === "neuroanatomy") {
+        const neuroanatomySeries = quizSeries.find(series => 
+          series.name.toLowerCase().includes('neuroanatomie') || 
+          series.id.toLowerCase().includes('neuroanatomie')
+        );
+        if (neuroanatomySeries) {
+          setCurrentSeriesId(neuroanatomySeries.id);
+          console.log(`Using neuroanatomie series: ${neuroanatomySeries.id}`);
+        } else {
+          setCurrentSeriesId(quizSeries[0].id);
+        }
+      } else {
+        setCurrentSeriesId(quizSeries[0].id);
+      }
     }
     
     setIsQuizOpen(true);
@@ -133,6 +164,9 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     );
   }
 
+  // Afficher des informations de débogage pour savoir quelle série sera utilisée
+  const currentSeries = quizSeries.find(series => series.id === currentSeriesId);
+
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 p-6 rounded-lg">
@@ -150,6 +184,16 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         </div>
         
         <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur l'aperçu du cerveau. Ce quiz comporte des questions à choix multiples avec des images et du texte dans la même série.</p>
+        
+        {/* Affichage de la série qui sera utilisée */}
+        {currentSeries && (
+          <div className="mb-4 p-3 bg-green-50 rounded border border-green-200">
+            <p className="text-sm text-green-800">
+              <strong>Série active :</strong> {currentSeries.name} 
+              ({currentSeries.imageQuestions.length + currentSeries.textQuestions.length} questions)
+            </p>
+          </div>
+        )}
         
         <div className="flex flex-wrap gap-3">
           <Button 
@@ -182,9 +226,11 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
         
         {quizSeries.length > 0 && (
           <div className="mt-4 text-sm text-gray-600">
+            <p className="font-medium mb-2">Séries disponibles :</p>
             {quizSeries.map(series => (
-              <div key={series.id}>
-                Série "{series.name}": {series.imageQuestions.length + series.textQuestions.length} questions
+              <div key={series.id} className={`p-2 rounded ${series.id === currentSeriesId ? 'bg-blue-100' : ''}`}>
+                • Série "{series.name}": {series.imageQuestions.length + series.textQuestions.length} questions
+                {series.id === currentSeriesId && <span className="text-blue-600 ml-2">(sélectionnée)</span>}
               </div>
             ))}
           </div>
