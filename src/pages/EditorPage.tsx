@@ -9,6 +9,7 @@ const EditorPage: React.FC = () => {
   const [selectedTool, setSelectedTool] = useState<'select' | 'icon' | 'text' | 'circle' | 'line'>('select');
   const [elements, setElements] = useState<any[]>([]);
   const [counter, setCounter] = useState(0);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const canvasRef = useRef<any>(null);
 
   const addElement = (element: any) => {
@@ -22,9 +23,9 @@ const EditorPage: React.FC = () => {
     setCounter(counter + 1);
   };
 
-  const updateElement = (id: number, updates: any) => {
+  const updateElement = (id: string, updates: any) => {
     setElements(prev => 
-      prev.map(el => el.id === id ? { ...el, ...updates } : el)
+      prev.map(el => el.id.toString() === id ? { ...el, ...updates } : el)
     );
   };
 
@@ -46,6 +47,35 @@ const EditorPage: React.FC = () => {
 
   const clearCanvas = () => {
     setElements([]);
+    setSelectedElementId(null);
+  };
+
+  const handleCanvasClick = (e: any) => {
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      setSelectedElementId(null);
+    }
+
+    if (selectedTool === 'circle') {
+      const pos = e.target.getStage().getPointerPosition();
+      addElement({ 
+        type: 'circle', 
+        x: pos.x, 
+        y: pos.y, 
+        radius: 50, 
+        fill: '#3B82F6' 
+      });
+    } else if (selectedTool === 'text') {
+      const pos = e.target.getStage().getPointerPosition();
+      addElement({ 
+        type: 'text', 
+        x: pos.x, 
+        y: pos.y, 
+        text: 'Nouveau texte', 
+        fontSize: 20, 
+        fill: '#000000' 
+      });
+    }
   };
 
   return (
@@ -59,23 +89,26 @@ const EditorPage: React.FC = () => {
           onExport={exportCanvas}
           onClear={clearCanvas}
           onAddCircle={() => addElement({ type: 'circle', radius: 50, fill: '#3B82F6' })}
-          onAddText={() => addElement({ type: 'text', text: 'Texte', fontSize: 20, fill: '#000000' })}
+          onAddText={() => addElement({ type: 'text', text: 'Nouveau texte', fontSize: 20, fill: '#000000' })}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="md:col-span-1">
-            <NewIconLibrary onAddIcon={(iconSrc) => addElement({ type: 'image', src: iconSrc })} />
+            <NewIconLibrary onAddIcon={(iconSrc) => addElement({ type: 'image', src: iconSrc, width: 100, height: 100 })} />
           </div>
           
           <div className="md:col-span-3">
             <div className="bg-white rounded-lg border border-gray-200 shadow-md">
               <KonvaCanvas
                 ref={canvasRef}
+                width={800}
+                height={600}
                 elements={elements}
-                selectedTool={selectedTool}
-                onUpdateElement={updateElement}
-                onDeleteElement={deleteElement}
-                onAddElement={addElement}
+                selectedElementId={selectedElementId}
+                onElementSelect={setSelectedElementId}
+                onElementUpdate={updateElement}
+                onCanvasClick={handleCanvasClick}
+                className="w-full"
               />
             </div>
           </div>

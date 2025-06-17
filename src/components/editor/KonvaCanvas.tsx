@@ -16,6 +16,7 @@ interface KonvaCanvasProps {
 
 export interface KonvaCanvasRef {
   exportCanvas: () => string;
+  toDataURL: () => string;
 }
 
 const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
@@ -32,6 +33,12 @@ const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
 
   useImperativeHandle(ref, () => ({
     exportCanvas: () => {
+      if (stageRef.current) {
+        return stageRef.current.toDataURL();
+      }
+      return '';
+    },
+    toDataURL: () => {
       if (stageRef.current) {
         return stageRef.current.toDataURL();
       }
@@ -67,9 +74,8 @@ const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
       <Layer>
         <CanvasElements 
           elements={elements}
-          selectedElementId={selectedElementId}
-          onElementSelect={onElementSelect}
-          onElementUpdate={onElementUpdate}
+          onUpdateElement={(id: number, updates: any) => onElementUpdate(id.toString(), updates)}
+          onDeleteElement={(id: number) => {}}
         />
       </Layer>
     </Stage>
