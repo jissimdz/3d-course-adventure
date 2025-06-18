@@ -52,14 +52,6 @@ const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
     }
   };
 
-  const handleMouseMove = () => {
-    // Handle mouse move if needed
-  };
-
-  const handleMouseUp = () => {
-    // Handle mouse up if needed
-  };
-
   return (
     <Stage
       width={width}
@@ -67,8 +59,6 @@ const KonvaCanvas = forwardRef<KonvaCanvasRef, KonvaCanvasProps>(({
       ref={stageRef}
       onClick={onCanvasClick}
       onMouseDown={handleMouseDown}
-      onMousemove={handleMouseMove}
-      onMouseup={handleMouseUp}
       className={className}
     >
       <Layer>

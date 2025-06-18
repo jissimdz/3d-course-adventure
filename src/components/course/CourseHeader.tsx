@@ -30,7 +30,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ course }) => {
         >
           {course.level === "Beginner" ? "Débutant" : course.level === "Intermediate" ? "Intermédiaire" : "Avancé"}
         </Badge>
-        <h1 className="text-4xl font-bold md:text-5xl">{course.title}</h1>
+        <h1 className="text-4xl font-bold md:text-5xl">BAC 2025</h1>
         <p className="mt-4 max-w-2xl text-lg">{course.description}</p>
         <div className="mt-6 flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
