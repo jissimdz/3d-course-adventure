@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { QuizSeries } from "./types/quizTypes";
@@ -8,7 +7,7 @@ import QuizEditor from "./quiz/QuizEditor";
 import { loadQuizSeries, createDefaultSeries, saveQuizSeries } from "./quiz/QuizStorage";
 import { useQuiz } from "./CourseQuizContext";
 import { Button } from "@/components/ui/button";
-import { Book, Edit, ExternalLink } from "lucide-react";
+import { Book, Edit, Download } from "lucide-react";
 
 interface CourseQuizProps {
   questions?: any[];
@@ -134,6 +133,15 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
     }
   };
 
+  const handleDownloadSupport = () => {
+    // Télécharger le support de cours
+    const link = document.createElement('a');
+    link.href = "https://drive.google.com/file/d/1H4mJa9YpkRugRRH7Moz3-WixlFjS3PKF/view?usp=sharing";
+    link.target = "_blank";
+    link.click();
+    toast.success("Ouverture du support de cours...");
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -172,15 +180,20 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
       <div className="bg-blue-50 p-6 rounded-lg">
         <h3 className="text-xl font-medium mb-4 text-brand-blue">Quiz d'évaluation : Aperçu du cerveau</h3>
         
-        {/* Ajout de la vidéo */}
-        <div className="mb-6 aspect-video w-full overflow-hidden rounded-md">
-          <iframe 
-            src="https://drive.google.com/file/d/1D192QjWoOHRerEDG6P3LSkABrZo-Ih-H/preview" 
-            className="w-full h-full"
-            title="Introduction à la neuroanatomie"
-            allow="autoplay; fullscreen" 
-            frameBorder="0"
-          ></iframe>
+        {/* Remplacement de la vidéo par un bouton de téléchargement */}
+        <div className="mb-6 p-8 bg-gray-100 rounded-md flex flex-col items-center justify-center">
+          <div className="text-center mb-4">
+            <Download className="h-12 w-12 text-brand-blue mx-auto mb-2" />
+            <h4 className="text-lg font-medium text-gray-800">Support de cours disponible</h4>
+            <p className="text-gray-600">Téléchargez le support de cours pour accompagner votre apprentissage</p>
+          </div>
+          <Button 
+            onClick={handleDownloadSupport}
+            className="bg-brand-blue hover:bg-brand-blue/90"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Télécharger le support
+          </Button>
         </div>
         
         <p className="mb-4">Testez vos connaissances avec notre quiz interactif sur l'aperçu du cerveau. Ce quiz comporte des questions à choix multiples avec des images et du texte dans la même série.</p>
@@ -212,15 +225,6 @@ const CourseQuiz: React.FC<CourseQuizProps> = ({
           >
             <Edit className="h-4 w-4 mr-2" />
             Éditer le Quiz
-          </Button>
-
-          <Button 
-            variant="outline"
-            className="text-brand-blue border-brand-blue hover:bg-brand-blue/10"
-            onClick={() => window.open("https://drive.google.com/file/d/1H4mJa9YpkRugRRH7Moz3-WixlFjS3PKF/view?usp=sharing", "_blank")}
-          >
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Voir la Vidéo
           </Button>
         </div>
         
